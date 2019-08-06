@@ -1,0 +1,15 @@
+---
+title: "SCDC data"
+author: "Meichen"
+date: "August 6, 2019"
+output: html_document
+---
+
+Pancreatic islets datasets:
+
+- [scRNA-seq data from Segerstolpe et al. (2016)](https://github.com/meichendong/SCDC/tree/master/vignettes/data/segerstolpe.rds)
+- [scRNA-seq data from Segerstolpe et al. (2016) after clustering QC](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_segerstolpe.rds)
+- [scRNA-seq data from Baron et al. (2017) after clustering QC](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_baron.rds)
+- [scRNA-seq data from Xin et al. (2016) after clustering QC](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_xin.rds)
+
+- [bulk RNA-seq data from Fadista et al. (2014)](https://github.com/meichendong/SCDC/tree/master/vignettes/data/fadista_77.rds)
