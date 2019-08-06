@@ -6,13 +6,13 @@ Authors@R:
            family = "Dong",
            role = c("aut", "cre"),
            email = "meichen@live.unc.edu")
-Description: SCDC adopts an ENSEMBLE method to integrate deconvolution results from different scRNA-seq datasets that are produced in different
-laboratories and at different times, implicitly addressing the batch-effect confounding.
+Description: SCDC adopts an ENSEMBLE method to integrate deconvolution results from different scRNA-seq datasets that are produced in different laboratories and at different times, implicitly addressing the batch-effect confounding.
 License: What license it uses
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
-URL: https://github.com/meichendong/SCDC/
+URL: https://github.com/meichendong/SCDC
+BugReports: https://github.com/meichendong/SCDC/issues
 Suggests: 
     knitr,
     rmarkdown

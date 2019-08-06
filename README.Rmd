@@ -1,0 +1,41 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# SCDC
+
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.org/meichendong/SCDC.svg?branch=master)](https://travis-ci.org/meichendong/SCDC)
+[![CRAN status](https://www.r-pkg.org/badges/version/SCDC)](https://CRAN.R-project.org/package=SCDC)
+<!-- badges: end -->
+
+SCDC is a deconvolution method for bulk RNA-seq that leverages cell-type specific gene expressions from multiple scRNA-seq reference datasets.
+SCDC adopts an ENSEMBLE method to integrate deconvolution results from different scRNA-seq datasets that are produced in different laboratories and at different times, implicitly addressing the batch-effect confounding.
+
+![SCDC framework](framework.PNG)
+
+## Installation
+
+You can install the released version of SCDC from [GitHub](https://github.com/) with:
+
+``` r
+if (!require("devtools")) {
+  install.packages("devtools")
+}
+devtools::install_github("meichendong/SCDC")
+```
+## Vignettes
+
+Please see the vignettes page at .
+
+
