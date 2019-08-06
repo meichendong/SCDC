@@ -11,7 +11,7 @@ SCDC_ENSEMBLE_subcl(bulk.eset, prop.list, truep = NULL, ct.sub,
 \arguments{
 \item{bulk.eset}{ExpressionSet object for bulk samples}
 
-\item{prop.list}{list of deconvolution results}
+\item{prop.list}{list of deconvolution results. should include: yhat (genes by samples), prop.est(samples by cell types). It's recommended to use as many genes as possible.}
 
 \item{truep}{true cell-type proportions for bulk samples if known}
 

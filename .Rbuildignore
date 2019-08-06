@@ -1,2 +1,3 @@
 ^SCDC\.Rproj$
 ^\.Rproj\.user$
+^\.travis\.yml$

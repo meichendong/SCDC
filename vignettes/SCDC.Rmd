@@ -23,11 +23,10 @@ when multiple scRNA-seq reference sets are available.
 
 As an illustration of **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. Raw read counts are required as input. The processed data is available at.
 
-```{r setup}
+```r
 if (!require("devtools")) {
   install.packages("devtools")
 }
 devtools::install_github("meichendong/SCDC")
 library(SCDC)
-
 ```
