@@ -1,0 +1,33 @@
+---
+title: "SCDC: leverage multiple Single-Cell RNA-seq reference sets for bulk gene expression DeConvolution"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SCDC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+**SCDC** adopts an ENSEMBLE method to integrate deconvolution results
+across methods and datasets, giving reference data that are more close to the
+bulk RNA-seq data higher weights, implicitly addressing the batch-effect confounding
+when multiple scRNA-seq reference sets are available.
+
+## Data
+
+As an illustration of **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. Raw read counts are required as input. The processed data is available at.
+
+```{r setup}
+if (!require("devtools")) {
+  install.packages("devtools")
+}
+devtools::install_github("meichendong/SCDC")
+library(SCDC)
+
+```

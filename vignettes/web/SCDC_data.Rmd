@@ -1,0 +1,12 @@
+---
+title: "SCDC Example Data"
+output:
+  pkgdown:
+    toc: FALSE
+---
+
+  * [scRNA-seq data from Segerstolpe et al. (2016)](https://github.com/xuranw/MuSiC/tree/master/vignettes/data/GSE50244bulkeset.rds)
+  * [scRNA-seq data from Segerstolpe et al. (2016) after clustering QC ](https://github.com/xuranw/MuSiC/tree/master/vignettes/data/EMTABesethealthy.rds)
+  * [scRNA-seq data from Baron et al. (2017) after clustering QC ](https://github.com/xuranw/MuSiC/tree/master/vignettes/data/EMTABesethealthy.rds)
+  * [scRNA-seq data from Xin et al. (2016) after clustering QC ](https://github.com/xuranw/MuSiC/tree/master/vignettes/data/EMTABesethealthy.rds)
+  * [bulk RNA-seq data from Fadista et al. (2014)](https://github.com/xuranw/MuSiC/tree/master/vignettes/data/EMTABesethealthy.rds)
