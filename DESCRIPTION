@@ -6,7 +6,8 @@ Authors@R:
            family = "Dong",
            role = c("aut", "cre"),
            email = "meichen@live.unc.edu")
-Description: What the package does (one paragraph).
+Description: SCDC adopts an ENSEMBLE method to integrate deconvolution results from different scRNA-seq datasets that are produced in different
+laboratories and at different times, implicitly addressing the batch-effect confounding.
 License: What license it uses
 Encoding: UTF-8
 LazyData: true
@@ -17,3 +18,4 @@ Suggests:
 VignetteBuilder: knitr
 Imports: Rcpp (>= 0.11.0)
 LinkingTo: Rcpp
+Depends: L1pack
