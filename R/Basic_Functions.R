@@ -242,6 +242,9 @@ SCDC_peval <- function(ptrue, pest, pest.names, select.ct = NULL){
   if (!is.list(pest)){
     pest <- list(pest)
   }
+  if (!is.data.frame(ptrue)){
+  ptrue <- as.data.frame.matrix(ptrue)
+  }
   n_est <- length(pest)
   sample_names <- lapply(pest, rownames)
   ctype_names <- lapply(pest, colnames)
@@ -261,20 +264,22 @@ SCDC_peval <- function(ptrue, pest, pest.names, select.ct = NULL){
     stop("Not enough cell types!")
   }
   ptrue.use <- ptrue[intersect(rownames(ptrue), sample), intersect(colnames(ptrue), celltype)]
-  ptrue.use <- ptrue.use / apply(ptrue.use,1,sum)
+  ptrue.use <- as.data.frame.matrix(ptrue.use / apply(ptrue.use,1,sum))
   ptrue.use[is.na(ptrue.use)] <- 0
 
   # for each estimation method in the list
   evals <- lapply(pest, function(xx){
     pest.use <- xx[intersect(rownames(xx), sample), intersect(colnames(xx), celltype)]
-    pest.use <- pest.use / apply(pest.use,1,sum)
+    pest.use <- as.data.frame.matrix(pest.use / apply(pest.use,1,sum))
     pest.use <- pest.use[rownames(ptrue.use),colnames(ptrue.use)]
     RMSD_bysample <- round(sqrt(rowMeans((ptrue.use - pest.use)^2)), digits = 5)
     mAD_bysample <- round(rowMeans(abs(ptrue.use - pest.use)), digits = 5)
-    Pearson_bysample <- sapply(1:nrow(ptrue.use), function(ss) {round(cor(ptrue.use[ss,], pest.use[ss,]), digits = 5)})
-    RMSD <- round(sqrt(mean((ptrue.use - pest.use)^2, na.rm = T)), digits = 5)
-    mAD <- round(mean(abs(ptrue.use - pest.use), na.rm = T), digits = 5)
-    Pearson <- round(cor(c(ptrue.use), c(pest.use)), digits = 4)
+    Pearson_bysample <- sapply(1:nrow(ptrue.use), function(ss) {
+	round(cor(c(as.matrix(ptrue.use[ss, ])), c(as.matrix(pest.use[ss, ]))), digits = 5)
+	})
+    RMSD <- round(sqrt(mean(as.matrix((ptrue.use - pest.use)^2), na.rm = T)), digits = 5)
+    mAD <- round(mean(as.matrix(abs(ptrue.use - pest.use)), na.rm = T), digits = 5)
+    Pearson <- round(cor(c(as.matrix(ptrue.use)), c(as.matrix(pest.use))), digits = 4)
 
     return(list(pest.use = pest.use, RMSD_bysample = RMSD_bysample, mAD_bysample = mAD_bysample, Pearson_bysample = Pearson_bysample,
                 RMSD = RMSD, mAD = mAD, Pearson = Pearson))

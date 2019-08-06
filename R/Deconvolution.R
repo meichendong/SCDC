@@ -81,7 +81,6 @@ SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample){
 
   message("Creating Basis Matrix adjusted for maximal variance weight")
   mean.mat.mvw <- sapply(unique(ct_sample.id), function(id){
-    # id = unique(ct_sample.id)[1]
     sid = unlist(strsplit(id,'%'))[2]
     y = as.matrix(countmat[, ct_sample.id %in% id])
     yy = sweep(y, 1, sqrt(var.adj.q[,sid]), '/')
@@ -221,7 +220,7 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample){
 #' @return a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.
 #' @export
 my_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
-                   ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.001, arow =NULL,
+                   ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.01, arow =NULL,
                    qcthreshold = 0.7, ...) {
   sc.basis = SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
   M.S <- sc.basis$sum.mat[ct.sub]
@@ -397,8 +396,9 @@ SCDC_qc_ONE <- function(sc.eset, ct.varname, sample, scsetname = "Single Cell",
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
 #' @export
 SCDC_prop <- function(bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max = 1000,
-                      nu = 1e-04, epsilon = 0.001, truep = NULL, ...){
+                      nu = 1e-04, epsilon = 0.01, truep = NULL, weight.basis = T, ...){
   bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset))>0, , drop = FALSE]
+  ct.sub <- intersect(ct.sub, unique(sc.eset@phenoData@data[,ct.varname]))
   sc.basis <- SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
 
   # match genes / cells first
@@ -409,7 +409,11 @@ SCDC_prop <- function(bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max =
   }
   message(paste("Used", length(commongenes), "common genes..."))
 
-  basis.mvw <- sc.basis$basis.mvw[commongenes, ct.sub]
+  if (weight.basis){
+    basis.mvw <- sc.basis$basis.mvw[commongenes, ct.sub]
+  } else {
+    basis.mvw <- sc.basis$basis[commongenes, ct.sub]
+  }
   xbulk <- getCPM0(exprs(bulk.eset)[commongenes,])
   sigma <- sc.basis$sigma[commongenes, ct.sub]
   ALS.S <- sc.basis$sum.mat[ct.sub]
@@ -428,9 +432,8 @@ SCDC_prop <- function(bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max =
   yhatgene.temp <- rownames(basis.mvw)
   # prop estimation for each bulk sample:
   for (i in 1:N.bulk) {
-    #i=2
     basis.mvw.temp <- basis.mvw
-    xbulk.temp <- xbulk[, i]*100 # why times 100 if not normalize???
+    xbulk.temp <- xbulk[, i]*100
     sigma.temp <- sigma
     message(paste(colnames(xbulk)[i], "has common genes", sum(xbulk[, i] != 0), "..."))
 
@@ -468,13 +471,10 @@ SCDC_prop <- function(bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max =
 
     R2 <- 1- var(xbulk.temp - basis.mvw.temp%*%as.matrix(lm.wt$x))/var(xbulk.temp)
     prop.est.mvw <- rbind(prop.est.mvw, prop.wt)
-
-    # yhat.temp <- b.wt %*% as.matrix(lm.wt$x) # change this!!!!!!!!!!!!!!!...
     yhat.temp <- basis.mvw.temp %*% as.matrix(lm.wt$x)
     yhatgene.temp <- intersect(rownames(yhat.temp), yhatgene.temp)
     yhat <- cbind(yhat[yhatgene.temp,], yhat.temp[yhatgene.temp,])
   }
-  # yhat <- getCPM0(yhat)
   colnames(prop.est.mvw) <- colnames(basis.mvw)
   rownames(prop.est.mvw) <- colnames(xbulk)
   colnames(yhat) <- colnames(xbulk)
@@ -494,7 +494,7 @@ SCDC_prop <- function(bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max =
 ############################################
 #' Proportion estimation function for one-subject case
 #' @description Proportion estimation function for one-subject case
-#' @name SCDC_propONE
+#' @name SCDC_prop_ONE
 #' @param bulk.eset ExpressionSet object for bulk samples
 #' @param sc.eset ExpressionSet object for single cell samples
 #' @param ct.varname variable name for 'cell types'
@@ -505,8 +505,9 @@ SCDC_prop <- function(bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max =
 #' @param epsilon a small constant number used for convergence criteria
 #' @param truep true cell-type proportions for bulk samples if known
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
-SCDC_propONE <- function(bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
-                          ct.sub, iter.max = 2000, nu = 1e-10, epsilon = 0.001,
+#' @export
+SCDC_prop_ONE <- function(bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
+                          ct.sub, iter.max = 2000, nu = 1e-10, epsilon = 0.01,
                           weight.basis = T, ...){
   bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset))>0, , drop = FALSE]
   sc.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
@@ -572,7 +573,7 @@ SCDC_propONE <- function(bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
     }
 
     prop.est.mvw <- rbind(prop.est.mvw, prop.wt)
-    yhat.temp <- basis.mvw %*% as.matrix(lm.wt$x) # change this!!!!!!!!!!!!!!!...
+    yhat.temp <- basis.mvw %*% as.matrix(lm.wt$x)
     yhatgene.temp <- intersect(rownames(yhat.temp), yhatgene.temp)
     yhat <- cbind(yhat[yhatgene.temp,], yhat.temp[yhatgene.temp,])
   }

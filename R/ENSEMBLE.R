@@ -1,6 +1,7 @@
 ##################################
 #####   ENSEMBL PROCEDURE    #####
 ##################################
+library(L1pack)
 
 ##################################################
 #' ENSEMBL function
@@ -20,15 +21,15 @@
 #' @export
 SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list, ct.varname, sample,
                           ct.sub, search.method = c("Grid search", "LAD", "NNLS"), search.length = 0.05,
-                          iter.max = 2000, nu = 1e-04, epsilon = 0.001, truep = NULL,
+                          iter.max = 2000, nu = 1e-04, epsilon = 0.001, truep = NULL, weight.basis =T,
                           ...){
   prop.list <- lapply(sc.eset.list, function(zz){
     if (length(unique(zz@phenoData@data[,sample])) > 1){
       SCDC_prop(bulk.eset = bulk.eset, sc.eset = zz, ct.varname = ct.varname, sample = sample, truep = truep,
-                ct.sub = ct.sub, iter.max = iter.max, nu = nu, epsilon = epsilon)
+                ct.sub = ct.sub, iter.max = iter.max, nu = nu, epsilon = epsilon, weight.basis = weight.basis)
     } else {
-      SCDC_propONE(bulk.eset = bulk.eset, sc.eset = zz, ct.varname = ct.varname, sample = sample, truep = truep,
-                    ct.sub = ct.sub, iter.max = iter.max, nu = nu, epsilon = epsilon)
+      SCDC_prop_ONE(bulk.eset = bulk.eset, sc.eset = zz, ct.varname = ct.varname, sample = sample, truep = truep,
+                    ct.sub = ct.sub, iter.max = iter.max, nu = nu, epsilon = epsilon, weight.basis = weight.basis)
     }
   })
 
@@ -59,8 +60,9 @@ SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list, ct.varname, sample,
         w_eval <- SCDC_peval(ptrue = as.matrix(truep), pest = temp,
                            pest.names = c("SCDC"),
                            select.ct = ct.sub)
-        w_eval$evals.table[3]
+        w_eval$evals.table
       })
+      w_pearson <- gridmat[which.max(t(testp)[,3]),]
     }
 
     message("Searching according to bulk expression measurement...")
@@ -79,7 +81,6 @@ SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list, ct.varname, sample,
     w_spearman <- gridmat[which.max(t(testy)[,1]),]
     w_rmsd <- gridmat[which.min(t(testy)[,2]),]
     w_mad<- gridmat[which.min(t(testy)[,3]),]
-    w_pearson <- gridmat[which.max(testp),]
   }
 
   xlist <- sapply(1:length(prop.list), function(z){
@@ -142,8 +143,8 @@ SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list, ct.varname, sample,
       colnames(w_table)[(length(prop.list)+1):(length(prop.list)+6)] <- c("RMSD","mAD","Pearson","spearman_Y","RMSD_Y","mAD_Y")
       rownames(w_table) <- c('max.Pearson_prop','min.mAD_Y','min.RMSD_Y','max.Spearman_corr_Y',
                              'min.mAD_Y_LAD', 'min.RMSD_Y_NNLS')[complete.cases(res_table)]
-      gridres <- cbind(t(testy), testp, gridmat)
-      colnames(gridres) <- c("spearman_Y","RMSD_Y","mAD_Y","Pearson",colnames(gridmat))
+      gridres <- cbind(t(testy), t(testp), gridmat)
+      colnames(gridres) <- c("spearman_Y","RMSD_Y","mAD_Y","RMSD","mAD","Pearson",colnames(gridmat))
     } else {
       w_table <- w_table[complete.cases(w_table),]
       colnames(w_table)[(length(prop.list)+1):(length(prop.list)+3)] <- c("spearman_Y","RMSD_Y","mAD_Y")
@@ -173,7 +174,7 @@ SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list, ct.varname, sample,
 #' @description ENSEMBL function for manually input deconvolution results
 #' @name SCDC_ENSEMBLE_subcl
 #' @param bulk.eset ExpressionSet object for bulk samples
-#' @param prop.list list of deconvolution results
+#' @param prop.list list of deconvolution results. should include: yhat (genes by samples), prop.est(samples by cell types). It's recommended to use as many genes as possible.
 #' @param ct.sub a subset of cell types that are selected to construct basis matrix
 #' @param ct.varname variable name for 'cell types'
 #' @param sample variable name for subject/samples
@@ -219,6 +220,7 @@ SCDC_ENSEMBLE_subcl <- function(bulk.eset, prop.list, truep = NULL,
                            select.ct = ct.sub)
         w_eval$evals.table[3]
       })
+      w_pearson <- gridmat[which.max(testp),]
     }
 
     message("Searching according to bulk expression measurement...")
@@ -241,7 +243,6 @@ SCDC_ENSEMBLE_subcl <- function(bulk.eset, prop.list, truep = NULL,
     w_spearman <- gridmat[which.max(t(testy)[,1]),]
     w_rmsd <- gridmat[which.min(t(testy)[,2]),]
     w_mad <- gridmat[which.min(t(testy)[,3]),]
-    w_pearson <- gridmat[which.max(testp),]
   }
 
   xlist <- sapply(1:length(prop.list), function(z){

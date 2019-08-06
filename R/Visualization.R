@@ -54,6 +54,7 @@ DemoPlot <- function(eset, cluster, sample, select.ct, Palette = cbPalette){
 #' @param ref1 name for the first reference dataset
 #' @param ref2 name for the second reference dataset
 #' @return A figure of evaluated performance, varying the ENSEMBL weights for three reference datasets
+#' @export
 wheat_map <- function(ensemble_res, ref1, ref2){
   pp <- ggplot( ensemble_res$gridres, aes(w1, w2, fill = Pearson)) +
     geom_tile(aes(fill = Pearson)) + #, colour = "white",size=0

@@ -1,5 +1,5 @@
 ---
-title: "SCDC: Bulk RNA-seq deconvolution by scRNA-seq"
+title: "SCDC: Bulk RNA-seq deconvolution by scRNA-seq using an ENSEMBLE method"
 author: "Meichen Dong"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -16,7 +16,34 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Single cell demographic and clustering QC
+For each singl-cell dataset with raw counts, we can first explore the demographic information by the visualization function `DemoPlot`. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us the general understanding or a dataset.
+Use single cell dataset Segerstolpe et al. as an example, we can visualize the number of single cells and the relative cell-type proportion per subject.
+```{r, fig.height = 4, fig.width = 5, fig.align = "center"}
+setwd("H:/994/SCDC/data")
+library(SCDC)
+library(ggplot2)
+library(pheatmap)
+library(L1pack) # lad
+library(reshape2) # melt
+library(nnls)
+
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+ct1 <- c("mediumorchid1","mediumpurple1","lightskyblue","seagreen1","yellow","tan1","azure3")
+seger <- readRDS("S0102_SEGER.rds")
+DemoPlot(seger, cluster = "cluster", sample = "sample", select.ct = c("alpha","beta","delta","gamma","ductal","acinar"), Palette = ct1)
+```
+
+Also, we can perform the clustering QC to filter out single cells that are potential doublets, miss-classified, or belonging to cell types not of interest.
+The threshold of keeping a single cell from an assigned cluster is chosen as 0.7 in this illustration example. This user-defined threshold should be selected carefully, to achieve the effect of quality control of single cells without obstructing the performance on the downstream analysis. An unproper threshold could potentially lead to filtering out a large proportion of cells from rare cell types. To be conservative, this can be chosen from (0.5,0.7).
+```{r, message=F, fig.height = 4, fig.width = 4, fig.align = "center"}
+seger.qc <- my_qc(seger, ct.varname = "cluster", sample = "sample", scsetname = "Segerstolpe", ct.sub = c("alpha","beta","delta","gamma","ductal","acinar"), qcthreshold = 0.7)
+```
+Similarly we can perform clustering QC for single cells from only one subject using function `SCDC_qc_ONE`.
+
+
 ## Data Input
+We will use the single cell dataset after clustering-QC.
 Pancreas data: 
 
 -- Single cells (only selected healthy subjects): Baron et al., Segerstolpe et al., Xin et al.
@@ -32,33 +59,18 @@ Mammary gland data:
 Three-cell-line mixture. Single cells and real bulk sample are cultured by ratio of 6:3:1 for MDA-MB468: MCF7: normal fibroblast cells.
 
 ```{r}
-setwd("H:/994/SCDC/data")
-library(SCDC)
-library(ggplot2)
-library(pheatmap)
-library(L1pack) # lad
-library(reshape2) # melt
-library(nnls)
-ct1 <- c("mediumorchid1","mediumpurple1","lightskyblue","seagreen1","yellow","tan1","azure3")
-
 ## Pancreas data
 ## Single cells:
-baron <- readRDS("S0102_BARON.rds")
-seger <- readRDS("S0102_SEGER.rds")
-xin <- readRDS("S0102_XIN.rds")
+setwd("H:/994/SCDC/data")
 qc.baron<- readRDS( "S0103_QCBARON.rds") #after CQC
 qc.seger<- readRDS( "S0103_QCSEGER.rds") #after CQC
 qc.xin<- readRDS( "S0103_QCXIN.rds") #after CQC
 
 ## real bulk samples
-seger.bulk.eset <- readRDS("S0102_segerbulk.rds")
 fadista_77 <- readRDS("H:/994/papers/baron/data/fadista_77.rds")
-
 
 ## Mammary Gland data
 ## Single cells
-perou <- readRDS("S0102_perou2.rds")
-tmouse <- readRDS("T0101_Tabula_sc.rds")
 qc.perou<- readRDS("S0103_QCPEROU.rds") #after CQC
 qc.tmouse<- readRDS("S0103_QCTMOUSE.rds") #after CQC
 ## real bulk samples
@@ -68,38 +80,19 @@ bulkff <- readRDS("S0102_peroubulkff_fvb34.rds")
 
 ## Three-cell-line mixture
 ## Single cells
-sc3cl <- readRDS("H:/994/papers/perou/data/P0113_3clESET.rds")
 qc.3cl<- readRDS("S0103_QC3CL.rds") #after CQC
+sc.3cl <- readRDS("H:/994/papers/perou/data/P0113_3clESET.rds")
 ## real bulk sample
 bulk3cl <- readRDS("H:/994/papers/perou/data/P0113_bulkESET.rds")
-
 ```
 
-## Single cell demographic and clustering QC
-Use single cell dataset Segerstolpe et al. as an example, we can visualize the number of single cells and the relative cell-type proportion per subject.
-```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
-# The palette with grey:
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-ct1 <- c("mediumorchid1","mediumpurple1","lightskyblue","seagreen1","yellow","tan1","azure3")
-
-DemoPlot(seger, cluster = "cluster", sample = "sample", select.ct = c("alpha","beta","delta","gamma","ductal","acinar"), Palette = ct1)
-
-```
-
-Also, we can perform the clustering QC to filter out single cells that are potential doublets, miss-classified, or belonging to cell types not of interest.
-```{r, message=F, fig.height = 4, fig.width = 4, fig.align = "center"}
-seger.qc <- my_qc(seger, ct.varname = "cluster", sample = "sample", scsetname = "Segerstolpe", ct.sub = c("alpha","beta","delta","gamma","ductal","acinar"), qcthreshold = 0.7)
-
-## similarly we can perform clustering QC for single cells from only one subject
-# sc3cl.qc <- SCDC_qc_ONE(sc3cl, ct.varname = "md_cluster", sample = "orig.ident", scsetname = "Three-cell-line", ct.sub = unique(sc3cl$md_cluster))
-```
 
 ## Simulation
 SCDC allows users to construct pseudo bulk samples in two ways:
 
 (1) Sum up gene-wise raw read counts per subject, and the true cell-type proportion is consistent with the single cell clustering result.
 
-(2) First randomly sample single cells from each of the cell types of interest without replacement, and then sum up gene-wise raw read counts per subject. The cell-type proportions are different from single cell clustering result.
+(2) Randomly sample single cells from each of the cell types of interest without replacement, and then sum up raw read counts per subject. The cell-type proportions are different from single cell clustering result.
 ```{r, message=F}
 ## Use cluster-QCed single cell dataset for downstream analysis
 ## (1) using all single cells
@@ -109,23 +102,23 @@ pseudo.seger <- generateBulk_allcells(qc.seger$sc.eset.qc, ct.varname = "cluster
 pseudo.seger.rand <- generateBulk_norep(qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma","ductal","acinar"), nbulk = 3)
 
 ## we know the true relative proportions for the pseudo bulk samples:
-pseudo.seger$truep
-
+round(pseudo.seger$truep,3)
+round(pseudo.seger.rand$true_p,3)
 ```
 
-## Deconvolution and ENSEMBL
-Pancreas data
+## Deconvolution and ENSEMBLE
+We will use three real bulk sample datasets to illustrate SCDC and ENSEMBLE method.
+
+###Pancreas data
 
 (1) Deconvolution of pseudo bulk samples using different reference datasets.
 
-(2) ENSEMBL of pseudo bulk samples
+(2) ENSEMBLE of pseudo bulk samples
 
-(3) Deconvolution of real bulk samples: Segerstolpe et al.; Fadista et al.
+(3) Deconvolution of real bulk samples: Fadista et al.
 
 ```{r, message=F}
 pseudo.seger <- generateBulk_allcells(qc.seger$sc.eset.qc, ct.varname = "cluster", sample="sample", ct.sub = c("alpha","beta","delta","gamma"))
-# pseudo.baron <- generateBulk_allcells(qc.baron$sc.eset.qc, ct.varname = "cluster", sample="sample", ct.sub = c("alpha","beta","delta","gamma"))
-# pseudo.xin <- generateBulk_allcells(qc.xin$sc.eset.qc, ct.varname = "cluster", sample="sample", ct.sub = c("alpha","beta","delta","gamma"))
 
 ### (1)
 bulkseger.scseger <- SCDC_prop(bulk.eset = pseudo.seger$pseudo_eset, sc.eset = qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma"), truep = pseudo.seger$truep)
@@ -136,7 +129,9 @@ bulkseger.scseger$peval$evals.table
 bulkseger.scbaron$peval$evals.table
 bulkseger.scxin$peval$evals.table
 ```
-We can observe the discrepancy of performance using different datasets. Next, we will explore the ENSEMBL results.
+We can observe the discrepancy of performance using different datasets. It's clear that using single cells from the reference dataset Segerstolpe et al., we derive the highest Pearson correlation, and the lowest RMSD and mAD.
+
+Next, we will explore the ENSEMBLE results. Using the pseudo bulk samples constructed above, we try to deconvolve using three reference datasets: Baron et al., Segerstolpe et al. and Xin et al. The search length is a parameter that is related to the grid search method. We are evaluating the performance of each possible combination of the deconvolution results, and this search length decides how carefully we will search through the combinations. For instance, when search.length = 0.01, the weights for the three reference datasets could be (0.01,0,0.99).
 
 ```{r, message=F}
 ### (2)
@@ -145,80 +140,31 @@ pancreas.sc <- list(baron = qc.baron$sc.eset.qc,
                     xin = qc.xin$sc.eset.qc)
 
 PS_ensemble <- SCDC_ENSEMBLE(bulk.eset = pseudo.seger$pseudo_eset, sc.eset.list = pancreas.sc, ct.varname = "cluster",
-                             sample = "sample", truep = pseudo.seger$truep[complete.cases(pseudo.seger$truep),], ct.sub =  c("alpha","beta","delta","gamma"),
-                             search.length = 0.01)
+                             sample = "sample", truep = pseudo.seger$truep[complete.cases(pseudo.seger$truep),], ct.sub =  c("alpha","beta","delta","gamma"), search.length = 0.01)
 PS_ensemble$w_table
 ```
+`SCDC_ENSEMBLE` provides the weights selected by the grid search method, as well as the mathematical solutions by LAD regression and the NNLS regression. We derived consistent weights for the three reference datasets. The reference dataset Segerstolpe et al. derives a weight of 1 from the LAD regression. This means that we tend to choose the reference dataset that is from the same source as the pseudo bulk samples.
 
-For real bulk samples, we analyze them by disease conditions in the ENSEMBL step.
+For real bulk samples from Fadista et al., we analyze them by disease conditions in the ENSEMBLE step. It might take a while if you include the grid search method, hence, we directly show the results here. `w1` is the weight for single cell reference from Baron et al., and `w2` is for single cell reference from Segerstolpe et al. From previous simulation results, SCDC, as its default, chooses the LAD regression weights as the final weights. For example, when ensembling results for the healthy samples, we assign 0.477 to the reference dataset Baron et al., and 0.523 to the reference dataset Segerstolpe et al.
+
 ```{r, message=F}
-### (3)
-### Segerstolpe et al. real bulk samples
+# Fadista et al. real bulk samples
 # baron.h <- qc.baron$sc.eset.qc
 # seger.h <- qc.seger$sc.eset.qc
-# baron.d.qc <- readRDS("S0102_BARONDIABQC.rds")
-# seger.d.qc <- readRDS("S0102_SEGERDIABQC.rds")
-# Segerbulk_ensemble_d <- SCDC_ENSEMBLE(bulk.eset = seger.bulk.eset[,grepl("D",seger.bulk.eset$sample)], sc.eset.list = list(baron = qc.baron$sc.eset.qc, seger = qc.seger$sc.eset.qc), ct.varname = "cluster",
-#                                       sample = "sample", truep = NULL, ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"),
-#                                       search.length = 0.01)
-# Segerbulk_ensemble_h <- SCDC_ENSEMBLE(bulk.eset = seger.bulk.eset[,grepl("H",seger.bulk.eset$sample)], sc.eset.list = list(baron = qc.baron$sc.eset.qc, seger = qc.seger$sc.eset.qc), ct.varname = "cluster",
-#                                       sample = "sample", truep = NULL, ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"),
-#                                       search.length = 0.01)
-
-Segerbulk_ensemble_d <- readRDS("H:/994/SCDC/data/S0103_SEGERBULK_DIAB_ENS.rds")
-Segerbulk_ensemble_h <- readRDS("H:/994/SCDC/data/S0103_SEGERBULK_HEAL_ENS.rds")
-
-Segerbulk_ensemble_d$w_table
-Segerbulk_ensemble_h$w_table
+# F_ensemble_h2 <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "Normal"], sc.eset.list = list(baronh = baron.h, segerh = seger.h), ct.varname = "cluster",
+#                                sample = "sample", truep = NULL, ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01)  
+# 
+# F_ensemble_d2 <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "T2D"], sc.eset.list = list(baronh = baron.h, segerh = seger.h), ct.varname = "cluster",
+#                                sample = "sample", truep = NULL, ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01)  
+F_ensemble_h2 <- readRDS("H:/994/SCDC/data/S0103_QC_fadistaens_healthy2.rds")
+F_ensemble_d2 <- readRDS("H:/994/SCDC/data/S0103_QC_fadistaens_diabetic2.rds")
+F_ensemble_d2$w_table
+F_ensemble_h2$w_table
 ```
 
-Deconvolution result visualization for Segerstolpe et al. real bulk samples:
-```{r, message=F, fig.height = 4, fig.width = 4, fig.align = "center"}
-getPropBar <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref){
-  prop.h <- ens_h$prop.list[[1]]$prop.est.mvw*w1h + ens_h$prop.list[[2]]$prop.est.mvw*w2h
-  prop.h <- as.data.frame(prop.h)
-  
-  prop.d <- ens_d$prop.list[[1]]$prop.est.mvw*w1d + ens_d$prop.list[[2]]$prop.est.mvw*w2d
-  prop.d <- as.data.frame(prop.d)
-  
-  prop2 <- rbind(prop.h, prop.d)
-  return(prop2)
-}
-dt.ens <- getPropBar(ens_h = Segerbulk_ensemble_h, ens_d = Segerbulk_ensemble_d, w1h = 0.2, w2h =0.8, w1d = 0.23, w2d = 0.77, ref = "ENSEMBL")
-dt.seger <- getPropBar(ens_h = Segerbulk_ensemble_h, ens_d = Segerbulk_ensemble_d, w1h = 0, w2h =1, w1d = 0, w2d = 1, ref = "Segerstolpe")
-dt.baron <- getPropBar(ens_h = Segerbulk_ensemble_h, ens_d = Segerbulk_ensemble_d, w1h = 1, w2h =0, w1d = 1, w2d = 0, ref = "Baron")
-seger.eset.qc <- readRDS("H:/994/SCDC/data/S0112_SEGERESETQC.rds")
-pseudo.seger.all <- generateBulk_allcells(seger.eset.qc, ct.varname = "cluster", sample="sample", ct.sub = c("alpha","beta","delta","gamma","acinar","ductal"))
-dtmeltt<- melt(pseudo.seger.all$truep[rownames(dt.ens),colnames(dt.ens)])
-dtmeltt$ref <- as.factor("SingleCells")
-colnames(dtmeltt)[1:2] <- c("Var1","Var2")
-dtmeltb <- melt(as.matrix(dt.baron))
-dtmeltb$ref <- as.factor("Baron")
-dtmelts <- melt(as.matrix(dt.seger ))
-dtmelts$ref <- as.factor("Segerstolpe")
-dtmelte <- melt(as.matrix(dt.ens))
-dtmelte$ref <- as.factor("ENSEMBL")
-dtbar <- rbind.data.frame(dtmeltt,dtmeltb, dtmelts, dtmelte)
-
-### barplot
-ggplot(dtbar, aes(x=Var1, y=value, fill = factor(Var2, levels = c("alpha","beta","delta","gamma","acinar","ductal")))) + 
-  geom_bar(stat = "identity") + xlab("") + ylab("Percentage") +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1, size=10),
-        axis.text.y = element_text(size = 10),
-        text = element_text(size = 10),
-        plot.title = element_text(size=10, face = "bold"),
-        plot.margin=unit(c(1,1,-5,0), "mm"),
-        legend.position="top",legend.title = element_blank(),
-        legend.text = element_text(size=8),
-        legend.box.spacing = unit(0, "mm"))+
-  guides(fill = guide_legend(nrow = 1))+
-  scale_fill_manual(values=c("mediumorchid1","mediumpurple1","lightskyblue","seagreen1","yellow","tan1")) +
-  facet_grid(rows = vars(ref))
-```
-
-Visualize the cell-type proportion comparison by disease conditions:
-```{r, message=F, fig.height = 4, fig.width = 4, fig.align = "center"}
-### boxplot
+To visualize the ENSEMBLE result, we provide the boxplot as follows:
+```{r, message=F, fig.height = 4, fig.width = 6, fig.align = "center"}
+## create function that integrate the ENSEMBLE results:
 getPropBox <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref){
   prop.h <- ens_h$prop.list[[1]]$prop.est.mvw*w1h + ens_h$prop.list[[2]]$prop.est.mvw*w2h
   prop.h <- as.data.frame(prop.h)
@@ -233,42 +179,12 @@ getPropBox <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref){
   dtmelt$ref <- as.factor(ref)
   return(dtmelt)
 }
-dt.ens <- getPropBox(ens_h = Segerbulk_ensemble_h, ens_d = Segerbulk_ensemble_d, w1h = 0.2, w2h =0.8, w1d = 0.23, w2d = 0.77, ref = "ENSEMBL")
-dt.seger <- getPropBox(ens_h = Segerbulk_ensemble_h, ens_d = Segerbulk_ensemble_d, w1h = 0, w2h =1, w1d = 0, w2d = 1, ref = "Segerstolpe")
-dt.baron <- getPropBox(ens_h = Segerbulk_ensemble_h, ens_d = Segerbulk_ensemble_d, w1h = 1, w2h =0, w1d = 1, w2d = 0, ref = "Baron")
-dtbox <- rbind(dt.ens, dt.seger, dt.baron)
-
-
-ggplot(dtbox, aes(x=variable, y=value, color = condition)) + 
-  geom_boxplot() + geom_jitter(aes(x=variable, color = condition),position = position_dodge(0.8), alpha = 0.5)+
-  theme(axis.text.x = element_text(angle = 30, hjust = 1, size=10),
-        axis.text.y = element_text(size = 10),
-        text = element_text(size = 10),
-        plot.title = element_text(size=10, face = "bold"),
-        plot.margin=unit(c(1,1,-5,0), "mm"),
-        legend.position="top",legend.title = element_blank(),
-        legend.text = element_text(size=8),
-        legend.box.spacing = unit(0, "mm"))+
-  ylab("") + xlab("") + facet_grid(rows = vars(ref))
-```
-
-For the 77 real bulk samples for Fadista et al., we also performed ENSEMBL step for healthy and T2D samples respectively. To visualize the result, we provide the boxplot as follows:
-```{r, message=F}
-# Fadista et al. real bulk samples
-# F_ensemble_h2 <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "Normal"], sc.eset.list = list(baronh = baron.h, segerh = seger.h), ct.varname = "cluster",
-#                                sample = "sample", truep = NULL, ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01)  
-# 
-# F_ensemble_d2 <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "T2D"], sc.eset.list = list(baronh = baron.h, segerh = seger.h), ct.varname = "cluster",
-#                                sample = "sample", truep = NULL, ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01)  
-F_ensemble_h2 <- readRDS("H:/994/SCDC/data/S0103_QC_fadistaens_healthy2.rds")
-F_ensemble_d2 <- readRDS("H:/994/SCDC/data/S0103_QC_fadistaens_diabetic2.rds")
-F_ensemble_d2$w_table
-F_ensemble_h2$w_table
-
-fdt.ens <- getPropBox(ens_h = F_ensemble_h2, ens_d = F_ensemble_d2, w1h = 0.41, w2h = 0.59, w1d = 0.48, w2d = 0.52, ref = "ENSEMBL")
+fdt.ens <- getPropBox(ens_h = F_ensemble_h2, ens_d = F_ensemble_d2, w1h = 0.41, w2h = 0.59, w1d = 0.48, w2d = 0.52, ref = "ENSEMBLE")
 fdt.seger <- getPropBox(ens_h = F_ensemble_h2, ens_d = F_ensemble_d2, w1h = 0, w2h =1, w1d = 0, w2d = 1, ref = "Segerstolpe")
 fdt.baron <- getPropBox(ens_h = F_ensemble_h2, ens_d = F_ensemble_d2, w1h = 1, w2h =0, w1d = 1, w2d = 0, ref = "Baron")
 dtbox_fa <- rbind(fdt.ens, fdt.seger, fdt.baron)
+
+## boxplot:
 ggplot(dtbox_fa, aes(x=variable, y=value, color = condition)) + 
   geom_boxplot() + geom_jitter(aes(x=variable, color = condition),position = position_dodge(0.8), alpha = 0.2)+
   theme(axis.text.x = element_text(angle = 30, hjust = 1, size=10),
@@ -280,9 +196,10 @@ ggplot(dtbox_fa, aes(x=variable, y=value, color = condition)) +
         legend.text = element_text(size=8),
         legend.box.spacing = unit(0, "mm"))+
   ylab("") + xlab("") + facet_grid(rows = vars(ref))
+```
 
-#######
-### explore of cell-type proportion and the hba1c levels
+Next, we explore of cell-type proportion and the HbA1c levels. In detail, for each of the cell types, we fit linear model with the estimated proportions as outcome and age, gender, BMI, HbA1c level as predictors.
+```{r, message=F,fig.height = 5, fig.width = 8, fig.align = "center"}
 getPropbycond <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref, hba1clvl){
   prop.h <- ens_h$prop.list[[1]]$prop.est.mvw*w1h + ens_h$prop.list[[2]]$prop.est.mvw*w2h
   prop.h <- as.data.frame(prop.h)
@@ -295,7 +212,7 @@ getPropbycond <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref, hba1clvl){
   return(prop2)
 }
 ## combine demographic information
-fadista_ens_prop <- getPropbycond(ens_h = F_ensemble_h2, ens_d = F_ensemble_d2, w1h = 0.41, w2h = 0.59, w1d = 0.48, w2d = 0.52, ref = "ENSEMBL")
+fadista_ens_prop <- getPropbycond(ens_h = F_ensemble_h2, ens_d = F_ensemble_d2, w1h = 0.41, w2h = 0.59, w1d = 0.48, w2d = 0.52, ref = "ENSEMBLE")
 fadista_demo <- fadista_77@phenoData@data[,c("age","gender","hba1c","bmi")]
 fadista_ens_all <- cbind(fadista_ens_prop, fadista_demo[rownames(fadista_ens_prop),])
 getlmtable <- function(ct){
@@ -326,12 +243,58 @@ ggplot(dtmelt[dtmelt$variable %in% c("alpha","beta","delta","gamma","acinar","du
             mapping = aes(x=5.5, y=0.75,label = label),
             hjust   = 0.2, vjust   = 0)
 ```
+We compared the ENSEMBLE results to the testing results using a uni-reference dataset. The listed p-values are for the HbA1c levels in the linear model where beta cell proportions are the outcome variable. The `ENSEMBLE` method and the uni-reference dataset Segerstolpe et al. would both lead to the conclusion that beta cell proportions are associated with the HbA1c levels. 
+Moreover, the p-value in the ENSEMBLE beta cell proportion model is 0.0023<0.0054, meaning that this statistical evidence is even stronger than that given be the uni-reference dataset Segerstolpe et al.
 
-Three-cell-line mixture
+```{r, message=F}
+#fadista_ens_prop <- getPropbycond(ens_h = F_ensemble_h2, ens_d = F_ensemble_d2, w1h = 0.41, w2h = 0.59, w1d = 0.48, w2d = 0.52, ref = "ENSEMBLE")
+#fadista_demo <- fadista_77@phenoData@data[,c("age","gender","hba1c","bmi")]
+#fadista_ens_all <- cbind(fadista_ens_prop, fadista_demo[rownames(fadista_ens_prop),])
 
-(1) Deconvolution of the real bulk sample
+fadista_seger_prop <- getPropbycond(ens_h = F_ensemble_h2, ens_d = F_ensemble_d2, w1h = 0, w2h = 1, w1d = 0, w2d = 1, ref = "Segerstolpe")
+fadista_baron_prop <- getPropbycond(ens_h = F_ensemble_h2, ens_d = F_ensemble_d2, w1h = 1, w2h = 0, w1d = 1, w2d = 0, ref = "Baron")
+fadista_seger_all <- cbind(fadista_seger_prop, fadista_demo[rownames(fadista_seger_prop),])
+fadista_baron_all <- cbind(fadista_baron_prop, fadista_demo[rownames(fadista_baron_prop),])
 
-(2) Tree-guided deconvolution of real bulk sample
+prop_lm <- function(propest){
+  getlmtable <- function(ct){
+    propest$ct <- propest[,ct]
+    lm1 <- lm(ct ~ hba1c + age + bmi + gender, data = propest)
+    s1 <- summary(lm1)
+    sdt <- cbind(round(s1$coefficients,4), celltype = rep(ct,5))
+    return(sdt)
+  } 
+  
+  dtlm <- NULL
+  for (ct in c("alpha","beta","delta","gamma","acinar","ductal")){
+    dtlm0 <- getlmtable(ct)
+    dtlm <- rbind(dtlm, dtlm0)
+  }
+  t <- as.data.frame(dtlm)
+  t$param <- rownames(t)
+  return(t)
+}
+
+segerproplm <- prop_lm(fadista_seger_all)
+baronproplm <- prop_lm(fadista_baron_all)
+ensproplm <- prop_lm(fadista_ens_all)
+
+factor_to_num <- function(f){as.numeric(levels(f))[f]}
+beta_pvalue <- rbind(factor_to_num(baronproplm[baronproplm$param=="hba1c",c(4)]),
+                     factor_to_num(segerproplm[segerproplm$param =="hba1c",c(4)]),
+                     factor_to_num(ensproplm[ensproplm$param=="hba1c",c(4)]))
+colnames(beta_pvalue) <- ensproplm[ensproplm$param=="hba1c",5]
+rownames(beta_pvalue) <- c("Baron","Segerstolpe","ENSEMBLE")
+
+beta_pvalue
+```
+
+
+### Three-cell-line mixture
+
+(1) Deconvolution of the real bulk sample: hard to distinguish the tumor cell types.
+
+(2) Tree-guided deconvolution of real bulk sample. The choice of limit for LogFoldChange `LFC.lim=5` could be changed by users. A more robust way is to select a reasonable range of threshold, for example in this case, we choose from 3 to 6, and then estimate the proportions using different threshold. Say we calculated proportions from 3 to 6 by 0.1, we will derive 30 different estimated proportions results. We can calculate the mean from these results; or we can take the median of value of each estimated cell type, and normalize the sample-wise proportions to 1. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an efficient number to detect the inter-cell-type variations.
 
 ```{r, message=F, fig.height = 4, fig.width = 4, fig.align = "center"}
 ###(1)
@@ -340,29 +303,32 @@ df.d <- dist(t(log(sc3cl.basis$basis.mvw + 1e-10)), method = "euclidean")
 hc1 <- hclust(df.d, method = "complete")
 plot(hc1, cex = 0.8, hang = -1, main = "log(basis matrix)")
 
-sc3cl2 <- qc.3cl$sc.eset.qc
+sc3cl2 <- sc.3cl
 sc3cl2$md_cluster2 <- sc3cl2$md_cluster
 sc3cl2$md_cluster2[!sc3cl2$md_cluster2 %in% "NormalFibroblast"] <- "Tumor"
-# deconv_3cl <- SCDC_propONE(bulk.eset = bulk3cl, sc.eset = sc3cl2, ct.varname = "md_cluster", sample = "orig.ident", ct.sub = unique(sc3cl$md_cluster), weight.basis = T)
+# deconv_3cl <- SCDC_prop_ONE(bulk.eset = bulk3cl, sc.eset = sc3cl2, ct.varname = "md_cluster", sample = "orig.ident", ct.sub = unique(sc3cl$md_cluster), weight.basis = T)
 
 ###(2)
 SCDC_3cl_tree <- SCDC_prop_ONE_subcl_marker(bulk.eset = bulk3cl, sc.eset = sc3cl2, ct.varname = "md_cluster",
                                              sample = "orig.ident", ct.sub = unique(sc3cl2$md_cluster),
-                                             ct.fl.sub = unique(sc3cl2$md_cluster2) ,
+                                             ct.fl.sub = unique(sc3cl2$md_cluster2) , weight.basis = T,
                                              fl.varname = "md_cluster2", select.marker = T, LFC.lim = 5)
 SCDC_3cl_tree$prop.est
 ```
 
 
-Mammary Gland data: Deconvolution of real bulk samples
+### Mammary Gland data
 
-Cell types of interest are possibly related. We explore this by looking at the Pearson correlation between basis-vector for all cell types.
+Cell types of interest are possibly related. We explore this by looking at the Pearson correlation between basis-vector for all cell types. We pool the single cells from two mouse mammary gland datasets Tabula Muris and SCDC by MNN. We construct basis matrix based on the batch-corrected single cell data, and investigate the inter-cell-type relationships.
 
 ```{r, message=F, fig.height = 4, fig.width = 4, fig.align = "center"}
 ### CELL-TYPE CORRELATION
 mbmnn <- readRDS("H:/994/SCDC/data/S0206_mousebasismnn.rds")
 print(mbmnn)
+```
 
+We deconvolve and ENSEMBLE for the 10X and FF samples separately.
+```{r, message=F}
 ### the tree-guided deconvolution results:
 #10x
 tmouse.subcl <- readRDS("H:/994/SCDC/data/S0204_subcltmouse_3.rds")
@@ -371,34 +337,32 @@ perou.subcl <- readRDS("H:/994/SCDC/data/S0204_Perou10xsubcl3.rds")
 perouff.subcl <- readRDS("H:/994/SCDC/data/S0204_subscperou_3ff.rds")
 tmouseff.subcl<- readRDS("H:/994/SCDC/data/S0204_subcltmouse_3ff.rds")
 ct.sub = c("endothelial","fibroblast","immune","luminal","basal")
-#ensembl:
+#ensemble:
 ens_subcl_perou10x <- SCDC_ENSEMBLE_subcl(bulk.eset = bulk10x, prop.list = list(tmouse.subcl = tmouse.subcl, perou.subcl = perou.subcl), 
                                           ct.sub = c("endothelial","fibroblast","immune","luminal","basal"), search.length = 0.01)
 
 ens_subcl_perouff <- SCDC_ENSEMBLE_subcl(bulk.eset = bulkff, prop.list = list(tmouseff.subcl = tmouseff.subcl, perouff.subcl = perouff.subcl), 
                                          ct.sub = c("endothelial","fibroblast","immune","luminal","basal"), search.length = 0.01)
+
 #ensembl proportions
 ens10xout <- ens_subcl_perou10x$w_table
 ensffout <- ens_subcl_perouff$w_table
-ens10xout <- ens10xout[c(3,1,4), ] 
-ens10xouttable <- cbind(round(ens10xout[,1:3],2), formatC(as.matrix(ens10xout[,4:5]), format = "e", digits = 2))
-ensffout <- ensffout[c(3,1,4), ] 
-ensffouttable <- cbind(round(ensffout[,1:3],2), formatC(as.matrix(ensffout[,4:5]), format = "e", digits = 2))
-ens_prop <- ens_subcl_perou10x$prop.list[[1]]$prop.est*ens10xouttable[1,1] +
-  ens_subcl_perou10x$prop.list[[2]]$prop.est[rownames(ens_subcl_perou10x$prop.list[[1]]$prop.est),colnames(ens_subcl_perou10x$prop.list[[1]]$prop.est)]*ens10xouttable[1,2]
-ens_propff <- ens_subcl_perouff$prop.list[[1]]$prop.est*ensffouttable[1,1]+
-  ens_subcl_perouff$prop.list[[2]]$prop.est[rownames(ens_subcl_perouff$prop.list[[1]]$prop.est),colnames(ens_subcl_perouff$prop.list[[1]]$prop.est)]*ensffouttable[1,2]
-
-
+## the 4th line is the mAD result:
+ens_prop <- ens_subcl_perou10x$prop.list[[1]]$prop.est*ens10xout[4,1] +
+  ens_subcl_perou10x$prop.list[[2]]$prop.est[rownames(ens_subcl_perou10x$prop.list[[1]]$prop.est),colnames(ens_subcl_perou10x$prop.list[[1]]$prop.est)]*ens10xout[4,2]
+ens_propff <- ens_subcl_perouff$prop.list[[1]]$prop.est*ensffout[4,1]+
+  ens_subcl_perouff$prop.list[[2]]$prop.est[rownames(ens_subcl_perouff$prop.list[[1]]$prop.est),colnames(ens_subcl_perouff$prop.list[[1]]$prop.est)]*ensffout[4,2]
 ```
 
-Visualization of ENSEMBL results for 10X and Fresh-frozen bulk samples.
-```{r, message=F, fig.height = 4, fig.width = 4, fig.align = "center"}
-# visualize the ensembl results
+Visualization of ENSEMBLE results for 10X and Fresh-frozen bulk samples.
+
+```{r, message=F}
+# visualize the ENSEMBLE results
+perou <- qc.perou$sc.eset.qc
 perou_pseudo_all <- generateBulk_allcells(perou, ct.varname = 'md_cluster', sample = 'subj', ct.sub = c("endothelial","fibroblast","immune","luminal","basal"))
 dtmeltt<- melt(perou_pseudo_all$truep[,c("endothelial","fibroblast","immune","luminal","basal")])
 dtmeltt$ref <- as.factor("SingleCells")
-colnames(dtmeltt)[1:2] <- c("Var1","Var2")
+colnames(dtmeltt)[1:2] <- c("X1","X2")
 
 ### calculate pearson corr for 10x results
 getPearson <- function(dt1, dt2, ct, subj){
@@ -412,10 +376,10 @@ p10x_e <- getPearson(perou_pseudo_all$truep, ens_prop,
                      ct = c("endothelial","fibroblast","luminal","basal","immune"), subj = c("FVB3","FVB4"))
 
 dat_text10x <- data.frame(label = c("",paste("R =", round(c(p10x_t, p10x_p, p10x_e),2))), 
-                          ref = as.factor(c("SingleCells","Tabula Muris", "Perou", "ENSEMBL")),
-                          Var1 = rep("FVB3",4),
+                          ref = as.factor(c("SingleCells","Tabula Muris", "Perou", "ENSEMBLE")),
+                          X1 = rep("FVB3",4),
                           value =rep(0.9, 4),
-                          Var2 = rep("endothelial",4))
+                          X2 = rep("endothelial",4))
 
 ### calculate pearson corr for ff results
 pff_t <- getPearson(perou_pseudo_all$truep, ens_subcl_perouff$prop.list[[1]]$prop.est, 
@@ -426,58 +390,27 @@ pff_e <- getPearson(perou_pseudo_all$truep, ens_propff,
                     ct = c("endothelial","fibroblast","luminal","basal","immune"), subj = c("FVB3","FVB4"))
 
 dat_textff <- data.frame(label = c("",paste("R =", round(c(pff_t, pff_p, pff_e),2))), 
-                         ref = as.factor(c("SingleCells","Tabula Muris", "Perou", "ENSEMBL")),
-                         Var1 = rep("FVB3",4),
+                         ref = as.factor(c("SingleCells","Tabula Muris", "Perou", "ENSEMBLE")),
+                         X1 = rep("FVB3",4),
                          value =rep(0.9, 4),
-                         Var2 = rep("endothelial",4))
-
-### pearson corr between ff and 10x deconv results
-getPearson(ens_propff, ens_prop,
-           ct = c("endothelial","fibroblast","luminal","basal","immune"), subj = c("FVB3","FVB4"))
+                         X2 = rep("endothelial",4))
+```
 
 
-###############
-## 10x
-dtmelttm <- melt(ens_subcl_perou10x$prop.list[[1]]$prop.est)
-dtmelttm$ref <- as.factor("Tabula Muris")
-dtmeltp <- melt(ens_subcl_perou10x$prop.list[[2]]$prop.est)
-dtmeltp$ref <- as.factor("Perou")
-dtmelte <- melt(ens_prop)
-dtmelte$ref <- as.factor("ENSEMBL")
-dtall <- rbind.data.frame(dtmeltt,dtmelttm, dtmeltp, dtmelte)
-dtall <- dtall[dtall$Var2 %in% c("endothelial","fibroblast","luminal","basal","immune"),]
+#### Fresh-Frozen samples:
 
-ggplot(dtall, aes(x=Var1, y=value, fill = factor(Var2, levels = c("endothelial","fibroblast","luminal","basal","immune")))) + 
-  geom_bar(stat = "identity") + xlab("") + ylab("Percentage") +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1, size=10),
-        axis.text.y = element_text(size = 10),
-        text = element_text(size = 10),
-        plot.title = element_text(size=10, face = "bold"),
-        plot.margin=unit(c(1,1,-5,0), "mm"),
-        legend.position="top",legend.title = element_blank(),
-        legend.text = element_text(size=8),
-        legend.box.spacing = unit(0, "mm"))+
-  scale_fill_manual(values=ct1) +
-  guides(fill = guide_legend(nrow = 2))+
-  facet_grid(cols = vars(ref)) +
-  geom_text(data = dat_text10x, 
-            mapping = aes(x=Var1, y=value,label = label),
-            hjust   = 0.2, vjust   = 0)
-
-
-
-
+```{r, message=F, fig.height = 4, fig.width = 5, fig.align = "center"}
 ## ff
 dtmelttm <- melt(ens_subcl_perouff$prop.list[[1]]$prop.est)
 dtmelttm$ref <- as.factor("Tabula Muris")
 dtmeltp <- melt(ens_subcl_perouff$prop.list[[2]]$prop.est)
 dtmeltp$ref <- as.factor("Perou")
 dtmelte <- melt(ens_propff)
-dtmelte$ref <- as.factor("ENSEMBL")
+dtmelte$ref <- as.factor("ENSEMBLE")
 dtall <- rbind.data.frame(dtmeltt,dtmelttm, dtmeltp, dtmelte)
-dtall <- dtall[dtall$Var2 %in% c("endothelial","fibroblast","immune","luminal","basal"),]
+dtall <- dtall[dtall$X2 %in% c("endothelial","fibroblast","immune","luminal","basal"),]
 
-ggplot(dtall, aes(x=Var1, y=value, fill = factor(Var2, levels = c("endothelial","fibroblast","luminal","basal","immune")))) + 
+ggplot(dtall, aes(x=X1, y=value, fill = factor(X2, levels = c("endothelial","fibroblast","luminal","basal","immune")))) + 
   geom_bar(stat = "identity") + xlab("") + ylab("Percentage") +
   theme(axis.text.x = element_text(angle = 30, hjust = 1, size=10),
         axis.text.y = element_text(size = 10),
@@ -491,9 +424,41 @@ ggplot(dtall, aes(x=Var1, y=value, fill = factor(Var2, levels = c("endothelial",
   guides(fill = guide_legend(nrow = 2))+
   facet_grid(cols = vars(ref)) +
   geom_text(data = dat_textff, 
-            mapping = aes(x=Var1, y=value,label = label),
+            mapping = aes(x=X1, y=value,label = label),
             hjust   = 0.2, vjust   = 0)
 
 
 ```
 
+#### 10X bulk samples:
+
+```{r, message=F, fig.height = 4, fig.width = 5, fig.align = "center"}
+dtmelttm <- melt(ens_subcl_perou10x$prop.list[[1]]$prop.est)
+dtmelttm$ref <- as.factor("Tabula Muris")
+dtmeltp <- melt(ens_subcl_perou10x$prop.list[[2]]$prop.est)
+dtmeltp$ref <- as.factor("Perou")
+dtmelte <- melt(ens_prop)
+dtmelte$ref <- as.factor("ENSEMBLE")
+dtall <- rbind.data.frame(dtmeltt,dtmelttm, dtmeltp, dtmelte)
+dtall <- dtall[dtall$X2 %in% c("endothelial","fibroblast","luminal","basal","immune"),]
+
+ggplot(dtall, aes(x=X1, y=value, fill = factor(X2, levels = c("endothelial","fibroblast","luminal","basal","immune")))) + 
+  geom_bar(stat = "identity") + xlab("") + ylab("Percentage") +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1, size=10),
+        axis.text.y = element_text(size = 10),
+        text = element_text(size = 10),
+        plot.title = element_text(size=10, face = "bold"),
+        plot.margin=unit(c(1,1,-5,0), "mm"),
+        legend.position="top",legend.title = element_blank(),
+        legend.text = element_text(size=8),
+        legend.box.spacing = unit(0, "mm"))+
+  scale_fill_manual(values=ct1) +
+  guides(fill = guide_legend(nrow = 2))+
+  facet_grid(cols = vars(ref)) +
+  geom_text(data = dat_text10x, 
+            mapping = aes(x=X1, y=value,label = label),
+            hjust   = 0.2, vjust   = 0)
+```
+
+From the deconvolution results for 10X and FF samples above, we see that the ENSEMBLE cell-type proportions have the highest Pearson correlation with the single cell clustering result. 
+To this aspect, the estimation accuracy is improved by the SCDC ENSEMBLE method.

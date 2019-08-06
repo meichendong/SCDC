@@ -1,11 +1,11 @@
 Package: SCDC
-Title: What the Package Does (One Line, Title Case)
+Title: Bulk RNA-seq deconvolution by scRNA-seq with multi-reference datasets
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Meichen",
+           family = "Dong",
            role = c("aut", "cre"),
-           email = "first.last@example.com")
+           email = "meichen@live.unc.edu")
 Description: What the package does (one paragraph).
 License: What license it uses
 Encoding: UTF-8
@@ -15,3 +15,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Imports: Rcpp (>= 0.11.0)
+LinkingTo: Rcpp
