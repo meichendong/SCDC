@@ -1,1 +1,1 @@
-# SCDC: Bulk RNA-seq deconvolution by scRNA-seq
+# SCDC: leverage multiple Single-Cell RNA-seq reference sets for bulk gene expression DeConvolution
