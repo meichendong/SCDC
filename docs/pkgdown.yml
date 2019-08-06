@@ -3,4 +3,5 @@ pkgdown: 1.3.0.9100
 pkgdown_sha: 1829398a4e97056fe7fb332d0e8b952784b49321
 articles:
   SCDC: ../../../../../../../../../H:/994/SCDC/package/SCDC2/SCDC/vignettes/SCDC.html
+  SCDC_data: ../../../../../../../../../H:/994/SCDC/package/SCDC2/SCDC/vignettes/web/SCDC_data.html
 
