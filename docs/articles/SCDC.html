@@ -113,11 +113,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   265   358   417   296   423</span>
-<span class="co">#&gt; gene2   259   294   454   125    66</span>
-<span class="co">#&gt; gene3   213   100   284   287   214</span>
-<span class="co">#&gt; gene4   452   248    36   300    52</span>
-<span class="co">#&gt; gene5    20   164   182   404   435</span>
+<span class="co">#&gt; gene1     5   494   187   112   140</span>
+<span class="co">#&gt; gene2   475   263    12   220   410</span>
+<span class="co">#&gt; gene3   492   100   284   390   479</span>
+<span class="co">#&gt; gene4     9    91    25   401   110</span>
+<span class="co">#&gt; gene5   197   305   257    94    74</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -126,7 +126,7 @@ eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESE
 <span class="co">#&gt; attr(,"package")</span>
 <span class="co">#&gt; [1] "Biobase"</span></code></pre></div>
 <p>As an illustration of the <strong>SCDC</strong> framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.</p>
-<p>The processed data is available for download at <a href="https://meichendong.github.io/SCDC/articles/web/SCDC_data.html">SCDC data page</a>.</p>
+<p>The processed data is available for download at the <a href="https://meichendong.github.io/SCDC/articles/web/SCDC_data.html">SCDC data page</a>.</p>
 </div>
 <div id="descriptive-information-of-scrna-seq-data" class="section level3">
 <h3 class="hasAnchor">
@@ -284,7 +284,7 @@ fadista.ens.plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(dt
 <div class="figure">
 <img src="fadista_ens.png" alt="Cell-type proportion estimation for 77 bulk samples from Fadista et al."><p class="caption">Cell-type proportion estimation for 77 bulk samples from Fadista et al.</p>
 </div>
-<p>We also investigated the relationship between the estimated cell-type proportions and the HbA1c levels.</p>
+<p>It’s suggested by previous studies that the HbA1c levels is an important biomarker of the Type II diabetes, especially the beta cells functioning. Hence, we constructed a linear model using the estimated cell-type proportions as the response variable and the other covariates (age, gender, BMI, and HbA1c) as predictors. Here we compare deconvolution results from three sources: 1) scRNA-seq from Segerstolpe et al. only; 2) scRNA-seq from Baron et al. only; 3) ENSEMBLE deconvolution results using scRNA-seq from Segerstolpe et al. and Baron et al. separately.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## we use the scRNA-seq datasets without clustering-QC as input here, aiming to be comparable to the results as MuSiC shown in their paper.
 baron &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"baron.rds"</span>)
 seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"segerstolpe.rds"</span>)
@@ -311,6 +311,7 @@ fadista_ens_prop &lt;-<span class="st"> </span><span class="kw">getPropbycond</s
 <p>Fit linear models: beta cell proportion ~ HbA1c + age + BMI + sex.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## get demographic information of the bulk samples from Fadista et al.
 fadista_demo &lt;-<span class="st"> </span>fadista_<span class="dv">77</span><span class="op">@</span>phenoData<span class="op">@</span>data[,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"age"</span>,<span class="st">"gender"</span>,<span class="st">"hba1c"</span>,<span class="st">"bmi"</span>,<span class="st">"hba1c_class2"</span>)]
+## the following getLMpValue() function is to perform the linear regression and wrap the linear model results
 getLMpValue &lt;-<span class="st"> </span><span class="cf">function</span>(prop_est, method_){
   prop_est_all &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(prop_est, fadista_demo[<span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(prop_est),])
   getlmtable &lt;-<span class="st"> </span><span class="cf">function</span>(ct){
@@ -344,6 +345,7 @@ getLMpValue &lt;-<span class="st"> </span><span class="cf">function</span>(prop_
 res.SCDC.seger &lt;-<span class="st"> </span><span class="kw">getLMpValue</span>(<span class="dt">prop_est =</span> fadista.seger<span class="op">$</span>prop.est.mvw, <span class="dt">method_ =</span> <span class="st">"SCDC+Segerstolpe"</span>)
 res.SCDC.baron &lt;-<span class="st"> </span><span class="kw">getLMpValue</span>(<span class="dt">prop_est =</span> fadista.baron<span class="op">$</span>prop.est.mvw, <span class="dt">method_ =</span> <span class="st">"SCDC+Baron"</span>)
 res.SCDC.ensemble &lt;-<span class="st"> </span><span class="kw">getLMpValue</span>(<span class="dt">prop_est =</span> fadista_ens_prop, <span class="dt">method_ =</span> <span class="st">"SCDC+ENSEMBLE"</span>)
+## pool the results together for visualization:
 alldata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(res.SCDC.seger<span class="op">$</span>meltdata, res.SCDC.ensemble<span class="op">$</span>meltdata,
                  res.SCDC.baron<span class="op">$</span>meltdata)
 allpvalue &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(res.SCDC.seger<span class="op">$</span>pvaldata, res.SCDC.ensemble<span class="op">$</span>pvaldata,
@@ -351,7 +353,7 @@ allpvalue &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.i
 demopval &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(res.SCDC.seger<span class="op">$</span>demo_pval, res.SCDC.ensemble<span class="op">$</span>demo_pval,
                   res.SCDC.baron<span class="op">$</span>demo_pval)
 alldata<span class="op">$</span>method &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(alldata<span class="op">$</span>method)</code></pre></div>
-<p>Comparing ENSEMBLE proportion estimation results with the one-reference deconvolution results:</p>
+<p>Comparing ENSEMBLE proportion estimation results with the one-reference deconvolution results. Here we visualize the beta-cell proportions with the HbA1c levels, and present the p-values for HbA1c coefficient from each model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fadista.LMplot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(alldata[alldata<span class="op">$</span>variable <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"beta"</span>),], <span class="kw">aes</span>(<span class="dt">x=</span>hba1c, <span class="dt">y=</span> value)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> hba1c_class2)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">method=</span><span class="st">'lm'</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>, <span class="dt">color =</span> <span class="st">"black"</span>, <span class="dt">lwd =</span> <span class="fl">0.25</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">"top"</span>, <span class="dt">legend.title =</span> <span class="kw">element_blank</span>(), <span class="co"># axis.title.x = element_blank(),</span>
@@ -368,12 +370,13 @@ fadista.LMplot</code></pre></div>
 <div class="figure">
 <img src="fadista_LMplot.png">
 </div>
+<p>We see that SCDC ENSEMBLE method derives the p-value of 0.0019 &lt;0.05, indicating a statistically significant association between the beta-cell proportions and the HbA1c levels.</p>
 </div>
 </div>
 <div id="three-cell-line-mixture-data-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#three-cell-line-mixture-data-analysis" class="anchor"></a>Three Cell-line Mixture Data Analysis</h2>
-<p>We use the three-cell-line mixture sample to illustrate the Tree-guided deconvolution method. First, by looking at the hierarchical structure of cell lines, we see two of the cell lines are mroe closely related.</p>
+<p>In the real world, some identified cell types are hard to be distinguished in certain environment. Employing a hierachical deconvolution structure (tree-guided deconvolution structure) may work better than a straightforward deconvolution. Here, using the three-cell-line mixture sample, we show how deconvolution is performed by SCDC when only one subject is available. Also, by looking at the hierarchical structure of cell lines, we see two of the cell lines are mroe closely related. Hence, we can show how a tree-guided deconvolution step is applied in this simple case.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">qc.3cl &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"MIX3cl_scESET.rds"</span>)
 sc3cl.basis &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_basis_ONE.html">SCDC_basis_ONE</a></span>(qc.3cl<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"md_cluster"</span>, <span class="dt">sample =</span><span class="st">"orig.ident"</span>)
 df.d &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(sc3cl.basis<span class="op">$</span>basis.mvw <span class="op">+</span><span class="st"> </span><span class="fl">1e-10</span>)), <span class="dt">method =</span> <span class="st">"euclidean"</span>)
