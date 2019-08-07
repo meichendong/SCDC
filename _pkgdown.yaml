@@ -1,0 +1,54 @@
+title: SCDC
+url: https://meichendong.github.io/SCDC/
+template:
+  params:
+    bootswatch: cosmo
+
+  reference:
+  - title: Basic Functions
+    desc: Functions that supports the deconvolution steps
+    contents:
+      - '`DemoPlot`'
+      - '`generateBulk_allcells`'
+      - '`generateBulk_norep`'
+      - '`getCPM0`'
+      - '`getESET`'
+      - '`getSearchGrid`'
+      - '`wheat_map`'
+
+  - title: Deconvolution Functions
+    desc: Deconvolution and ENSEMBLE functions
+    contents:
+      - '`my_qc`'
+      - '`SCDC_basis`'
+      - '`SCDC_basis_ONE`'
+      - '`SCDC_ENSEMBLE`'
+      - '`SCDC_ENSEMBLE_subcl`'
+      - '`SCDC_peval`'
+      - '`SCDC_prop`'
+      - '`SCDC_prop_ONE`'
+      - '`SCDC_prop_ONE_subcl_marker`'
+      - '`SCDC_prop_subcl_marker`'
+      - '`SCDC_qc_ONE`'
+      - '`SCDC_yeval`'
+
+navbar:
+  type: inverse
+  left:
+    - icon: fa-home
+      href: index.html
+    - text: "Vignettes"
+      href: articles/SCDC.html
+    - text: "References"
+      href: reference/index.html
+    - text: "Data"
+      href: articles/web/SCDC_data.html
+
+  right:
+    - icon: fa-file-code-o
+      text: "functions"
+      href: reference/index.html
+    - icon: fa-github fa-lg
+      text: "github"
+      href: https://github.com/meichendong/SCDC
+
