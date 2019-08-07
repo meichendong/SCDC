@@ -114,11 +114,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   494   360    65   188   496</span>
-<span class="co">#&gt; gene2   346   215   241   475   166</span>
-<span class="co">#&gt; gene3    44   438    60   147   120</span>
-<span class="co">#&gt; gene4   389    33   442   180    90</span>
-<span class="co">#&gt; gene5   170   156   371   280   228</span>
+<span class="co">#&gt; gene1   286   334   304   497   165</span>
+<span class="co">#&gt; gene2   116   363   323   245   333</span>
+<span class="co">#&gt; gene3    16   445   387   249    48</span>
+<span class="co">#&gt; gene4   335   496   434    78   300</span>
+<span class="co">#&gt; gene5   383   447   151   344   139</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -126,7 +126,8 @@ eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESE
 <span class="co">#&gt; [1] "ExpressionSet"</span>
 <span class="co">#&gt; attr(,"package")</span>
 <span class="co">#&gt; [1] "Biobase"</span></code></pre></div>
-<p>As an illustration of the <strong>SCDC</strong> framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. The processed data is available for download at.</p>
+<p>As an illustration of the <strong>SCDC</strong> framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.</p>
+<p>The processed data is available for download at.</p>
 </div>
 <div id="descriptive-information-of-scrna-seq-data" class="section level3">
 <h3 class="hasAnchor">
@@ -365,7 +366,38 @@ alldata<span class="op">$</span>method &lt;-<span class="st"> </span><span class
             <span class="dt">hjust   =</span> <span class="fl">0.2</span>, <span class="dt">vjust   =</span> <span class="dv">0</span>, <span class="dt">size =</span> <span class="fl">2.5</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">"HbA1c"</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">"Proportions"</span>) <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/graphics/plot.window.html">ylim</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,<span class="dv">1</span>))
 fadista.LMplot</code></pre></div>
+<div class="figure">
+<img src="fadista_LMplot.png">
 </div>
+</div>
+</div>
+<div id="three-cell-line-mixture-data-analysis" class="section level2">
+<h2 class="hasAnchor">
+<a href="#three-cell-line-mixture-data-analysis" class="anchor"></a>Three Cell-line Mixture Data Analysis</h2>
+<p>We use the three-cell-line mixture sample to illustrate the Tree-guided deconvolution method. First, by looking at the hierarchical structure of cell lines, we see two of the cell lines are mroe closely related.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">qc.3cl &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"MIX3cl_scESET.rds"</span>)
+sc3cl.basis &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_basis_ONE.html">SCDC_basis_ONE</a></span>(qc.3cl<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"md_cluster"</span>, <span class="dt">sample =</span><span class="st">"orig.ident"</span>)
+df.d &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(sc3cl.basis<span class="op">$</span>basis.mvw <span class="op">+</span><span class="st"> </span><span class="fl">1e-10</span>)), <span class="dt">method =</span> <span class="st">"euclidean"</span>)
+hc1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span>(df.d, <span class="dt">method =</span> <span class="st">"complete"</span>)
+<span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(hc1, <span class="dt">cex =</span> <span class="fl">0.8</span>, <span class="dt">hang =</span> <span class="op">-</span><span class="dv">1</span>, <span class="dt">main =</span> <span class="st">"log(basis matrix)"</span>)</code></pre></div>
+<div class="figure">
+<img src="hc_3cl.png">
+</div>
+<p>The tree-structured deconvolution procedure will allow users to specify a ‘meta cluster’ by their own professional judgement. Without the requirement for marker genes input, we could employ the function <code><a href="../reference/SCDC_prop_ONE_subcl_marker.html">SCDC_prop_ONE_subcl_marker()</a></code> to deconvolve the bulk samples.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bulk3cl &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"MIX3cl_bulkESET.rds"</span>)
+sc3cl2 &lt;-<span class="st"> </span>qc.3cl<span class="op">$</span>sc.eset.qc
+sc3cl2<span class="op">$</span>md_cluster2 &lt;-<span class="st"> </span>sc3cl2<span class="op">$</span>md_cluster
+sc3cl2<span class="op">$</span>md_cluster2[<span class="op">!</span>sc3cl2<span class="op">$</span>md_cluster2 <span class="op">%in%</span><span class="st"> "NormalFibroblast"</span>] &lt;-<span class="st"> "Tumor"</span>
+<span class="co"># deconv_3cl &lt;- SCDC_prop_ONE(bulk.eset = bulk3cl, sc.eset = sc3cl2, ct.varname = "md_cluster", sample = "orig.ident", ct.sub = unique(sc3cl$md_cluster), weight.basis = T)</span>
+SCDC_3cl_tree &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_prop_ONE_subcl_marker.html">SCDC_prop_ONE_subcl_marker</a></span>(<span class="dt">bulk.eset =</span> bulk3cl, <span class="dt">sc.eset =</span> sc3cl2, <span class="dt">ct.varname =</span> <span class="st">"md_cluster"</span>,
+                                             <span class="dt">sample =</span> <span class="st">"orig.ident"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(sc3cl2<span class="op">$</span>md_cluster),
+                                             <span class="dt">ct.fl.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(sc3cl2<span class="op">$</span>md_cluster2) , <span class="dt">weight.basis =</span> T,
+                                             <span class="dt">fl.varname =</span> <span class="st">"md_cluster2"</span>, <span class="dt">select.marker =</span> T, <span class="dt">LFC.lim =</span> <span class="dv">5</span>)
+<span class="co">#&gt; WNNLS for Second level clusters MCF7 MDA-MB468 Converged at iteration  3</span>
+SCDC_3cl_tree<span class="op">$</span>prop.est
+<span class="co">#&gt;        MCF7 MDA-MB468 NormalFibroblast</span>
+<span class="co">#&gt; 1 0.2561348 0.6367564        0.1071088</span></code></pre></div>
+<p>The choice of limit for LogFoldChange LFC.lim=5 could be changed by users. A more robust way is to select a reasonable range of threshold, for example in this case, we choose from 3 to 6, and then estimate the proportions using different threshold. Say we calculated proportions from 3 to 6 by 0.1, we will derive 30 different estimated proportions results. We can calculate the mean from these results; or we can take the median of value of each estimated cell type, and normalize the sample-wise proportions to 1. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an efficient number to detect the inter-cell-type variations.</p>
 </div>
   </div>
 
@@ -376,6 +408,7 @@ fadista.LMplot</code></pre></div>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#installation">Installation</a></li>
       <li><a href="#example">Example</a></li>
+      <li><a href="#three-cell-line-mixture-data-analysis">Three Cell-line Mixture Data Analysis</a></li>
       </ul>
 </div>
       </div>

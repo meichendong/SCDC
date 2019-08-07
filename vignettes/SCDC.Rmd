@@ -47,7 +47,10 @@ eset <- getESET(counts, fdata = fdata, pdata = pdata)
 class(eset)
 ```
 
-As an illustration of the **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. The processed data is available for download at.
+As an illustration of the **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. 
+We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.
+
+The processed data is available for download at.
 
 ### Descriptive Information of scRNA-seq Data
 For each singl-cell dataset with raw counts, we can first explore the demographic information by the visualization function `DemoPlot`. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us the general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, we derive the following plot:
@@ -317,3 +320,34 @@ fadista.LMplot <- ggplot(alldata[alldata$variable %in% c("beta"),], aes(x=hba1c,
 fadista.LMplot
 ```
 ![](fadista_LMplot.png)
+
+## Three Cell-line Mixture Data Analysis
+We use the three-cell-line mixture sample to illustrate the Tree-guided deconvolution method. 
+First, by looking at the hierarchical structure of cell lines, we see two of the cell lines are mroe closely related.
+```r
+qc.3cl <- readRDS("MIX3cl_scESET.rds")
+sc3cl.basis <- SCDC_basis_ONE(qc.3cl$sc.eset.qc, ct.varname = "md_cluster", sample ="orig.ident")
+df.d <- dist(t(log(sc3cl.basis$basis.mvw + 1e-10)), method = "euclidean")
+hc1 <- hclust(df.d, method = "complete")
+plot(hc1, cex = 0.8, hang = -1, main = "log(basis matrix)")
+```
+![](hc_3cl.png) 
+
+The tree-structured deconvolution procedure will allow users to specify a 'meta cluster' by their own professional judgement. Without the requirement for marker genes input, we could employ the function `SCDC_prop_ONE_subcl_marker()` to deconvolve the bulk samples.
+
+```r
+bulk3cl <- readRDS("MIX3cl_bulkESET.rds")
+sc3cl2 <- qc.3cl$sc.eset.qc
+sc3cl2$md_cluster2 <- sc3cl2$md_cluster
+sc3cl2$md_cluster2[!sc3cl2$md_cluster2 %in% "NormalFibroblast"] <- "Tumor"
+# deconv_3cl <- SCDC_prop_ONE(bulk.eset = bulk3cl, sc.eset = sc3cl2, ct.varname = "md_cluster", sample = "orig.ident", ct.sub = unique(sc3cl$md_cluster), weight.basis = T)
+SCDC_3cl_tree <- SCDC_prop_ONE_subcl_marker(bulk.eset = bulk3cl, sc.eset = sc3cl2, ct.varname = "md_cluster",
+                                             sample = "orig.ident", ct.sub = unique(sc3cl2$md_cluster),
+                                             ct.fl.sub = unique(sc3cl2$md_cluster2) , weight.basis = T,
+                                             fl.varname = "md_cluster2", select.marker = T, LFC.lim = 5)
+#> WNNLS for Second level clusters MCF7 MDA-MB468 Converged at iteration  3
+SCDC_3cl_tree$prop.est
+#>        MCF7 MDA-MB468 NormalFibroblast
+#> 1 0.2561348 0.6367564        0.1071088
+```
+The choice of limit for LogFoldChange LFC.lim=5 could be changed by users. A more robust way is to select a reasonable range of threshold, for example in this case, we choose from 3 to 6, and then estimate the proportions using different threshold. Say we calculated proportions from 3 to 6 by 0.1, we will derive 30 different estimated proportions results. We can calculate the mean from these results; or we can take the median of value of each estimated cell type, and normalize the sample-wise proportions to 1. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an efficient number to detect the inter-cell-type variations.
