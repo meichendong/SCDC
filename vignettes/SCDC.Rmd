@@ -32,7 +32,7 @@ devtools::install_github("meichendong/SCDC")
 
 ### Data Input
 
-SCDC takes `ExpressionSet` objects with raw read counts as input. `ExpressionSet` object is based on the package _Biobase_, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples).
+SCDC takes `ExpressionSet` objects with raw read counts as input. `ExpressionSet` object is based on the package _Biobase_, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples, like the clustering results, subjects, conditions).
 We also enable a quick construction of the ExpressionSet object by the function `getESET()`. Here's a toy example:
 
 ```{r, message=F}
@@ -68,13 +68,14 @@ seger.qc <- my_qc(seger, ct.varname = "cluster", sample = "sample", scsetname = 
 seger.qc$heatfig
 ```
 ![scRNA-seq from Segerstolpe et al. Clustering QC](cqc.png) 
+
 Similarly we can perform clustering QC for single cells from only one subject using function `SCDC_qc_ONE()`.
 
 
 ### SCDC on Simulated Data
 SCDC allows users to construct pseudo bulk samples in two ways:
 
-- `generateBulk_allcells()` Sum up gene-wise raw read counts per subject, and the true cell-type proportion is consistent with the single cell clustering result.
+- `generateBulk_allcells()`: Sum up gene-wise raw read counts per subject, and the true cell-type proportion is consistent with the single cell clustering result.
 
 - `generateBulk_norep()`: Randomly sample single cells from each of the cell types of interest without replacement, and then sum up raw read counts per subject. The cell-type proportions are different from single cell clustering result.
 
@@ -82,35 +83,144 @@ Here, we use the `ExpressionSet` objects after the clustering-QC of each scRNA-s
 
 ```r
 # ExpressionSet objects from the three different scRNA-seq resources
+# setwd("your/working/directory")
 qc.seger <- readRDS("qc_segerstolpe.rds")
 qc.baron <- readRDS("qc_baron.rds")
 qc.xin <- readRDS("qc_xin.rds")
 ```
 
-Then create the _pseudo bulk_ samples:
+Then create the _pseudo bulk_ samples as follows. `ct.varname` specifies the variable name of your single cell clustering result variable. `sample` specifies the variable indicating subjects or individuals information. `ct.sub` specifies the subset of cell types you want to use to construct pseudo bulk samples.
 ```r
 ## (1) using all single cells
-pseudo.seger <- generateBulk_allcells(qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma","ductal","acinar"))
+pseudo.seger <- generateBulk_allcells(qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma"))
 
 ## (2) using random proportions of single cells
-pseudo.seger.rand <- generateBulk_norep(qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma","ductal","acinar"), nbulk = 3)
+pseudo.seger.rand <- generateBulk_norep(qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma"), nbulk = 3)
 
 ## we know the true relative proportions for the pseudo bulk samples:
 round(pseudo.seger$truep,3)
-#>          cluster.id
-#> sample.id acinar alpha  beta delta ductal gamma
-#>        H1  0.048 0.452 0.167 0.119  0.095 0.119
-#>        H2  0.061 0.496 0.200 0.091  0.078 0.074
-#>        H3  0.013 0.554 0.140 0.076  0.089 0.127
-#>        H4  0.346 0.122 0.156 0.005  0.327 0.044
-#>        H5  0.016 0.720 0.175 0.037  0.042 0.011
-#>        H6  0.023 0.488 0.105 0.116  0.256 0.012
 round(pseudo.seger.rand$true_p,3)
-#>      acinar alpha  beta delta ductal gamma
-#> H2_1  0.081 0.422 0.225 0.110  0.075 0.087
-#> H4_2  0.422 0.130 0.130 0.006  0.266 0.045
-#> H4_3  0.322 0.137 0.151 0.007  0.329 0.055
 ```
 
 The constructed _pseudo bulk_ object includes the true cell-type proportion matrix `pseudo.seger$truep` and the `ExpressionSet` object `pseudo.seger$pseudo_eset`.
 
+To perform deconvolution using one reference scRNA-seq dataset, use the `SCDC_prop()` function:
+```r
+bulkseger.scseger <- SCDC_prop(bulk.eset = pseudo.seger$pseudo_eset, sc.eset = qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma"), truep = pseudo.seger$truep)
+bulkseger.scbaron <- SCDC_prop(bulk.eset = pseudo.seger$pseudo_eset, sc.eset = qc.baron$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma"), truep = pseudo.seger$truep)
+bulkseger.scxin <- SCDC_prop(bulk.eset = pseudo.seger$pseudo_eset, sc.eset = qc.xin$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma"), truep = pseudo.seger$truep)
+
+bulkseger.scseger$peval$evals.table
+#>         RMSD     mAD      R
+#> SCDC 0.03352 0.02553 0.9912
+bulkseger.scbaron$peval$evals.table
+#>         RMSD     mAD     R
+#> SCDC 0.08337 0.06499 0.954
+bulkseger.scxin$peval$evals.table
+#>         RMSD     mAD      R
+#> SCDC 0.19058 0.15449 0.9331
+```
+We can observe the discrepancy of performance using different datasets. In this example, when using single cells from the reference dataset Segerstolpe et al., we derive the highest Pearson correlation, and the lowest RMSD and mAD.
+
+Next, we will explore the ENSEMBLE method integrating all the three scRNA-seq reference datasets using the pseudo bulk samples constructed above.
+Here we offered three methods to derive the ENSEMBLE weights: "Grid search", "LAD", and "NNLS". The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method. 
+```r
+#input the list of single cell ExpressionSet objects
+pancreas.sc <- list(baron = qc.baron$sc.eset.qc,
+                    seger = qc.seger$sc.eset.qc,
+                    xin = qc.xin$sc.eset.qc)
+# This might take several minutes, depending on the search.length set by user.
+PS_ensemble <- SCDC_ENSEMBLE(bulk.eset = pseudo.seger$pseudo_eset, sc.eset.list = pancreas.sc, ct.varname = "cluster",
+                             sample = "sample", truep = pseudo.seger$truep[complete.cases(pseudo.seger$truep),], ct.sub =  c("alpha","beta","delta","gamma"), search.length = 0.01)
+PS_ensemble$w_table
+#>                              w1        w2   w3    RMSD     mAD Pearson
+#> max.Pearson_prop    0.0200000000 0.9300000 0.05 0.03627 0.02779  0.9913
+#> min.mAD_Y           0.0000000000 1.0000000 0.00 0.03376 0.02509  0.9907
+#> min.RMSD_Y          0.0000000000 1.0000000 0.00 0.03376 0.02509  0.9907
+#> max.Spearman_corr_Y 0.0000000000 0.9600000 0.04 0.03538 0.02712  0.9912
+#> min.mAD_Y_LAD       0.0002156889 0.9997843 0.00 0.03376 0.02509  0.9907
+#> min.RMSD_Y_NNLS     0.0000000000 1.0000000 0.00 0.03376 0.02509  0.9907
+#>                     spearman_Y    RMSD_Y     mAD_Y
+#> max.Pearson_prop       0.91429 0.0003501 2.785e-05
+#> min.mAD_Y              0.91420 0.0003437 2.755e-05
+#> min.RMSD_Y             0.91420 0.0003437 2.755e-05
+#> max.Spearman_corr_Y    0.91449 0.0003467 2.777e-05
+#> min.mAD_Y_LAD          0.91420 0.0003438 2.755e-05
+#> min.RMSD_Y_NNLS        0.91420 0.0003437 2.755e-05
+```
+In this case, SCDC ENSEMBLE weights suggest that the weight for results from reference dataset Segerstolpe et al. to be one. Hence, the final estimated cell-type proportions can be found at `PS_ensemble$prop.list$seger$prop.est.mvw`.
+
+Next, we move on to analyze the real pancreatic islet bulk RNA-seq dataset. Fadista et al. (2014) provided 89 bulk samples, of which 77 samples have the HbA1c level information(an important biomarker for the Type II diabetes). Hence, we focus on the deconvolution for the 77 bulk samples.
+To allow the basis matrix to reflect the potentially different gene expression patterns between the cases and controls, we performed the ENSEMBLE weight selection procedures for the samples from the two classes (normal and T2D) separately.
+
+```r
+fadista_77 <- readRDS("fadista_77.rds")
+# setting the search.length as 0.01 might take several minutes to finish the ENSEMBLE.
+fadista.healthy.ens <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "Normal"],
+                                     sc.eset.list = list(baron = qc.baron$sc.eset.qc, seger = qc.seger$sc.eset.qc),
+                                     ct.varname = "cluster", sample = "sample", truep = NULL,
+                                     ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01)
+
+fadista.t2d.ens <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "T2D"],
+                                 sc.eset.list = list(baron = qc.baron$sc.eset.qc, seger = qc.seger$sc.eset.qc),
+                                 ct.varname = "cluster", sample = "sample", truep = NULL,
+                                 ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01)
+> fadista.healthy.ens$w_table
+#>                           w1        w2 spearman_Y    RMSD_Y     mAD_Y
+#> min.mAD_Y           0.4400000 0.5600000    0.77554 0.0003397 4.710e-05
+#> max.Spearman_corr_Y 0.4200000 0.5800000    0.77559 0.0003434 4.711e-05
+#> min.mAD_Y_LAD       0.4462969 0.5537031    0.77551 0.0003386 4.711e-05
+> fadista.t2d.ens$w_table
+#>                            w1        w2 spearman_Y    RMSD_Y     mAD_Y
+#> min.mAD_Y           0.4900000 0.5100000    0.79769 0.0002810 4.475e-05
+#> max.Spearman_corr_Y 0.5000000 0.5000000    0.79770 0.0002795 4.476e-05
+#> min.mAD_Y_LAD       0.5163056 0.4836944    0.79768 0.0002773 4.478e-05
+```
+To compare the ENSEMBLE results to the deconvolution results using one reference dataset only, we visualize the estimated proportions as following:
+```r
+library(reshape2)
+library(ggplot2)
+getPropBox <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref){
+  prop.h <- ens_h$prop.list[[1]]$prop.est.mvw*w1h + ens_h$prop.list[[2]]$prop.est.mvw*w2h
+  prop.h <- as.data.frame(prop.h)
+
+  prop.d <- ens_d$prop.list[[1]]$prop.est.mvw*w1d + ens_d$prop.list[[2]]$prop.est.mvw*w2d
+  prop.d <- as.data.frame(prop.d)
+
+  prop2 <- rbind(prop.h, prop.d)
+  prop2$condition <- c(rep("Normal", nrow(prop.h)), rep("T2D", nrow(prop.d)))
+
+  dtmelt <- melt(prop2, id.vars = "condition")
+  dtmelt$ref <- as.factor(ref)
+  return(dtmelt)
+}
+
+fdt.ens <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, w1h = 0.45, w2h = 0.55, w1d = 0.52, w2d = 0.48, ref = "ENSEMBLE")
+fdt.seger <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, w1h = 0, w2h =1, w1d = 0, w2d = 1, ref = "Segerstolpe")
+fdt.baron <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, w1h = 1, w2h =0, w1d = 1, w2d = 0, ref = "Baron")
+dtall_fadista <- rbind(fdt.ens, fdt.seger, fdt.baron)
+dtall_fadista$refcond <- paste(dtall_fadista$ref, dtall_fadista$condition)
+colfunc <- colorRampPalette(c("red", "white"))
+colfunc2 <- colorRampPalette(c("blue", "white"))
+fadista.ens.plot <- ggplot(dtall_fadista, aes(x=variable, y=value, color = factor(refcond,
+                                                                      levels = c("ENSEMBLE Normal", "Segerstolpe Normal","Baron Normal",
+                                                                                 "ENSEMBLE T2D","Segerstolpe T2D","Baron T2D")))) +
+  geom_boxplot(outlier.size=-1)+
+  geom_jitter(aes(x=variable,
+                  color = factor(refcond,
+                                 levels = c("ENSEMBLE Normal", "Segerstolpe Normal","Baron Normal",
+                                            "ENSEMBLE T2D" ,"Segerstolpe T2D","Baron T2D"))),
+              position = position_dodge(0.75), alpha = 0.5,cex = 0.25)+
+  theme(axis.text.x = element_text(angle = 30, hjust = 1, size=10),
+        axis.text.y = element_text(size = 10),
+        text = element_text(size = 10),
+        plot.title = element_text(size=10, face = "bold"),
+        plot.margin=unit(c(1,1,-5,0), "mm"),
+        legend.position="top",legend.title = element_blank(),
+        legend.text = element_text(size=8),
+        legend.box.spacing = unit(0, "mm"))+
+  scale_color_manual(values=c(colfunc(10)[c(3,5,7)],colfunc2(10)[c(3,5,7)])) +
+  ylab("") + xlab("")
+print(fadista.ens.plot)
+```
+![Cell-type proportion estimation for 77 bulk samples from Fadista et al.](fadista_ens.png)

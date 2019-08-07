@@ -114,11 +114,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   439   215   320   416   437</span>
-<span class="co">#&gt; gene2   408    86   108   367   337</span>
-<span class="co">#&gt; gene3   218   443   214   259    14</span>
-<span class="co">#&gt; gene4   373   495   206   141   425</span>
-<span class="co">#&gt; gene5     5    82   166   281   392</span>
+<span class="co">#&gt; gene1   308   110   185   183   251</span>
+<span class="co">#&gt; gene2   159   418    77   115   425</span>
+<span class="co">#&gt; gene3    22   154   336   313   441</span>
+<span class="co">#&gt; gene4   203   160   424   491   188</span>
+<span class="co">#&gt; gene5   231   125   476   170   359</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -159,27 +159,52 @@ qc.baron &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io
 qc.xin &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"qc_xin.rds"</span>)</code></pre></div>
 <p>Then create the <em>pseudo bulk</em> samples:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## (1) using all single cells
-pseudo.seger &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generateBulk_allcells.html">generateBulk_allcells</a></span>(qc.seger<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>))
+pseudo.seger &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generateBulk_allcells.html">generateBulk_allcells</a></span>(qc.seger<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>))
 
 ## (2) using random proportions of single cells
-pseudo.seger.rand &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generateBulk_norep.html">generateBulk_norep</a></span>(qc.seger<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>), <span class="dt">nbulk =</span> <span class="dv">3</span>)
+pseudo.seger.rand &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generateBulk_norep.html">generateBulk_norep</a></span>(qc.seger<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>), <span class="dt">nbulk =</span> <span class="dv">3</span>)
 
 ## we know the true relative proportions for the pseudo bulk samples:
 <span class="kw"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(pseudo.seger<span class="op">$</span>truep,<span class="dv">3</span>)
-<span class="co">#&gt;          cluster.id</span>
-<span class="co">#&gt; sample.id acinar alpha  beta delta ductal gamma</span>
-<span class="co">#&gt;        H1  0.048 0.452 0.167 0.119  0.095 0.119</span>
-<span class="co">#&gt;        H2  0.061 0.496 0.200 0.091  0.078 0.074</span>
-<span class="co">#&gt;        H3  0.013 0.554 0.140 0.076  0.089 0.127</span>
-<span class="co">#&gt;        H4  0.346 0.122 0.156 0.005  0.327 0.044</span>
-<span class="co">#&gt;        H5  0.016 0.720 0.175 0.037  0.042 0.011</span>
-<span class="co">#&gt;        H6  0.023 0.488 0.105 0.116  0.256 0.012</span>
-<span class="kw"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(pseudo.seger.rand<span class="op">$</span>true_p,<span class="dv">3</span>)
-<span class="co">#&gt;      acinar alpha  beta delta ductal gamma</span>
-<span class="co">#&gt; H2_1  0.081 0.422 0.225 0.110  0.075 0.087</span>
-<span class="co">#&gt; H4_2  0.422 0.130 0.130 0.006  0.266 0.045</span>
-<span class="co">#&gt; H4_3  0.322 0.137 0.151 0.007  0.329 0.055</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(pseudo.seger.rand<span class="op">$</span>true_p,<span class="dv">3</span>)</code></pre></div>
 <p>The constructed <em>pseudo bulk</em> object includes the true cell-type proportion matrix <code>pseudo.seger$truep</code> and the <code>ExpressionSet</code> object <code>pseudo.seger$pseudo_eset</code>.</p>
+<p>To perform deconvolution using one reference scRNA-seq dataset, use the <code><a href="../reference/SCDC_prop.html">SCDC_prop()</a></code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bulkseger.scseger &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_prop.html">SCDC_prop</a></span>(<span class="dt">bulk.eset =</span> pseudo.seger<span class="op">$</span>pseudo_eset, <span class="dt">sc.eset =</span> qc.seger<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>), <span class="dt">truep =</span> pseudo.seger<span class="op">$</span>truep)
+bulkseger.scbaron &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_prop.html">SCDC_prop</a></span>(<span class="dt">bulk.eset =</span> pseudo.seger<span class="op">$</span>pseudo_eset, <span class="dt">sc.eset =</span> qc.baron<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>), <span class="dt">truep =</span> pseudo.seger<span class="op">$</span>truep)
+bulkseger.scxin &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_prop.html">SCDC_prop</a></span>(<span class="dt">bulk.eset =</span> pseudo.seger<span class="op">$</span>pseudo_eset, <span class="dt">sc.eset =</span> qc.xin<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>), <span class="dt">truep =</span> pseudo.seger<span class="op">$</span>truep)
+
+bulkseger.scseger<span class="op">$</span>peval<span class="op">$</span>evals.table
+<span class="co">#&gt;         RMSD     mAD      R</span>
+<span class="co">#&gt; SCDC 0.03352 0.02553 0.9912</span>
+bulkseger.scbaron<span class="op">$</span>peval<span class="op">$</span>evals.table
+<span class="co">#&gt;         RMSD     mAD     R</span>
+<span class="co">#&gt; SCDC 0.08337 0.06499 0.954</span>
+bulkseger.scxin<span class="op">$</span>peval<span class="op">$</span>evals.table
+<span class="co">#&gt;         RMSD     mAD      R</span>
+<span class="co">#&gt; SCDC 0.19058 0.15449 0.9331</span></code></pre></div>
+<p>We can observe the discrepancy of performance using different datasets. It’s clear that using single cells from the reference dataset Segerstolpe et al., we derive the highest Pearson correlation, and the lowest RMSD and mAD.</p>
+<p>Next, we will explore the ENSEMBLE results. Using the pseudo bulk samples constructed above, we try to deconvolve using three reference datasets: Baron et al., Segerstolpe et al. and Xin et al. The search length is a parameter that is related to the grid search method.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pancreas.sc &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">baron =</span> qc.baron<span class="op">$</span>sc.eset.qc,
+                    <span class="dt">seger =</span> qc.seger<span class="op">$</span>sc.eset.qc,
+                    <span class="dt">xin =</span> qc.xin<span class="op">$</span>sc.eset.qc)
+
+PS_ensemble &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_ENSEMBLE.html">SCDC_ENSEMBLE</a></span>(<span class="dt">bulk.eset =</span> pseudo.seger<span class="op">$</span>pseudo_eset, <span class="dt">sc.eset.list =</span> pancreas.sc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>,
+                             <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">truep =</span> pseudo.seger<span class="op">$</span>truep[<span class="kw"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span>(pseudo.seger<span class="op">$</span>truep),], <span class="dt">ct.sub =</span>  <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>), <span class="dt">search.length =</span> <span class="fl">0.01</span>)
+PS_ensemble<span class="op">$</span>w_table
+<span class="co">#&gt;                       w1   w2   w3    RMSD     mAD Pearson spearman_Y</span>
+<span class="co">#&gt; max.Pearson_prop    0.01 0.94 0.05 0.03599 0.02797  0.9918    0.91372</span>
+<span class="co">#&gt; min.mAD_Y           0.00 1.00 0.00 0.03352 0.02553  0.9912    0.91346</span>
+<span class="co">#&gt; min.RMSD_Y          0.00 1.00 0.00 0.03352 0.02553  0.9912    0.91346</span>
+<span class="co">#&gt; max.Spearman_corr_Y 0.00 0.96 0.04 0.03521 0.02741  0.9917    0.91381</span>
+<span class="co">#&gt; min.mAD_Y_LAD       0.00 1.00 0.00 0.03352 0.02553  0.9912    0.91346</span>
+<span class="co">#&gt; min.RMSD_Y_NNLS     0.00 1.00 0.00 0.03352 0.02553  0.9912    0.91346</span>
+<span class="co">#&gt;                        RMSD_Y     mAD_Y</span>
+<span class="co">#&gt; max.Pearson_prop    0.0003513 2.785e-05</span>
+<span class="co">#&gt; min.mAD_Y           0.0003458 2.756e-05</span>
+<span class="co">#&gt; min.RMSD_Y          0.0003458 2.756e-05</span>
+<span class="co">#&gt; max.Spearman_corr_Y 0.0003490 2.778e-05</span>
+<span class="co">#&gt; min.mAD_Y_LAD       0.0003458 2.756e-05</span>
+<span class="co">#&gt; min.RMSD_Y_NNLS     0.0003458 2.756e-05</span></code></pre></div>
 </div>
 </div>
   </div>
