@@ -107,18 +107,18 @@ devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/
 <div id="data-input" class="section level3">
 <h3 class="hasAnchor">
 <a href="#data-input" class="anchor"></a>Data Input</h3>
-<p>SCDC takes <code>ExpressionSet</code> objects with raw read counts as input. <code>ExpressionSet</code> object is based on the package <em>Biobase</em>, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples). We also enable a quick construction of the ExpressionSet object by the function <code><a href="../reference/getESET.html">getESET()</a></code>. Here’s a toy example:</p>
+<p>SCDC takes <code>ExpressionSet</code> objects with raw read counts as input. <code>ExpressionSet</code> object is based on the package <em>Biobase</em>, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples, like the clustering results, subjects, conditions). We also enable a quick construction of the ExpressionSet object by the function <code><a href="../reference/getESET.html">getESET()</a></code>. Here’s a toy example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(SCDC)
 counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="dv">0</span><span class="op">:</span><span class="dv">500</span>, <span class="dv">25</span>), <span class="dt">nrow =</span> <span class="dv">5</span>)
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"cell"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   308   110   185   183   251</span>
-<span class="co">#&gt; gene2   159   418    77   115   425</span>
-<span class="co">#&gt; gene3    22   154   336   313   441</span>
-<span class="co">#&gt; gene4   203   160   424   491   188</span>
-<span class="co">#&gt; gene5   231   125   476   170   359</span>
+<span class="co">#&gt; gene1   494   360    65   188   496</span>
+<span class="co">#&gt; gene2   346   215   241   475   166</span>
+<span class="co">#&gt; gene3    44   438    60   147   120</span>
+<span class="co">#&gt; gene4   389    33   442   180    90</span>
+<span class="co">#&gt; gene5   170   156   371   280   228</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -142,22 +142,26 @@ seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">seger.qc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/my_qc.html">my_qc</a></span>(seger, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">scsetname =</span> <span class="st">"Segerstolpe"</span>,
                   <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>), <span class="dt">qcthreshold =</span> <span class="fl">0.7</span>) 
 seger.qc<span class="op">$</span>heatfig</code></pre></div>
-<p><img src="cqc.png" alt="scRNA-seq from Segerstolpe et al. Clustering QC"> Similarly we can perform clustering QC for single cells from only one subject using function <code><a href="../reference/SCDC_qc_ONE.html">SCDC_qc_ONE()</a></code>.</p>
+<div class="figure">
+<img src="cqc.png" alt="scRNA-seq from Segerstolpe et al. Clustering QC"><p class="caption">scRNA-seq from Segerstolpe et al. Clustering QC</p>
+</div>
+<p>Similarly we can perform clustering QC for single cells from only one subject using function <code><a href="../reference/SCDC_qc_ONE.html">SCDC_qc_ONE()</a></code>.</p>
 </div>
 <div id="scdc-on-simulated-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#scdc-on-simulated-data" class="anchor"></a>SCDC on Simulated Data</h3>
 <p>SCDC allows users to construct pseudo bulk samples in two ways:</p>
 <ul>
-<li><p><code><a href="../reference/generateBulk_allcells.html">generateBulk_allcells()</a></code> Sum up gene-wise raw read counts per subject, and the true cell-type proportion is consistent with the single cell clustering result.</p></li>
+<li><p><code><a href="../reference/generateBulk_allcells.html">generateBulk_allcells()</a></code>: Sum up gene-wise raw read counts per subject, and the true cell-type proportion is consistent with the single cell clustering result.</p></li>
 <li><p><code><a href="../reference/generateBulk_norep.html">generateBulk_norep()</a></code>: Randomly sample single cells from each of the cell types of interest without replacement, and then sum up raw read counts per subject. The cell-type proportions are different from single cell clustering result.</p></li>
 </ul>
 <p>Here, we use the <code>ExpressionSet</code> objects after the clustering-QC of each scRNA-seq dataset. Read in the processed objects downloaded from our webpage:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ExpressionSet objects from the three different scRNA-seq resources</span>
+<span class="co"># setwd("your/working/directory")</span>
 qc.seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"qc_segerstolpe.rds"</span>)
 qc.baron &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"qc_baron.rds"</span>)
 qc.xin &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"qc_xin.rds"</span>)</code></pre></div>
-<p>Then create the <em>pseudo bulk</em> samples:</p>
+<p>Then create the <em>pseudo bulk</em> samples as follows. <code>ct.varname</code> specifies the variable name of your single cell clustering result variable. <code>sample</code> specifies the variable indicating subjects or individuals information. <code>ct.sub</code> specifies the subset of cell types you want to use to construct pseudo bulk samples.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## (1) using all single cells
 pseudo.seger &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generateBulk_allcells.html">generateBulk_allcells</a></span>(qc.seger<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>))
 
@@ -182,29 +186,185 @@ bulkseger.scbaron<span class="op">$</span>peval<span class="op">$</span>evals.ta
 bulkseger.scxin<span class="op">$</span>peval<span class="op">$</span>evals.table
 <span class="co">#&gt;         RMSD     mAD      R</span>
 <span class="co">#&gt; SCDC 0.19058 0.15449 0.9331</span></code></pre></div>
-<p>We can observe the discrepancy of performance using different datasets. It’s clear that using single cells from the reference dataset Segerstolpe et al., we derive the highest Pearson correlation, and the lowest RMSD and mAD.</p>
-<p>Next, we will explore the ENSEMBLE results. Using the pseudo bulk samples constructed above, we try to deconvolve using three reference datasets: Baron et al., Segerstolpe et al. and Xin et al. The search length is a parameter that is related to the grid search method.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pancreas.sc &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">baron =</span> qc.baron<span class="op">$</span>sc.eset.qc,
+<p>We can observe the discrepancy of performance using different datasets. In this example, when using single cells from the reference dataset Segerstolpe et al., we derive the highest Pearson correlation, and the lowest RMSD and mAD.</p>
+<p>Next, we will explore the ENSEMBLE method integrating all the three scRNA-seq reference datasets using the pseudo bulk samples constructed above. Here we offered three methods to derive the ENSEMBLE weights: “Grid search”, “LAD”, and “NNLS”. The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#input the list of single cell ExpressionSet objects</span>
+pancreas.sc &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">baron =</span> qc.baron<span class="op">$</span>sc.eset.qc,
                     <span class="dt">seger =</span> qc.seger<span class="op">$</span>sc.eset.qc,
                     <span class="dt">xin =</span> qc.xin<span class="op">$</span>sc.eset.qc)
-
+<span class="co"># This might take several minutes, depending on the search.length set by user.</span>
 PS_ensemble &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_ENSEMBLE.html">SCDC_ENSEMBLE</a></span>(<span class="dt">bulk.eset =</span> pseudo.seger<span class="op">$</span>pseudo_eset, <span class="dt">sc.eset.list =</span> pancreas.sc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>,
                              <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">truep =</span> pseudo.seger<span class="op">$</span>truep[<span class="kw"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span>(pseudo.seger<span class="op">$</span>truep),], <span class="dt">ct.sub =</span>  <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>), <span class="dt">search.length =</span> <span class="fl">0.01</span>)
 PS_ensemble<span class="op">$</span>w_table
-<span class="co">#&gt;                       w1   w2   w3    RMSD     mAD Pearson spearman_Y</span>
-<span class="co">#&gt; max.Pearson_prop    0.01 0.94 0.05 0.03599 0.02797  0.9918    0.91372</span>
-<span class="co">#&gt; min.mAD_Y           0.00 1.00 0.00 0.03352 0.02553  0.9912    0.91346</span>
-<span class="co">#&gt; min.RMSD_Y          0.00 1.00 0.00 0.03352 0.02553  0.9912    0.91346</span>
-<span class="co">#&gt; max.Spearman_corr_Y 0.00 0.96 0.04 0.03521 0.02741  0.9917    0.91381</span>
-<span class="co">#&gt; min.mAD_Y_LAD       0.00 1.00 0.00 0.03352 0.02553  0.9912    0.91346</span>
-<span class="co">#&gt; min.RMSD_Y_NNLS     0.00 1.00 0.00 0.03352 0.02553  0.9912    0.91346</span>
-<span class="co">#&gt;                        RMSD_Y     mAD_Y</span>
-<span class="co">#&gt; max.Pearson_prop    0.0003513 2.785e-05</span>
-<span class="co">#&gt; min.mAD_Y           0.0003458 2.756e-05</span>
-<span class="co">#&gt; min.RMSD_Y          0.0003458 2.756e-05</span>
-<span class="co">#&gt; max.Spearman_corr_Y 0.0003490 2.778e-05</span>
-<span class="co">#&gt; min.mAD_Y_LAD       0.0003458 2.756e-05</span>
-<span class="co">#&gt; min.RMSD_Y_NNLS     0.0003458 2.756e-05</span></code></pre></div>
+<span class="co">#&gt;                              w1        w2   w3    RMSD     mAD Pearson</span>
+<span class="co">#&gt; max.Pearson_prop    0.0200000000 0.9300000 0.05 0.03627 0.02779  0.9913</span>
+<span class="co">#&gt; min.mAD_Y           0.0000000000 1.0000000 0.00 0.03376 0.02509  0.9907</span>
+<span class="co">#&gt; min.RMSD_Y          0.0000000000 1.0000000 0.00 0.03376 0.02509  0.9907</span>
+<span class="co">#&gt; max.Spearman_corr_Y 0.0000000000 0.9600000 0.04 0.03538 0.02712  0.9912</span>
+<span class="co">#&gt; min.mAD_Y_LAD       0.0002156889 0.9997843 0.00 0.03376 0.02509  0.9907</span>
+<span class="co">#&gt; min.RMSD_Y_NNLS     0.0000000000 1.0000000 0.00 0.03376 0.02509  0.9907</span>
+<span class="co">#&gt;                     spearman_Y    RMSD_Y     mAD_Y</span>
+<span class="co">#&gt; max.Pearson_prop       0.91429 0.0003501 2.785e-05</span>
+<span class="co">#&gt; min.mAD_Y              0.91420 0.0003437 2.755e-05</span>
+<span class="co">#&gt; min.RMSD_Y             0.91420 0.0003437 2.755e-05</span>
+<span class="co">#&gt; max.Spearman_corr_Y    0.91449 0.0003467 2.777e-05</span>
+<span class="co">#&gt; min.mAD_Y_LAD          0.91420 0.0003438 2.755e-05</span>
+<span class="co">#&gt; min.RMSD_Y_NNLS        0.91420 0.0003437 2.755e-05</span></code></pre></div>
+<p>In this case, SCDC ENSEMBLE weights suggest that the weight for results from reference dataset Segerstolpe et al. to be one. Hence, the final estimated cell-type proportions can be found at <code>PS_ensemble$prop.list$seger$prop.est.mvw</code>.</p>
+</div>
+<div id="scdc-on-real-bulk-rna-seq-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#scdc-on-real-bulk-rna-seq-data" class="anchor"></a>SCDC on Real Bulk RNA-seq Data</h3>
+<p>Here, we move on to analyze the real pancreatic islet bulk RNA-seq dataset. Fadista et al. (2014) provided 89 bulk samples, of which 77 samples have the HbA1c level information(an important biomarker for the Type II diabetes). Hence, we focus on the deconvolution for the 77 bulk samples (51 healthy and 26 diabetic). To allow the basis matrix to reflect the potentially different gene expression patterns between the cases and controls, we performed the ENSEMBLE weight selection procedures for the samples from the two classes (normal and T2D) separately.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fadista_<span class="dv">77</span> &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"fadista_77.rds"</span>)
+<span class="co"># setting the search.length as 0.01 might take several minutes to finish the ENSEMBLE procedure.</span>
+fadista.healthy.ens &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_ENSEMBLE.html">SCDC_ENSEMBLE</a></span>(<span class="dt">bulk.eset =</span> fadista_<span class="dv">77</span>[,fadista_<span class="dv">77</span><span class="op">$</span>hba1c_class2 <span class="op">==</span><span class="st"> "Normal"</span>],
+                                     <span class="dt">sc.eset.list =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">baron =</span> qc.baron<span class="op">$</span>sc.eset.qc, <span class="dt">seger =</span> qc.seger<span class="op">$</span>sc.eset.qc),
+                                     <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">truep =</span> <span class="ot">NULL</span>,
+                                     <span class="dt">ct.sub =</span>  <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"acinar"</span>,<span class="st">"ductal"</span>), <span class="dt">search.length =</span> <span class="fl">0.01</span>)
+fadista.t2d.ens &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_ENSEMBLE.html">SCDC_ENSEMBLE</a></span>(<span class="dt">bulk.eset =</span> fadista_<span class="dv">77</span>[,fadista_<span class="dv">77</span><span class="op">$</span>hba1c_class2 <span class="op">==</span><span class="st"> "T2D"</span>],
+                                 <span class="dt">sc.eset.list =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">baron =</span> qc.baron<span class="op">$</span>sc.eset.qc, <span class="dt">seger =</span> qc.seger<span class="op">$</span>sc.eset.qc),
+                                 <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">truep =</span> <span class="ot">NULL</span>,
+                                 <span class="dt">ct.sub =</span>  <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"acinar"</span>,<span class="st">"ductal"</span>), <span class="dt">search.length =</span> <span class="fl">0.01</span>)
+<span class="op">&gt;</span><span class="st"> </span>fadista.healthy.ens<span class="op">$</span>w_table
+<span class="co">#&gt;                           w1        w2 spearman_Y    RMSD_Y     mAD_Y</span>
+<span class="co">#&gt; min.mAD_Y           0.4400000 0.5600000    0.77554 0.0003397 4.710e-05</span>
+<span class="co">#&gt; max.Spearman_corr_Y 0.4200000 0.5800000    0.77559 0.0003434 4.711e-05</span>
+<span class="co">#&gt; min.mAD_Y_LAD       0.4462969 0.5537031    0.77551 0.0003386 4.711e-05</span>
+<span class="op">&gt;</span><span class="st"> </span>fadista.t2d.ens<span class="op">$</span>w_table
+<span class="co">#&gt;                            w1        w2 spearman_Y    RMSD_Y     mAD_Y</span>
+<span class="co">#&gt; min.mAD_Y           0.4900000 0.5100000    0.79769 0.0002810 4.475e-05</span>
+<span class="co">#&gt; max.Spearman_corr_Y 0.5000000 0.5000000    0.79770 0.0002795 4.476e-05</span>
+<span class="co">#&gt; min.mAD_Y_LAD       0.5163056 0.4836944    0.79768 0.0002773 4.478e-05</span></code></pre></div>
+<p>To compare the ENSEMBLE results to the deconvolution results using one reference dataset only, we visualize the estimated proportions as following:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(reshape2)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)
+getPropBox &lt;-<span class="st"> </span><span class="cf">function</span>(ens_h, ens_d, w1h, w2h, w1d,w2d, ref){
+  prop.h &lt;-<span class="st"> </span>ens_h<span class="op">$</span>prop.list[[<span class="dv">1</span>]]<span class="op">$</span>prop.est.mvw<span class="op">*</span>w1h <span class="op">+</span><span class="st"> </span>ens_h<span class="op">$</span>prop.list[[<span class="dv">2</span>]]<span class="op">$</span>prop.est.mvw<span class="op">*</span>w2h
+  prop.h &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(prop.h)
+
+  prop.d &lt;-<span class="st"> </span>ens_d<span class="op">$</span>prop.list[[<span class="dv">1</span>]]<span class="op">$</span>prop.est.mvw<span class="op">*</span>w1d <span class="op">+</span><span class="st"> </span>ens_d<span class="op">$</span>prop.list[[<span class="dv">2</span>]]<span class="op">$</span>prop.est.mvw<span class="op">*</span>w2d
+  prop.d &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(prop.d)
+
+  prop2 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(prop.h, prop.d)
+  prop2<span class="op">$</span>condition &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"Normal"</span>, <span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(prop.h)), <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"T2D"</span>, <span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(prop.d)))
+
+  dtmelt &lt;-<span class="st"> </span><span class="kw">melt</span>(prop2, <span class="dt">id.vars =</span> <span class="st">"condition"</span>)
+  dtmelt<span class="op">$</span>ref &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(ref)
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(dtmelt)
+}
+
+fdt.ens &lt;-<span class="st"> </span><span class="kw">getPropBox</span>(<span class="dt">ens_h =</span> fadista.healthy.ens, <span class="dt">ens_d =</span> fadista.t2d.ens, <span class="dt">w1h =</span> <span class="fl">0.45</span>, <span class="dt">w2h =</span> <span class="fl">0.55</span>, <span class="dt">w1d =</span> <span class="fl">0.52</span>, <span class="dt">w2d =</span> <span class="fl">0.48</span>, <span class="dt">ref =</span> <span class="st">"ENSEMBLE"</span>)
+fdt.seger &lt;-<span class="st"> </span><span class="kw">getPropBox</span>(<span class="dt">ens_h =</span> fadista.healthy.ens, <span class="dt">ens_d =</span> fadista.t2d.ens, <span class="dt">w1h =</span> <span class="dv">0</span>, <span class="dt">w2h =</span><span class="dv">1</span>, <span class="dt">w1d =</span> <span class="dv">0</span>, <span class="dt">w2d =</span> <span class="dv">1</span>, <span class="dt">ref =</span> <span class="st">"Segerstolpe"</span>)
+fdt.baron &lt;-<span class="st"> </span><span class="kw">getPropBox</span>(<span class="dt">ens_h =</span> fadista.healthy.ens, <span class="dt">ens_d =</span> fadista.t2d.ens, <span class="dt">w1h =</span> <span class="dv">1</span>, <span class="dt">w2h =</span><span class="dv">0</span>, <span class="dt">w1d =</span> <span class="dv">1</span>, <span class="dt">w2d =</span> <span class="dv">0</span>, <span class="dt">ref =</span> <span class="st">"Baron"</span>)
+dtall_fadista &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(fdt.ens, fdt.seger, fdt.baron)
+dtall_fadista<span class="op">$</span>refcond &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(dtall_fadista<span class="op">$</span>ref, dtall_fadista<span class="op">$</span>condition)
+colfunc &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"red"</span>, <span class="st">"white"</span>))
+colfunc2 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"blue"</span>, <span class="st">"white"</span>))
+fadista.ens.plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(dtall_fadista, <span class="kw">aes</span>(<span class="dt">x=</span>variable, <span class="dt">y=</span>value, <span class="dt">color =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(refcond,
+                                                                      <span class="dt">levels =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ENSEMBLE Normal"</span>, <span class="st">"Segerstolpe Normal"</span>,<span class="st">"Baron Normal"</span>,
+                                                                                 <span class="st">"ENSEMBLE T2D"</span>,<span class="st">"Segerstolpe T2D"</span>,<span class="st">"Baron T2D"</span>)))) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_boxplot</span>(<span class="dt">outlier.size=</span><span class="op">-</span><span class="dv">1</span>)<span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_jitter</span>(<span class="kw">aes</span>(<span class="dt">x=</span>variable,
+                  <span class="dt">color =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(refcond,
+                                 <span class="dt">levels =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ENSEMBLE Normal"</span>, <span class="st">"Segerstolpe Normal"</span>,<span class="st">"Baron Normal"</span>,
+                                            <span class="st">"ENSEMBLE T2D"</span> ,<span class="st">"Segerstolpe T2D"</span>,<span class="st">"Baron T2D"</span>))),
+              <span class="dt">position =</span> <span class="kw">position_dodge</span>(<span class="fl">0.75</span>), <span class="dt">alpha =</span> <span class="fl">0.5</span>,<span class="dt">cex =</span> <span class="fl">0.25</span>)<span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">30</span>, <span class="dt">hjust =</span> <span class="dv">1</span>, <span class="dt">size=</span><span class="dv">10</span>),
+        <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">10</span>),
+        <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">10</span>),
+        <span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">10</span>, <span class="dt">face =</span> <span class="st">"bold"</span>),
+        <span class="dt">plot.margin=</span><span class="kw">unit</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="op">-</span><span class="dv">5</span>,<span class="dv">0</span>), <span class="st">"mm"</span>),
+        <span class="dt">legend.position=</span><span class="st">"top"</span>,<span class="dt">legend.title =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">legend.text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">8</span>),
+        <span class="dt">legend.box.spacing =</span> <span class="kw">unit</span>(<span class="dv">0</span>, <span class="st">"mm"</span>))<span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">colfunc</span>(<span class="dv">10</span>)[<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>)],<span class="kw">colfunc2</span>(<span class="dv">10</span>)[<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>)])) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">""</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">""</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(fadista.ens.plot)</code></pre></div>
+<div class="figure">
+<img src="fadista_ens.png" alt="Cell-type proportion estimation for 77 bulk samples from Fadista et al."><p class="caption">Cell-type proportion estimation for 77 bulk samples from Fadista et al.</p>
+</div>
+<p>We also investigated the relationship between the estimated cell-type proportions and the HbA1c levels.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## we use the scRNA-seq datasets without clustering-QC as input here, aiming to be comparable to the results as MuSiC shown in their paper.
+baron &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"baron.rds"</span>)
+seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"segerstolpe.rds"</span>)
+## SCDC deconvolution using one ref dataset:
+fadista.seger &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_prop.html">SCDC_prop</a></span>(fadista_<span class="dv">77</span>, seger, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>,
+                          <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"acinar"</span>,<span class="st">"ductal"</span>))
+
+fadista.baron &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_prop.html">SCDC_prop</a></span>(fadista_<span class="dv">77</span>, baron, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>,
+                                <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"acinar"</span>,<span class="st">"ductal"</span>))
+## ENSEMBLE proportions
+getPropbycond &lt;-<span class="st"> </span><span class="cf">function</span>(ens_h, ens_d, w1h, w2h, w1d,w2d, ref, hba1clvl){
+  prop.h &lt;-<span class="st"> </span>ens_h<span class="op">$</span>prop.list[[<span class="dv">1</span>]]<span class="op">$</span>prop.est.mvw<span class="op">*</span>w1h <span class="op">+</span><span class="st"> </span>ens_h<span class="op">$</span>prop.list[[<span class="dv">2</span>]]<span class="op">$</span>prop.est.mvw<span class="op">*</span>w2h
+  prop.h &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(prop.h)
+
+  prop.d &lt;-<span class="st"> </span>ens_d<span class="op">$</span>prop.list[[<span class="dv">1</span>]]<span class="op">$</span>prop.est.mvw<span class="op">*</span>w1d <span class="op">+</span><span class="st"> </span>ens_d<span class="op">$</span>prop.list[[<span class="dv">2</span>]]<span class="op">$</span>prop.est.mvw<span class="op">*</span>w2d
+  prop.d &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(prop.d)
+
+  prop2 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(prop.h, prop.d)
+  prop2<span class="op">$</span>condition &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"Normal"</span>, <span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(prop.h)), <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"T2D"</span>, <span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(prop.d)))
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(prop2)
+}
+fadista_ens_prop &lt;-<span class="st"> </span><span class="kw">getPropbycond</span>(<span class="dt">ens_h =</span> fadista.healthy.ens, <span class="dt">ens_d =</span> fadista.t2d.ens,
+                                  <span class="dt">w1h =</span> <span class="fl">0.45</span>, <span class="dt">w2h =</span> <span class="fl">0.55</span>, <span class="dt">w1d =</span> <span class="fl">0.52</span>, <span class="dt">w2d =</span> <span class="fl">0.48</span>, <span class="dt">ref =</span> <span class="st">"ENSEMBLE"</span>)</code></pre></div>
+<p>Fit linear models: beta cell proportion ~ HbA1c + age + BMI + sex.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## get demographic information of the bulk samples from Fadista et al.
+fadista_demo &lt;-<span class="st"> </span>fadista_<span class="dv">77</span><span class="op">@</span>phenoData<span class="op">@</span>data[,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"age"</span>,<span class="st">"gender"</span>,<span class="st">"hba1c"</span>,<span class="st">"bmi"</span>,<span class="st">"hba1c_class2"</span>)]
+getLMpValue &lt;-<span class="st"> </span><span class="cf">function</span>(prop_est, method_){
+  prop_est_all &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(prop_est, fadista_demo[<span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(prop_est),])
+  getlmtable &lt;-<span class="st"> </span><span class="cf">function</span>(ct){
+    prop_est_all<span class="op">$</span>ct &lt;-<span class="st"> </span>prop_est_all[,ct]
+    lm.ens1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(ct <span class="op">~</span><span class="st"> </span>hba1c <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>bmi <span class="op">+</span><span class="st"> </span>gender, <span class="dt">data =</span> prop_est_all)
+    s1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(lm.ens1)
+    sdt &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(s1<span class="op">$</span>coefficients,<span class="dv">4</span>), <span class="dt">celltype =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(ct,<span class="dv">5</span>))
+    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(sdt)
+  }
+  dtlm &lt;-<span class="st"> </span><span class="ot">NULL</span>
+  <span class="cf">for</span> (ct <span class="cf">in</span> <span class="kw"><a href="https://rdrr.io/r/base/sets.html">intersect</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"acinar"</span>,<span class="st">"ductal"</span>),
+                       <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(prop_est))){
+    dtlm0 &lt;-<span class="st"> </span><span class="kw">getlmtable</span>(ct)
+    dtlm &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(dtlm, dtlm0)
+  }
+  dat_text_fad &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">label =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"p-value ="</span>,dtlm[<span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dt">from =</span> <span class="dv">2</span> , <span class="dt">to =</span> <span class="dv">27</span>, <span class="dt">by=</span><span class="dv">5</span>),<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">4</span>)]),
+                             <span class="dt">variable =</span> dtlm[<span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dt">from =</span> <span class="dv">2</span> , <span class="dt">to =</span> <span class="dv">27</span>, <span class="dt">by=</span><span class="dv">5</span>),<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>)],
+                             <span class="dt">hba1c =</span> <span class="dv">6</span>, <span class="dt">value =</span> <span class="fl">0.5</span>,
+                             <span class="dt">condition =</span> <span class="st">"T2D"</span>,
+                             <span class="dt">method =</span> method_)
+  demo_pval &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">label =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"p-value ="</span>,dtlm[,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">4</span>)]),
+                          <span class="dt">variable =</span> dtlm[,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>)],
+                          <span class="dt">value =</span> <span class="fl">0.5</span>,
+                          <span class="dt">covar =</span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(dtlm),
+                          <span class="dt">condition =</span> <span class="st">"T2D"</span>,
+                          <span class="dt">method =</span> method_)
+  dtmelt &lt;-<span class="st"> </span><span class="kw">melt</span>(prop_est_all, <span class="dt">id.vars =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"hba1c_class2"</span>,<span class="st">"age"</span>,<span class="st">"gender"</span>,<span class="st">"bmi"</span>,<span class="st">"hba1c"</span>), <span class="dt">measure.vars =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"acinar"</span>,<span class="st">"ductal"</span>))
+  dtmelt<span class="op">$</span>method &lt;-<span class="st"> </span>method_
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">meltdata =</span> dtmelt, <span class="dt">pvaldata =</span> dat_text_fad, <span class="dt">demo_pval =</span> demo_pval))
+}
+res.SCDC.seger &lt;-<span class="st"> </span><span class="kw">getLMpValue</span>(<span class="dt">prop_est =</span> fadista.seger<span class="op">$</span>prop.est.mvw, <span class="dt">method_ =</span> <span class="st">"SCDC+Segerstolpe"</span>)
+res.SCDC.baron &lt;-<span class="st"> </span><span class="kw">getLMpValue</span>(<span class="dt">prop_est =</span> fadista.baron<span class="op">$</span>prop.est.mvw, <span class="dt">method_ =</span> <span class="st">"SCDC+Baron"</span>)
+res.SCDC.ensemble &lt;-<span class="st"> </span><span class="kw">getLMpValue</span>(<span class="dt">prop_est =</span> fadista_ens_prop, <span class="dt">method_ =</span> <span class="st">"SCDC+ENSEMBLE"</span>)
+alldata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(res.SCDC.seger<span class="op">$</span>meltdata, res.SCDC.ensemble<span class="op">$</span>meltdata,
+                 res.SCDC.baron<span class="op">$</span>meltdata)
+allpvalue &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(res.SCDC.seger<span class="op">$</span>pvaldata, res.SCDC.ensemble<span class="op">$</span>pvaldata,
+                   res.SCDC.baron<span class="op">$</span>pvaldata)
+demopval &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(res.SCDC.seger<span class="op">$</span>demo_pval, res.SCDC.ensemble<span class="op">$</span>demo_pval,
+                  res.SCDC.baron<span class="op">$</span>demo_pval)
+alldata<span class="op">$</span>method &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(alldata<span class="op">$</span>method)</code></pre></div>
+<p>Comparing ENSEMBLE proportion estimation results with the one-reference deconvolution results:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fadista.LMplot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(alldata[alldata<span class="op">$</span>variable <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"beta"</span>),], <span class="kw">aes</span>(<span class="dt">x=</span>hba1c, <span class="dt">y=</span> value)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> hba1c_class2)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">method=</span><span class="st">'lm'</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>, <span class="dt">color =</span> <span class="st">"black"</span>, <span class="dt">lwd =</span> <span class="fl">0.25</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">"top"</span>, <span class="dt">legend.title =</span> <span class="kw">element_blank</span>(), <span class="co"># axis.title.x = element_blank(),</span>
+        <span class="dt">legend.box.spacing =</span> <span class="kw">unit</span>(<span class="dv">0</span>, <span class="st">"mm"</span>),
+        <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">9</span>),
+        <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">9</span>),
+        <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">9</span>))<span class="op">+</span><span class="co">#, axis.title.y = element_blank()) +</span>
+<span class="st">  </span><span class="kw">facet_grid</span>(<span class="dt">cols =</span> <span class="kw">vars</span>(<span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(method, <span class="dt">levels =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"SCDC+Baron"</span>, <span class="st">"SCDC+Segerstolpe"</span>, <span class="st">"SCDC+ENSEMBLE"</span>))),<span class="dt">scales =</span> <span class="st">"free"</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> allpvalue[allpvalue<span class="op">$</span>variable <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"beta"</span>),],
+            <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x=</span><span class="fl">5.5</span>, <span class="dt">y=</span><span class="fl">0.85</span>,<span class="dt">label =</span> label),
+            <span class="dt">hjust   =</span> <span class="fl">0.2</span>, <span class="dt">vjust   =</span> <span class="dv">0</span>, <span class="dt">size =</span> <span class="fl">2.5</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">"HbA1c"</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">"Proportions"</span>) <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/graphics/plot.window.html">ylim</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,<span class="dv">1</span>))
+fadista.LMplot</code></pre></div>
 </div>
 </div>
   </div>

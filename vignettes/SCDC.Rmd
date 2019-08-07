@@ -150,17 +150,17 @@ PS_ensemble$w_table
 ```
 In this case, SCDC ENSEMBLE weights suggest that the weight for results from reference dataset Segerstolpe et al. to be one. Hence, the final estimated cell-type proportions can be found at `PS_ensemble$prop.list$seger$prop.est.mvw`.
 
-Next, we move on to analyze the real pancreatic islet bulk RNA-seq dataset. Fadista et al. (2014) provided 89 bulk samples, of which 77 samples have the HbA1c level information(an important biomarker for the Type II diabetes). Hence, we focus on the deconvolution for the 77 bulk samples.
+### SCDC on Real Bulk RNA-seq Data
+Here, we move on to analyze the real pancreatic islet bulk RNA-seq dataset. Fadista et al. (2014) provided 89 bulk samples, of which 77 samples have the HbA1c level information(an important biomarker for the Type II diabetes). Hence, we focus on the deconvolution for the 77 bulk samples (51 healthy and 26 diabetic).
 To allow the basis matrix to reflect the potentially different gene expression patterns between the cases and controls, we performed the ENSEMBLE weight selection procedures for the samples from the two classes (normal and T2D) separately.
 
 ```r
 fadista_77 <- readRDS("fadista_77.rds")
-# setting the search.length as 0.01 might take several minutes to finish the ENSEMBLE.
+# setting the search.length as 0.01 might take several minutes to finish the ENSEMBLE procedure.
 fadista.healthy.ens <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "Normal"],
                                      sc.eset.list = list(baron = qc.baron$sc.eset.qc, seger = qc.seger$sc.eset.qc),
                                      ct.varname = "cluster", sample = "sample", truep = NULL,
                                      ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01)
-
 fadista.t2d.ens <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "T2D"],
                                  sc.eset.list = list(baron = qc.baron$sc.eset.qc, seger = qc.seger$sc.eset.qc),
                                  ct.varname = "cluster", sample = "sample", truep = NULL,
@@ -224,3 +224,96 @@ fadista.ens.plot <- ggplot(dtall_fadista, aes(x=variable, y=value, color = facto
 print(fadista.ens.plot)
 ```
 ![Cell-type proportion estimation for 77 bulk samples from Fadista et al.](fadista_ens.png)
+
+We also investigated the relationship between the estimated cell-type proportions and the HbA1c levels.
+
+```r
+## we use the scRNA-seq datasets without clustering-QC as input here, aiming to be comparable to the results as MuSiC shown in their paper.
+baron <- readRDS("baron.rds")
+seger <- readRDS("segerstolpe.rds")
+## SCDC deconvolution using one ref dataset:
+fadista.seger <- SCDC_prop(fadista_77, seger, ct.varname = "cluster", sample = "sample",
+                          ct.sub = c("alpha","beta","delta","gamma","acinar","ductal"))
+
+fadista.baron <- SCDC_prop(fadista_77, baron, ct.varname = "cluster", sample = "sample",
+                                ct.sub = c("alpha","beta","delta","gamma","acinar","ductal"))
+## ENSEMBLE proportions
+getPropbycond <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref, hba1clvl){
+  prop.h <- ens_h$prop.list[[1]]$prop.est.mvw*w1h + ens_h$prop.list[[2]]$prop.est.mvw*w2h
+  prop.h <- as.data.frame(prop.h)
+
+  prop.d <- ens_d$prop.list[[1]]$prop.est.mvw*w1d + ens_d$prop.list[[2]]$prop.est.mvw*w2d
+  prop.d <- as.data.frame(prop.d)
+
+  prop2 <- rbind(prop.h, prop.d)
+  prop2$condition <- c(rep("Normal", nrow(prop.h)), rep("T2D", nrow(prop.d)))
+  return(prop2)
+}
+fadista_ens_prop <- getPropbycond(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens,
+                                  w1h = 0.45, w2h = 0.55, w1d = 0.52, w2d = 0.48, ref = "ENSEMBLE")
+```
+
+Fit linear models: beta cell proportion ~ HbA1c + age + BMI + sex.
+```r
+## get demographic information of the bulk samples from Fadista et al.
+fadista_demo <- fadista_77@phenoData@data[,c("age","gender","hba1c","bmi","hba1c_class2")]
+getLMpValue <- function(prop_est, method_){
+  prop_est_all <- cbind(prop_est, fadista_demo[rownames(prop_est),])
+  getlmtable <- function(ct){
+    prop_est_all$ct <- prop_est_all[,ct]
+    lm.ens1 <- lm(ct ~ hba1c + age + bmi + gender, data = prop_est_all)
+    s1 <- summary(lm.ens1)
+    sdt <- cbind(round(s1$coefficients,4), celltype = rep(ct,5))
+    return(sdt)
+  }
+  dtlm <- NULL
+  for (ct in intersect(c("alpha","beta","delta","gamma","acinar","ductal"),
+                       colnames(prop_est))){
+    dtlm0 <- getlmtable(ct)
+    dtlm <- rbind(dtlm, dtlm0)
+  }
+  dat_text_fad <- data.frame(label = paste("p-value =",dtlm[seq(from = 2 , to = 27, by=5),c(4)]),
+                             variable = dtlm[seq(from = 2 , to = 27, by=5),c(5)],
+                             hba1c = 6, value = 0.5,
+                             condition = "T2D",
+                             method = method_)
+  demo_pval <- data.frame(label = paste("p-value =",dtlm[,c(4)]),
+                          variable = dtlm[,c(5)],
+                          value = 0.5,
+                          covar =rownames(dtlm),
+                          condition = "T2D",
+                          method = method_)
+  dtmelt <- melt(prop_est_all, id.vars = c("hba1c_class2","age","gender","bmi","hba1c"), measure.vars = c("alpha","beta","delta","gamma","acinar","ductal"))
+  dtmelt$method <- method_
+  return(list(meltdata = dtmelt, pvaldata = dat_text_fad, demo_pval = demo_pval))
+}
+res.SCDC.seger <- getLMpValue(prop_est = fadista.seger$prop.est.mvw, method_ = "SCDC+Segerstolpe")
+res.SCDC.baron <- getLMpValue(prop_est = fadista.baron$prop.est.mvw, method_ = "SCDC+Baron")
+res.SCDC.ensemble <- getLMpValue(prop_est = fadista_ens_prop, method_ = "SCDC+ENSEMBLE")
+alldata <- rbind(res.SCDC.seger$meltdata, res.SCDC.ensemble$meltdata,
+                 res.SCDC.baron$meltdata)
+allpvalue <- rbind(res.SCDC.seger$pvaldata, res.SCDC.ensemble$pvaldata,
+                   res.SCDC.baron$pvaldata)
+demopval <- rbind(res.SCDC.seger$demo_pval, res.SCDC.ensemble$demo_pval,
+                  res.SCDC.baron$demo_pval)
+alldata$method <- as.factor(alldata$method)
+```
+
+Comparing ENSEMBLE proportion estimation results with the one-reference deconvolution results:
+
+```r
+fadista.LMplot <- ggplot(alldata[alldata$variable %in% c("beta"),], aes(x=hba1c, y= value)) + geom_point(aes(color = hba1c_class2)) +
+  geom_smooth(method='lm', se = FALSE, color = "black", lwd = 0.25) +
+  theme(legend.position = "top", legend.title = element_blank(), # axis.title.x = element_blank(),
+        legend.box.spacing = unit(0, "mm"),
+        text = element_text(size=9),
+        axis.text.x = element_text(size=9),
+        axis.text.y = element_text(size=9))+#, axis.title.y = element_blank()) +
+  facet_grid(cols = vars(factor(method, levels = c("SCDC+Baron", "SCDC+Segerstolpe", "SCDC+ENSEMBLE"))),scales = "free") +
+  geom_text(data = allpvalue[allpvalue$variable %in% c("beta"),],
+            mapping = aes(x=5.5, y=0.85,label = label),
+            hjust   = 0.2, vjust   = 0, size = 2.5) +
+  xlab("HbA1c") + ylab("Proportions") + ylim(c(0,1))
+fadista.LMplot
+```
+![](fadista_LMplot.png)
