@@ -7,4 +7,4 @@ devtools::install_github("meichendong/SCDC")
 ```
 
 ## Vignettes
-Please see vignettes [here](https://meichendong.github.io/SCDC/).
+Please see vignettes [here](https://meichendong.github.io/SCDC/index.html).
