@@ -5,3 +5,6 @@ To install SCDC R package, please use
 library(devtools)
 devtools::install_github("meichendong/SCDC")
 ```
+
+## Vignettes
+Please see vignettes [here](https://meichendong.github.io/SCDC/).
