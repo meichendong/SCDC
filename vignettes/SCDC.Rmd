@@ -49,7 +49,7 @@ class(eset)
 
 As an illustration of the **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. The processed data is available for download at.
 
-### Descriptive information of scRNA-seq data
+### Descriptive Information of scRNA-seq Data
 For each singl-cell dataset with raw counts, we can first explore the demographic information by the visualization function `DemoPlot`. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us the general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, we derive the following plot:
 
 ```r
@@ -69,4 +69,48 @@ seger.qc$heatfig
 ```
 ![scRNA-seq from Segerstolpe et al. Clustering QC](cqc.png) 
 Similarly we can perform clustering QC for single cells from only one subject using function `SCDC_qc_ONE()`.
+
+
+### SCDC on Simulated Data
+SCDC allows users to construct pseudo bulk samples in two ways:
+
+- `generateBulk_allcells()` Sum up gene-wise raw read counts per subject, and the true cell-type proportion is consistent with the single cell clustering result.
+
+- `generateBulk_norep()`: Randomly sample single cells from each of the cell types of interest without replacement, and then sum up raw read counts per subject. The cell-type proportions are different from single cell clustering result.
+
+Here, we use the `ExpressionSet` objects after the clustering-QC of each scRNA-seq dataset. Read in the processed objects downloaded from our webpage:
+
+```r
+# ExpressionSet objects from the three different scRNA-seq resources
+qc.seger <- readRDS("qc_segerstolpe.rds")
+qc.baron <- readRDS("qc_baron.rds")
+qc.xin <- readRDS("qc_xin.rds")
+```
+
+Then create the _pseudo bulk_ samples:
+```r
+## (1) using all single cells
+pseudo.seger <- generateBulk_allcells(qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma","ductal","acinar"))
+
+## (2) using random proportions of single cells
+pseudo.seger.rand <- generateBulk_norep(qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma","ductal","acinar"), nbulk = 3)
+
+## we know the true relative proportions for the pseudo bulk samples:
+round(pseudo.seger$truep,3)
+#>          cluster.id
+#> sample.id acinar alpha  beta delta ductal gamma
+#>        H1  0.048 0.452 0.167 0.119  0.095 0.119
+#>        H2  0.061 0.496 0.200 0.091  0.078 0.074
+#>        H3  0.013 0.554 0.140 0.076  0.089 0.127
+#>        H4  0.346 0.122 0.156 0.005  0.327 0.044
+#>        H5  0.016 0.720 0.175 0.037  0.042 0.011
+#>        H6  0.023 0.488 0.105 0.116  0.256 0.012
+round(pseudo.seger.rand$true_p,3)
+#>      acinar alpha  beta delta ductal gamma
+#> H2_1  0.081 0.422 0.225 0.110  0.075 0.087
+#> H4_2  0.422 0.130 0.130 0.006  0.266 0.045
+#> H4_3  0.322 0.137 0.151 0.007  0.329 0.055
+```
+
+The constructed _pseudo bulk_ object includes the true cell-type proportion matrix `pseudo.seger$truep` and the `ExpressionSet` object `pseudo.seger$pseudo_eset`.
 

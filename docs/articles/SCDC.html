@@ -114,11 +114,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1    60   315   408   240   429</span>
-<span class="co">#&gt; gene2   121    38   439   138   210</span>
-<span class="co">#&gt; gene3   469   404   341   143    73</span>
-<span class="co">#&gt; gene4   442   244   177   120   397</span>
-<span class="co">#&gt; gene5   375   165   297   136   363</span>
+<span class="co">#&gt; gene1   439   215   320   416   437</span>
+<span class="co">#&gt; gene2   408    86   108   367   337</span>
+<span class="co">#&gt; gene3   218   443   214   259    14</span>
+<span class="co">#&gt; gene4   373   495   206   141   425</span>
+<span class="co">#&gt; gene5     5    82   166   281   392</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -130,7 +130,7 @@ eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESE
 </div>
 <div id="descriptive-information-of-scrna-seq-data" class="section level3">
 <h3 class="hasAnchor">
-<a href="#descriptive-information-of-scrna-seq-data" class="anchor"></a>Descriptive information of scRNA-seq data</h3>
+<a href="#descriptive-information-of-scrna-seq-data" class="anchor"></a>Descriptive Information of scRNA-seq Data</h3>
 <p>For each singl-cell dataset with raw counts, we can first explore the demographic information by the visualization function <code>DemoPlot</code>. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us the general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, we derive the following plot:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ct1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mediumorchid1"</span>,<span class="st">"mediumpurple1"</span>,<span class="st">"lightskyblue"</span>,<span class="st">"seagreen1"</span>,<span class="st">"yellow"</span>,<span class="st">"tan1"</span>,<span class="st">"azure3"</span>)
 seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"segerstolpe.rds"</span>)
@@ -142,9 +142,44 @@ seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">seger.qc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/my_qc.html">my_qc</a></span>(seger, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">scsetname =</span> <span class="st">"Segerstolpe"</span>,
                   <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>), <span class="dt">qcthreshold =</span> <span class="fl">0.7</span>) 
 seger.qc<span class="op">$</span>heatfig</code></pre></div>
-<div class="figure">
-<img src="cqc.png" alt="scRNA-seq from Segerstolpe et al. Clustering QC"><p class="caption">scRNA-seq from Segerstolpe et al. Clustering QC</p>
+<p><img src="cqc.png" alt="scRNA-seq from Segerstolpe et al. Clustering QC"> Similarly we can perform clustering QC for single cells from only one subject using function <code><a href="../reference/SCDC_qc_ONE.html">SCDC_qc_ONE()</a></code>.</p>
 </div>
+<div id="scdc-on-simulated-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#scdc-on-simulated-data" class="anchor"></a>SCDC on Simulated Data</h3>
+<p>SCDC allows users to construct pseudo bulk samples in two ways:</p>
+<ul>
+<li><p><code><a href="../reference/generateBulk_allcells.html">generateBulk_allcells()</a></code> Sum up gene-wise raw read counts per subject, and the true cell-type proportion is consistent with the single cell clustering result.</p></li>
+<li><p><code><a href="../reference/generateBulk_norep.html">generateBulk_norep()</a></code>: Randomly sample single cells from each of the cell types of interest without replacement, and then sum up raw read counts per subject. The cell-type proportions are different from single cell clustering result.</p></li>
+</ul>
+<p>Here, we use the <code>ExpressionSet</code> objects after the clustering-QC of each scRNA-seq dataset. Read in the processed objects downloaded from our webpage:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ExpressionSet objects from the three different scRNA-seq resources</span>
+qc.seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"qc_segerstolpe.rds"</span>)
+qc.baron &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"qc_baron.rds"</span>)
+qc.xin &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"qc_xin.rds"</span>)</code></pre></div>
+<p>Then create the <em>pseudo bulk</em> samples:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## (1) using all single cells
+pseudo.seger &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generateBulk_allcells.html">generateBulk_allcells</a></span>(qc.seger<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>))
+
+## (2) using random proportions of single cells
+pseudo.seger.rand &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generateBulk_norep.html">generateBulk_norep</a></span>(qc.seger<span class="op">$</span>sc.eset.qc, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>), <span class="dt">nbulk =</span> <span class="dv">3</span>)
+
+## we know the true relative proportions for the pseudo bulk samples:
+<span class="kw"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(pseudo.seger<span class="op">$</span>truep,<span class="dv">3</span>)
+<span class="co">#&gt;          cluster.id</span>
+<span class="co">#&gt; sample.id acinar alpha  beta delta ductal gamma</span>
+<span class="co">#&gt;        H1  0.048 0.452 0.167 0.119  0.095 0.119</span>
+<span class="co">#&gt;        H2  0.061 0.496 0.200 0.091  0.078 0.074</span>
+<span class="co">#&gt;        H3  0.013 0.554 0.140 0.076  0.089 0.127</span>
+<span class="co">#&gt;        H4  0.346 0.122 0.156 0.005  0.327 0.044</span>
+<span class="co">#&gt;        H5  0.016 0.720 0.175 0.037  0.042 0.011</span>
+<span class="co">#&gt;        H6  0.023 0.488 0.105 0.116  0.256 0.012</span>
+<span class="kw"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(pseudo.seger.rand<span class="op">$</span>true_p,<span class="dv">3</span>)
+<span class="co">#&gt;      acinar alpha  beta delta ductal gamma</span>
+<span class="co">#&gt; H2_1  0.081 0.422 0.225 0.110  0.075 0.087</span>
+<span class="co">#&gt; H4_2  0.422 0.130 0.130 0.006  0.266 0.045</span>
+<span class="co">#&gt; H4_3  0.322 0.137 0.151 0.007  0.329 0.055</span></code></pre></div>
+<p>The constructed <em>pseudo bulk</em> object includes the true cell-type proportion matrix <code>pseudo.seger$truep</code> and the <code>ExpressionSet</code> object <code>pseudo.seger$pseudo_eset</code>.</p>
 </div>
 </div>
   </div>
