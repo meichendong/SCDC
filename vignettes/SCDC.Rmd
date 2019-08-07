@@ -19,6 +19,8 @@ across methods and datasets, giving reference data that are more close to the
 bulk RNA-seq data higher weights, implicitly addressing the batch-effect confounding
 when multiple scRNA-seq reference sets are available.
 
+Our manuscript is available at .
+
 ## Installation
 
 ```r
