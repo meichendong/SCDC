@@ -113,11 +113,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1     5   494   187   112   140</span>
-<span class="co">#&gt; gene2   475   263    12   220   410</span>
-<span class="co">#&gt; gene3   492   100   284   390   479</span>
-<span class="co">#&gt; gene4     9    91    25   401   110</span>
-<span class="co">#&gt; gene5   197   305   257    94    74</span>
+<span class="co">#&gt; gene1   149   325   162   116    15</span>
+<span class="co">#&gt; gene2    73    68    17   469   106</span>
+<span class="co">#&gt; gene3   491   425   327   177    54</span>
+<span class="co">#&gt; gene4   144   275   288   204   255</span>
+<span class="co">#&gt; gene5   395   385   302   214   219</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
