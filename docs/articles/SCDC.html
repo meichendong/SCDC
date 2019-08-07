@@ -93,15 +93,59 @@
     
     
 <p><strong>SCDC</strong> adopts an ENSEMBLE method to integrate deconvolution results across methods and datasets, giving reference data that are more close to the bulk RNA-seq data higher weights, implicitly addressing the batch-effect confounding when multiple scRNA-seq reference sets are available.</p>
-<div id="data" class="section level2">
+<div id="installation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#data" class="anchor"></a>Data</h2>
-<p>As an illustration of <strong>SCDC</strong> framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. Raw read counts are required as input. The processed data is available at.</p>
+<a href="#installation" class="anchor"></a>Installation</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"devtools"</span>)) {
   <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)
 }
-devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"meichendong/SCDC"</span>)
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(SCDC)</code></pre></div>
+devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"meichendong/SCDC"</span>)</code></pre></div>
+</div>
+<div id="example" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example" class="anchor"></a>Example</h2>
+<div id="data-input" class="section level3">
+<h3 class="hasAnchor">
+<a href="#data-input" class="anchor"></a>Data Input</h3>
+<p>SCDC takes <code>ExpressionSet</code> objects with raw read counts as input. <code>ExpressionSet</code> object is based on the package <em>Biobase</em>, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples). We also enable a quick construction of the ExpressionSet object by the function <code><a href="../reference/getESET.html">getESET()</a></code>. Here’s a toy example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(SCDC)
+counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="dv">0</span><span class="op">:</span><span class="dv">500</span>, <span class="dv">25</span>), <span class="dt">nrow =</span> <span class="dv">5</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"cell"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
+counts
+<span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
+<span class="co">#&gt; gene1    60   315   408   240   429</span>
+<span class="co">#&gt; gene2   121    38   439   138   210</span>
+<span class="co">#&gt; gene3   469   404   341   143    73</span>
+<span class="co">#&gt; gene4   442   244   177   120   397</span>
+<span class="co">#&gt; gene5   375   165   297   136   363</span>
+fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
+pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
+eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
+<span class="kw"><a href="https://rdrr.io/r/base/class.html">class</a></span>(eset)
+<span class="co">#&gt; [1] "ExpressionSet"</span>
+<span class="co">#&gt; attr(,"package")</span>
+<span class="co">#&gt; [1] "Biobase"</span></code></pre></div>
+<p>As an illustration of the <strong>SCDC</strong> framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. The processed data is available for download at.</p>
+</div>
+<div id="descriptive-information-of-scrna-seq-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#descriptive-information-of-scrna-seq-data" class="anchor"></a>Descriptive information of scRNA-seq data</h3>
+<p>For each singl-cell dataset with raw counts, we can first explore the demographic information by the visualization function <code>DemoPlot</code>. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us the general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, we derive the following plot:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ct1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mediumorchid1"</span>,<span class="st">"mediumpurple1"</span>,<span class="st">"lightskyblue"</span>,<span class="st">"seagreen1"</span>,<span class="st">"yellow"</span>,<span class="st">"tan1"</span>,<span class="st">"azure3"</span>)
+seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"segerstolpe.rds"</span>)
+<span class="kw"><a href="../reference/DemoPlot.html">DemoPlot</a></span>(seger, <span class="dt">cluster =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">select.ct =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>), <span class="dt">Palette =</span> ct1)</code></pre></div>
+<div class="figure">
+<img src="demoplot.png" alt="scRNA-seq from Segerstolpe et al."><p class="caption">scRNA-seq from Segerstolpe et al.</p>
+</div>
+<p>To make SCDC robust to single-cell clustering, a quality control procedure is performed as a first step to remove cells with questionable cell-type assignments, as well as cells with low library preparation and sequencing quality. Specifically, each single cell is treated as a “bulk” sample and its cell-type composition can be derived by a first-pass run of SCDC. The threshold of keeping a single cell from an assigned cluster is chosen as 0.7 in this illustration example. This user-defined threshold should be selected carefully, to achieve the effect of quality control of single cells without obstructing the performance on the downstream analysis. An unproper threshold could potentially lead to filtering out a large proportion of cells from rare cell types. To be conservative, this can be chosen from (0.5,0.7).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">seger.qc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/my_qc.html">my_qc</a></span>(seger, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">scsetname =</span> <span class="st">"Segerstolpe"</span>,
+                  <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>), <span class="dt">qcthreshold =</span> <span class="fl">0.7</span>) 
+seger.qc<span class="op">$</span>heatfig</code></pre></div>
+<div class="figure">
+<img src="cqc.png" alt="scRNA-seq from Segerstolpe et al. Clustering QC"><p class="caption">scRNA-seq from Segerstolpe et al. Clustering QC</p>
+</div>
+</div>
 </div>
   </div>
 
@@ -110,7 +154,8 @@ devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#data">Data</a></li>
+<li><a href="#installation">Installation</a></li>
+      <li><a href="#example">Example</a></li>
       </ul>
 </div>
       </div>

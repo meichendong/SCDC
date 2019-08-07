@@ -24,6 +24,7 @@ getCPM0 <- function(x){
 #' Get ExpressionSet
 #' @description Use Pdata, Fdata, and count matrix to derive ExpressionSet Object
 #' @name getESET
+#' @import Biobase
 #' @param exprs raw count matrix
 #' @param fdata feature data, for genes, usually it's gene name
 #' @param pdata pheno data, for samples, usually it's the characteristics for each single cell/bulk sample, including name, gender, age, cluster, disease,...

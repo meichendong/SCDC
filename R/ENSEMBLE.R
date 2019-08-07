@@ -18,6 +18,8 @@ library(L1pack)
 #' @param nu a small constant to facilitate the calculation of variance
 #' @param epsilon a small constant number used for convergence criteria
 #' @param truep true cell-type proportions for bulk samples if known
+#' @import L1pack
+#' @import nnls
 #' @export
 SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list, ct.varname, sample,
                           ct.sub, search.method = c("Grid search", "LAD", "NNLS"), search.length = 0.05,

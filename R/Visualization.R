@@ -3,6 +3,7 @@
 #' Demographic figure for single cells
 #' @description Create a demographic figure for the input single cell dataset for each of the subject
 #' @name DemoPlot
+#' @import ggplot2
 #' @param eset ExpressionSet object of the single cell data
 #' @param cluster the variable name for "cell types" or "cluster name"
 #' @param sample the variable name for subjects
@@ -53,7 +54,8 @@ DemoPlot <- function(eset, cluster, sample, select.ct, Palette = cbPalette){
 #' @param ensemble_res the EMSEMBL result object, derived from SCDC_ENSEMBL() or SCDC_ENSEMBL_subcl()
 #' @param ref1 name for the first reference dataset
 #' @param ref2 name for the second reference dataset
-#' @return A figure of evaluated performance, varying the ENSEMBL weights for three reference datasets
+#' @import cowplot
+#' @return A figure of evaluated performance, varying the ENSEMBLE weights for three reference datasets
 #' @export
 wheat_map <- function(ensemble_res, ref1, ref2){
   pp <- ggplot( ensemble_res$gridres, aes(w1, w2, fill = Pearson)) +

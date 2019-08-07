@@ -207,6 +207,7 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample){
 #' Clustering QC
 #' @description Single cells Clustering QC
 #' @name my_qc
+#' @import pheatmap
 #' @param sc.eset ExpressionSet object for single cells
 #' @param ct.varname variable name for 'cell type'
 #' @param sample variable name for subject/sample

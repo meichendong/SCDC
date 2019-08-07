@@ -14,7 +14,7 @@ wheat_map(ensemble_res, ref1, ref2)
 \item{ref2}{name for the second reference dataset}
 }
 \value{
-A figure of evaluated performance, varying the ENSEMBL weights for three reference datasets
+A figure of evaluated performance, varying the ENSEMBLE weights for three reference datasets
 }
 \description{
 Heatmap for ENSEMBL weight selection, with four measures
