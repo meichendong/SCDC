@@ -111,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1     4   260    59    85   329</span>
-<span class="co">#&gt; gene2   443    38   294   426   238</span>
-<span class="co">#&gt; gene3   277     3    83   153    96</span>
-<span class="co">#&gt; gene4    74   338    70   183    27</span>
-<span class="co">#&gt; gene5   231   372   127   452   381</span>
+<span class="co">#&gt; gene1   384   395   328   312   198</span>
+<span class="co">#&gt; gene2   392   321    32     2   344</span>
+<span class="co">#&gt; gene3    23   175   141    77   454</span>
+<span class="co">#&gt; gene4   437   470   246   267   476</span>
+<span class="co">#&gt; gene5   401    63   383   273   463</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -252,6 +252,8 @@ getPropBox &lt;-<span class="st"> </span><span class="cf">function</span>(ens_h,
   <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(dtmelt)
 }
 
+<span class="co"># Note in the following fdt.ens, the weights 0.45, 0.55, 0.52 and 0.48 are selected through </span>
+<span class="co"># the previous step from the fadista.healthy.ens$w_table and fadista.t2d.ens$w_table, the 'min.mAD_Y_LAD' method.</span>
 fdt.ens &lt;-<span class="st"> </span><span class="kw">getPropBox</span>(<span class="dt">ens_h =</span> fadista.healthy.ens, <span class="dt">ens_d =</span> fadista.t2d.ens, <span class="dt">w1h =</span> <span class="fl">0.45</span>, <span class="dt">w2h =</span> <span class="fl">0.55</span>, <span class="dt">w1d =</span> <span class="fl">0.52</span>, <span class="dt">w2d =</span> <span class="fl">0.48</span>, <span class="dt">ref =</span> <span class="st">"ENSEMBLE"</span>)
 fdt.seger &lt;-<span class="st"> </span><span class="kw">getPropBox</span>(<span class="dt">ens_h =</span> fadista.healthy.ens, <span class="dt">ens_d =</span> fadista.t2d.ens, <span class="dt">w1h =</span> <span class="dv">0</span>, <span class="dt">w2h =</span><span class="dv">1</span>, <span class="dt">w1d =</span> <span class="dv">0</span>, <span class="dt">w2d =</span> <span class="dv">1</span>, <span class="dt">ref =</span> <span class="st">"Segerstolpe"</span>)
 fdt.baron &lt;-<span class="st"> </span><span class="kw">getPropBox</span>(<span class="dt">ens_h =</span> fadista.healthy.ens, <span class="dt">ens_d =</span> fadista.t2d.ens, <span class="dt">w1h =</span> <span class="dv">1</span>, <span class="dt">w2h =</span><span class="dv">0</span>, <span class="dt">w1d =</span> <span class="dv">1</span>, <span class="dt">w2d =</span> <span class="dv">0</span>, <span class="dt">ref =</span> <span class="st">"Baron"</span>)

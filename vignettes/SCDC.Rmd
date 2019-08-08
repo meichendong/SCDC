@@ -198,6 +198,8 @@ getPropBox <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref){
   return(dtmelt)
 }
 
+# Note in the following fdt.ens, the weights 0.45, 0.55, 0.52 and 0.48 are selected through 
+# the previous step from the fadista.healthy.ens$w_table and fadista.t2d.ens$w_table, the 'min.mAD_Y_LAD' method.
 fdt.ens <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, w1h = 0.45, w2h = 0.55, w1d = 0.52, w2d = 0.48, ref = "ENSEMBLE")
 fdt.seger <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, w1h = 0, w2h =1, w1d = 0, w2d = 1, ref = "Segerstolpe")
 fdt.baron <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, w1h = 1, w2h =0, w1d = 1, w2d = 0, ref = "Baron")
