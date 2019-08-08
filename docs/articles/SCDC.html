@@ -104,18 +104,18 @@ devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/
 <div id="data-input" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-input" class="anchor"></a>Data Input</h2>
-<p>SCDC takes <code>ExpressionSet</code> objects with raw read counts as input. <code>ExpressionSet</code> object is based on the package <em>Biobase</em>, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples, like the clustering results, subjects, conditions). We also enable a quick construction of the ExpressionSet object by the function <code><a href="../reference/getESET.html">getESET()</a></code>. Here’s a toy example:</p>
+<p>SCDC takes <code>ExpressionSet</code> objects with raw read counts as input. <code>ExpressionSet</code> object is based on the package <em>Biobase</em>, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples, like the clustering results, subjects, conditions). We also enable a quick construction of the ExpressionSet object by the function <code><a href="../reference/getESET.html">getESET()</a></code>. Here we show a toy example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(SCDC)
 counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="dv">0</span><span class="op">:</span><span class="dv">500</span>, <span class="dv">25</span>), <span class="dt">nrow =</span> <span class="dv">5</span>)
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"cell"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   118    93   141   490   458</span>
-<span class="co">#&gt; gene2   284   444   163   177   293</span>
-<span class="co">#&gt; gene3   153    16   446    88   453</span>
-<span class="co">#&gt; gene4   198   489   422   108   202</span>
-<span class="co">#&gt; gene5   174    94   478   178   164</span>
+<span class="co">#&gt; gene1   312   174   222    65   366</span>
+<span class="co">#&gt; gene2   453   377   206   127   276</span>
+<span class="co">#&gt; gene3   214   133   476   152   131</span>
+<span class="co">#&gt; gene4    51   138   487   348   297</span>
+<span class="co">#&gt; gene5   155   143   109   412   116</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -123,13 +123,13 @@ eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESE
 <span class="co">#&gt; [1] "ExpressionSet"</span>
 <span class="co">#&gt; attr(,"package")</span>
 <span class="co">#&gt; [1] "Biobase"</span></code></pre></div>
-<p>As an illustration of the <strong>SCDC</strong> framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from <a href="https://www.sciencedirect.com/science/article/pii/S2405471216302666?via%3Dihub">Baron et al.(2016)</a>, <a href="https://www.sciencedirect.com/science/article/pii/S1550413116304363?via%3Dihub">Segerstolpe et al.(2016)</a> and <a href="https://www.sciencedirect.com/science/article/pii/S155041311630434X?via%3Dihub">Xin et al.(2016)</a> are used; a bulk RNA-seq dataset from <a href="https://www.pnas.org/content/111/38/13924">Fadista et al.(2014)</a> is used in the real data analysis. We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.</p>
+<p>As an illustration of the <strong>SCDC</strong> framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from <a href="https://www.sciencedirect.com/science/article/pii/S2405471216302666?via%3Dihub">Baron et al. (2016)</a>, <a href="https://www.sciencedirect.com/science/article/pii/S1550413116304363?via%3Dihub">Segerstolpe et al. (2016)</a> and <a href="https://www.sciencedirect.com/science/article/pii/S155041311630434X?via%3Dihub">Xin et al. (2016)</a> are used; a bulk RNA-seq dataset from <a href="https://www.pnas.org/content/111/38/13924">Fadista et al. (2014)</a> is used in the real data analysis. We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.</p>
 <p>The processed data is available for download at the <a href="https://meichendong.github.io/SCDC/articles/web/SCDC_data.html">SCDC data page</a>.</p>
 </div>
 <div id="scdc-pre-process-of-scrna-seq-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scdc-pre-process-of-scrna-seq-data" class="anchor"></a>SCDC pre-process of scRNA-seq Data</h2>
-<p>For each singl-cell dataset with raw counts, we can first explore the demographic information by the visualization function <code>DemoPlot</code>. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us the general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, we derive the following plot:</p>
+<p>For each single-cell dataset with raw counts, we can first explore the demographic information by the visualization function <code>DemoPlot</code>. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us a general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, and we derive the following plot:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ct1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mediumorchid1"</span>,<span class="st">"mediumpurple1"</span>,<span class="st">"lightskyblue"</span>,<span class="st">"seagreen1"</span>,<span class="st">"yellow"</span>,<span class="st">"tan1"</span>,<span class="st">"azure3"</span>)
 seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"segerstolpe.rds"</span>)
 <span class="kw"><a href="../reference/DemoPlot.html">DemoPlot</a></span>(seger, <span class="dt">cluster =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">select.ct =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>), <span class="dt">Palette =</span> ct1)</code></pre></div>
@@ -143,7 +143,7 @@ seger.qc<span class="op">$</span>heatfig</code></pre></div>
 <div class="figure">
 <img src="cqc.png" alt="scRNA-seq from Segerstolpe et al. Clustering QC"><p class="caption">scRNA-seq from Segerstolpe et al. Clustering QC</p>
 </div>
-<p>Similarly we can perform clustering QC for single cells from only one subject using function <code><a href="../reference/SCDC_qc_ONE.html">SCDC_qc_ONE()</a></code>.</p>
+<p>Similarly, we can perform clustering QC for single cells from only one subject using function <code><a href="../reference/SCDC_qc_ONE.html">SCDC_qc_ONE()</a></code>.</p>
 </div>
 <div id="scdc-on-simulated-data" class="section level2">
 <h2 class="hasAnchor">
@@ -185,7 +185,7 @@ bulkseger.scxin<span class="op">$</span>peval<span class="op">$</span>evals.tabl
 <span class="co">#&gt;         RMSD     mAD      R</span>
 <span class="co">#&gt; SCDC 0.19058 0.15449 0.9331</span></code></pre></div>
 <p>We can observe the discrepancy of performance using different datasets. In this example, when using single cells from the reference dataset Segerstolpe et al., we derive the highest Pearson correlation, and the lowest RMSD and mAD.</p>
-<p>Next, we will explore the ENSEMBLE method integrating all the three scRNA-seq reference datasets using the pseudo bulk samples constructed above. Here we offered three methods to derive the ENSEMBLE weights: “Grid search”, “LAD”, and “NNLS”. The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method.</p>
+<p>Next, we will explore the ENSEMBLE method integrating all the three scRNA-seq reference datasets using the pseudo bulk samples constructed above. Here we offered three methods to derive the ENSEMBLE weights: ‘Grid search’,‘LAD’, and ‘NNLS’. The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#input the list of single cell ExpressionSet objects</span>
 pancreas.sc &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">baron =</span> qc.baron<span class="op">$</span>sc.eset.qc,
                     <span class="dt">seger =</span> qc.seger<span class="op">$</span>sc.eset.qc,
@@ -282,7 +282,7 @@ fadista.ens.plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(dt
 <div class="figure">
 <img src="fadista_ens.png" alt="Cell-type proportion estimation for 77 bulk samples from Fadista et al."><p class="caption">Cell-type proportion estimation for 77 bulk samples from Fadista et al.</p>
 </div>
-<p>It’s suggested by previous studies that the HbA1c levels is an important biomarker of the Type II diabetes, especially the beta cells functioning. Hence, we constructed a linear model using the estimated cell-type proportions as the response variable and the other covariates (age, gender, BMI, and HbA1c) as predictors. Here we compare deconvolution results from three sources: 1) scRNA-seq from Segerstolpe et al. only; 2) scRNA-seq from Baron et al. only; 3) ENSEMBLE deconvolution results using scRNA-seq from Segerstolpe et al. and Baron et al. separately.</p>
+<p>In our paper, we sought to replicate previous findings on the negative correlation between the hemoglobin A1c (HbA1c, an important biomarker for type 2 diabetes) levels and the beta cell functions (Kanat et al., 2011, Hou et al., 2016). Hence, we constructed a linear model using the estimated cell-type proportions as the response variable and the other covariates (age, gender, BMI, and HbA1c) as predictors. Here we compare deconvolution results from three sources: 1) scRNA-seq from Segerstolpe et al. only; 2) scRNA-seq from Baron et al. only; 3) ENSEMBLE deconvolution results using scRNA-seq from Segerstolpe et al. and Baron et al. separately.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## we use the scRNA-seq datasets without clustering-QC as input here, aiming to be comparable to the results as MuSiC shown in their paper.
 baron &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"baron.rds"</span>)
 seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"segerstolpe.rds"</span>)
@@ -382,7 +382,7 @@ hc1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/st
 <div class="figure">
 <img src="hc_3cl.png">
 </div>
-<p>The tree-structured deconvolution procedure will allow users to specify a ‘meta cluster’ by their own professional judgement. Without the requirement for marker genes input, we could employ the function <code><a href="../reference/SCDC_prop_ONE_subcl_marker.html">SCDC_prop_ONE_subcl_marker()</a></code> to deconvolve the bulk samples.</p>
+<p>The tree-structured deconvolution procedure will allow users to specify a ‘meta cluster’ by their own professional judgment. Without the requirement for marker genes input, we could employ the function <code><a href="../reference/SCDC_prop_ONE_subcl_marker.html">SCDC_prop_ONE_subcl_marker()</a></code> to deconvolve the bulk samples.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bulk3cl &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"MIX3cl_bulkESET.rds"</span>)
 sc3cl2 &lt;-<span class="st"> </span>qc.3cl<span class="op">$</span>sc.eset.qc
 sc3cl2<span class="op">$</span>md_cluster2 &lt;-<span class="st"> </span>sc3cl2<span class="op">$</span>md_cluster
@@ -396,7 +396,7 @@ SCDC_3cl_tree &lt;-<span class="st"> </span><span class="kw"><a href="../referen
 SCDC_3cl_tree<span class="op">$</span>prop.est
 <span class="co">#&gt;        MCF7 MDA-MB468 NormalFibroblast</span>
 <span class="co">#&gt; 1 0.2561348 0.6367564        0.1071088</span></code></pre></div>
-<p>The choice of limit for LogFoldChange LFC.lim=5 could be changed by users. A more robust way is to select a reasonable range of threshold, for example in this case, we choose from 3 to 6, and then estimate the proportions using different threshold. Say we calculated proportions from 3 to 6 by 0.1, we will derive 30 different estimated proportions results. We can calculate the mean from these results; or we can take the median of value of each estimated cell type, and normalize the sample-wise proportions to 1. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an efficient number to detect the inter-cell-type variations.</p>
+<p>The choice of limit for LogFoldChange <code>LFC.lim=5</code> could be changed by users. A more robust way is to select a reasonable range of threshold, for example, in this case, we choose from 3 to 6, and then estimate the proportions using different threshold. Say we calculated proportions from 3 to 6 by 0.1, we will derive 30 different estimated proportions results. We can calculate the mean from these results, or we can take the median of the value of each estimated cell type, and normalize the sample-wise proportions to 1. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.</p>
 </div>
   </div>
 

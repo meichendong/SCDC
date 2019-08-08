@@ -33,7 +33,7 @@ devtools::install_github("meichendong/SCDC")
 ## Data Input
 
 SCDC takes `ExpressionSet` objects with raw read counts as input. `ExpressionSet` object is based on the package _Biobase_, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples, like the clustering results, subjects, conditions).
-We also enable a quick construction of the ExpressionSet object by the function `getESET()`. Here's a toy example:
+We also enable a quick construction of the ExpressionSet object by the function `getESET()`. Here we show a toy example:
 
 ```{r, message=F}
 library(SCDC)
@@ -47,13 +47,13 @@ eset <- getESET(counts, fdata = fdata, pdata = pdata)
 class(eset)
 ```
 
-As an illustration of the **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from [Baron et al.(2016)](https://www.sciencedirect.com/science/article/pii/S2405471216302666?via%3Dihub), [Segerstolpe et al.(2016)](https://www.sciencedirect.com/science/article/pii/S1550413116304363?via%3Dihub) and [Xin et al.(2016)](https://www.sciencedirect.com/science/article/pii/S155041311630434X?via%3Dihub) are used; a bulk RNA-seq dataset from [Fadista et al.(2014)](https://www.pnas.org/content/111/38/13924) is used in the real data analysis. 
+As an illustration of the **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from [Baron et al. (2016)](https://www.sciencedirect.com/science/article/pii/S2405471216302666?via%3Dihub), [Segerstolpe et al. (2016)](https://www.sciencedirect.com/science/article/pii/S1550413116304363?via%3Dihub) and [Xin et al. (2016)](https://www.sciencedirect.com/science/article/pii/S155041311630434X?via%3Dihub) are used; a bulk RNA-seq dataset from [Fadista et al. (2014)](https://www.pnas.org/content/111/38/13924) is used in the real data analysis. 
 We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.
 
 The processed data is available for download at the [SCDC data page](https://meichendong.github.io/SCDC/articles/web/SCDC_data.html).
 
 ## SCDC pre-process of scRNA-seq Data
-For each singl-cell dataset with raw counts, we can first explore the demographic information by the visualization function `DemoPlot`. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us the general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, we derive the following plot:
+For each single-cell dataset with raw counts, we can first explore the demographic information by the visualization function `DemoPlot`. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us a general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, and we derive the following plot:
 
 ```r
 ct1 <- c("mediumorchid1","mediumpurple1","lightskyblue","seagreen1","yellow","tan1","azure3")
@@ -72,7 +72,7 @@ seger.qc$heatfig
 ```
 ![scRNA-seq from Segerstolpe et al. Clustering QC](cqc.png) 
 
-Similarly we can perform clustering QC for single cells from only one subject using function `SCDC_qc_ONE()`.
+Similarly, we can perform clustering QC for single cells from only one subject using function `SCDC_qc_ONE()`.
 
 
 ## SCDC on Simulated Data
@@ -126,7 +126,7 @@ bulkseger.scxin$peval$evals.table
 We can observe the discrepancy of performance using different datasets. In this example, when using single cells from the reference dataset Segerstolpe et al., we derive the highest Pearson correlation, and the lowest RMSD and mAD.
 
 Next, we will explore the ENSEMBLE method integrating all the three scRNA-seq reference datasets using the pseudo bulk samples constructed above.
-Here we offered three methods to derive the ENSEMBLE weights: "Grid search", "LAD", and "NNLS". The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method. 
+Here we offered three methods to derive the ENSEMBLE weights: 'Grid search','LAD', and 'NNLS'. The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method. 
 ```r
 #input the list of single cell ExpressionSet objects
 pancreas.sc <- list(baron = qc.baron$sc.eset.qc,
@@ -228,7 +228,10 @@ print(fadista.ens.plot)
 ```
 ![Cell-type proportion estimation for 77 bulk samples from Fadista et al.](fadista_ens.png)
 
-It's suggested by previous studies that the HbA1c levels is an important biomarker of the Type II diabetes, especially the beta cells functioning. Hence, we constructed a linear model using the estimated cell-type proportions as the response variable and the other covariates (age, gender, BMI, and HbA1c) as predictors. Here we compare deconvolution results from three sources: 1) scRNA-seq from Segerstolpe et al. only; 2) scRNA-seq from Baron et al. only; 3) ENSEMBLE deconvolution results using scRNA-seq from Segerstolpe et al. and Baron et al. separately.
+In our paper, we sought to replicate previous findings on the negative correlation
+between the hemoglobin A1c (HbA1c, an important biomarker for type 2 diabetes)
+levels and the beta cell functions (Kanat et al., 2011, Hou et al., 2016). 
+Hence, we constructed a linear model using the estimated cell-type proportions as the response variable and the other covariates (age, gender, BMI, and HbA1c) as predictors. Here we compare deconvolution results from three sources: 1) scRNA-seq from Segerstolpe et al. only; 2) scRNA-seq from Baron et al. only; 3) ENSEMBLE deconvolution results using scRNA-seq from Segerstolpe et al. and Baron et al. separately.
 
 ```r
 ## we use the scRNA-seq datasets without clustering-QC as input here, aiming to be comparable to the results as MuSiC shown in their paper.
@@ -337,7 +340,7 @@ plot(hc1, cex = 0.8, hang = -1, main = "log(basis matrix)")
 ```
 ![](hc_3cl.png) 
 
-The tree-structured deconvolution procedure will allow users to specify a 'meta cluster' by their own professional judgement. Without the requirement for marker genes input, we could employ the function `SCDC_prop_ONE_subcl_marker()` to deconvolve the bulk samples.
+The tree-structured deconvolution procedure will allow users to specify a 'meta cluster' by their own professional judgment. Without the requirement for marker genes input, we could employ the function `SCDC_prop_ONE_subcl_marker()` to deconvolve the bulk samples.
 
 ```r
 bulk3cl <- readRDS("MIX3cl_bulkESET.rds")
@@ -354,4 +357,4 @@ SCDC_3cl_tree$prop.est
 #>        MCF7 MDA-MB468 NormalFibroblast
 #> 1 0.2561348 0.6367564        0.1071088
 ```
-The choice of limit for LogFoldChange LFC.lim=5 could be changed by users. A more robust way is to select a reasonable range of threshold, for example in this case, we choose from 3 to 6, and then estimate the proportions using different threshold. Say we calculated proportions from 3 to 6 by 0.1, we will derive 30 different estimated proportions results. We can calculate the mean from these results; or we can take the median of value of each estimated cell type, and normalize the sample-wise proportions to 1. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an efficient number to detect the inter-cell-type variations.
+The choice of limit for LogFoldChange `LFC.lim=5` could be changed by users. A more robust way is to select a reasonable range of threshold, for example, in this case, we choose from 3 to 6, and then estimate the proportions using different threshold. Say we calculated proportions from 3 to 6 by 0.1, we will derive 30 different estimated proportions results. We can calculate the mean from these results, or we can take the median of the value of each estimated cell type, and normalize the sample-wise proportions to 1. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.
