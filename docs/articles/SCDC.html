@@ -101,12 +101,9 @@
 }
 devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"meichendong/SCDC"</span>)</code></pre></div>
 </div>
-<div id="example" class="section level2">
+<div id="data-input" class="section level2">
 <h2 class="hasAnchor">
-<a href="#example" class="anchor"></a>Example</h2>
-<div id="data-input" class="section level3">
-<h3 class="hasAnchor">
-<a href="#data-input" class="anchor"></a>Data Input</h3>
+<a href="#data-input" class="anchor"></a>Data Input</h2>
 <p>SCDC takes <code>ExpressionSet</code> objects with raw read counts as input. <code>ExpressionSet</code> object is based on the package <em>Biobase</em>, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples, like the clustering results, subjects, conditions). We also enable a quick construction of the ExpressionSet object by the function <code><a href="../reference/getESET.html">getESET()</a></code>. Here’s a toy example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(SCDC)
 counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="dv">0</span><span class="op">:</span><span class="dv">500</span>, <span class="dv">25</span>), <span class="dt">nrow =</span> <span class="dv">5</span>)
@@ -114,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   389   394   247    12   231</span>
-<span class="co">#&gt; gene2   385     2   196   118    97</span>
-<span class="co">#&gt; gene3     5    37    55   205   166</span>
-<span class="co">#&gt; gene4   255   258   230   224   249</span>
-<span class="co">#&gt; gene5   403   410   246   126   227</span>
+<span class="co">#&gt; gene1   118    93   141   490   458</span>
+<span class="co">#&gt; gene2   284   444   163   177   293</span>
+<span class="co">#&gt; gene3   153    16   446    88   453</span>
+<span class="co">#&gt; gene4   198   489   422   108   202</span>
+<span class="co">#&gt; gene5   174    94   478   178   164</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -126,12 +123,12 @@ eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESE
 <span class="co">#&gt; [1] "ExpressionSet"</span>
 <span class="co">#&gt; attr(,"package")</span>
 <span class="co">#&gt; [1] "Biobase"</span></code></pre></div>
-<p>As an illustration of the <strong>SCDC</strong> framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.</p>
+<p>As an illustration of the <strong>SCDC</strong> framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from <a href="https://www.sciencedirect.com/science/article/pii/S2405471216302666?via%3Dihub">Baron et al.(2016)</a>, <a href="https://www.sciencedirect.com/science/article/pii/S1550413116304363?via%3Dihub">Segerstolpe et al.(2016)</a> and <a href="https://www.sciencedirect.com/science/article/pii/S155041311630434X?via%3Dihub">Xin et al.(2016)</a> are used; a bulk RNA-seq dataset from <a href="https://www.pnas.org/content/111/38/13924">Fadista et al.(2014)</a> is used in the real data analysis. We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.</p>
 <p>The processed data is available for download at the <a href="https://meichendong.github.io/SCDC/articles/web/SCDC_data.html">SCDC data page</a>.</p>
 </div>
-<div id="descriptive-information-of-scrna-seq-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#descriptive-information-of-scrna-seq-data" class="anchor"></a>Descriptive Information of scRNA-seq Data</h3>
+<div id="scdc-pre-process-of-scrna-seq-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scdc-pre-process-of-scrna-seq-data" class="anchor"></a>SCDC pre-process of scRNA-seq Data</h2>
 <p>For each singl-cell dataset with raw counts, we can first explore the demographic information by the visualization function <code>DemoPlot</code>. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us the general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, we derive the following plot:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ct1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mediumorchid1"</span>,<span class="st">"mediumpurple1"</span>,<span class="st">"lightskyblue"</span>,<span class="st">"seagreen1"</span>,<span class="st">"yellow"</span>,<span class="st">"tan1"</span>,<span class="st">"azure3"</span>)
 seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"segerstolpe.rds"</span>)
@@ -148,9 +145,9 @@ seger.qc<span class="op">$</span>heatfig</code></pre></div>
 </div>
 <p>Similarly we can perform clustering QC for single cells from only one subject using function <code><a href="../reference/SCDC_qc_ONE.html">SCDC_qc_ONE()</a></code>.</p>
 </div>
-<div id="scdc-on-simulated-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#scdc-on-simulated-data" class="anchor"></a>SCDC on Simulated Data</h3>
+<div id="scdc-on-simulated-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scdc-on-simulated-data" class="anchor"></a>SCDC on Simulated Data</h2>
 <p>SCDC allows users to construct pseudo bulk samples in two ways:</p>
 <ul>
 <li><p><code><a href="../reference/generateBulk_allcells.html">generateBulk_allcells()</a></code>: Sum up gene-wise raw read counts per subject, and the true cell-type proportion is consistent with the single cell clustering result.</p></li>
@@ -213,9 +210,9 @@ PS_ensemble<span class="op">$</span>w_table
 <span class="co">#&gt; min.RMSD_Y_NNLS        0.91420 0.0003437 2.755e-05</span></code></pre></div>
 <p>In this case, SCDC ENSEMBLE weights suggest that the weight for results from reference dataset Segerstolpe et al. to be one. Hence, the final estimated cell-type proportions can be found at <code>PS_ensemble$prop.list$seger$prop.est.mvw</code>.</p>
 </div>
-<div id="scdc-on-real-bulk-rna-seq-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#scdc-on-real-bulk-rna-seq-data" class="anchor"></a>SCDC on Real Bulk RNA-seq Data</h3>
+<div id="scdc-on-real-bulk-rna-seq-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scdc-on-real-bulk-rna-seq-data" class="anchor"></a>SCDC on Real Bulk RNA-seq Data</h2>
 <p>Here, we move on to analyze the real pancreatic islet bulk RNA-seq dataset. Fadista et al. (2014) provided 89 bulk samples, of which 77 samples have the HbA1c level information(an important biomarker for the Type II diabetes). Hence, we focus on the deconvolution for the 77 bulk samples (51 healthy and 26 diabetic). To allow the basis matrix to reflect the potentially different gene expression patterns between the cases and controls, we performed the ENSEMBLE weight selection procedures for the samples from the two classes (normal and T2D) separately.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fadista_<span class="dv">77</span> &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"fadista_77.rds"</span>)
 <span class="co"># setting the search.length as 0.01 might take several minutes to finish the ENSEMBLE procedure.</span>
@@ -373,7 +370,6 @@ fadista.LMplot</code></pre></div>
 </div>
 <p>We see that SCDC ENSEMBLE method derives the p-value of 0.0019 &lt;0.05, indicating a statistically significant association between the beta-cell proportions and the HbA1c levels.</p>
 </div>
-</div>
 <div id="three-cell-line-mixture-data-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#three-cell-line-mixture-data-analysis" class="anchor"></a>Three Cell-line Mixture Data Analysis</h2>
@@ -410,7 +406,10 @@ SCDC_3cl_tree<span class="op">$</span>prop.est
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#installation">Installation</a></li>
-      <li><a href="#example">Example</a></li>
+      <li><a href="#data-input">Data Input</a></li>
+      <li><a href="#scdc-pre-process-of-scrna-seq-data">SCDC pre-process of scRNA-seq Data</a></li>
+      <li><a href="#scdc-on-simulated-data">SCDC on Simulated Data</a></li>
+      <li><a href="#scdc-on-real-bulk-rna-seq-data">SCDC on Real Bulk RNA-seq Data</a></li>
       <li><a href="#three-cell-line-mixture-data-analysis">Three Cell-line Mixture Data Analysis</a></li>
       </ul>
 </div>

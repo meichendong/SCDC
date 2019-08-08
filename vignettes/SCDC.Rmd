@@ -30,9 +30,7 @@ if (!require("devtools")) {
 devtools::install_github("meichendong/SCDC")
 ```
 
-## Example 
-
-### Data Input
+## Data Input
 
 SCDC takes `ExpressionSet` objects with raw read counts as input. `ExpressionSet` object is based on the package _Biobase_, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples, like the clustering results, subjects, conditions).
 We also enable a quick construction of the ExpressionSet object by the function `getESET()`. Here's a toy example:
@@ -54,7 +52,7 @@ We also applied our method to a three-cell-line mixture data from Perou lab, whe
 
 The processed data is available for download at the [SCDC data page](https://meichendong.github.io/SCDC/articles/web/SCDC_data.html).
 
-### Descriptive Information of scRNA-seq Data
+## SCDC pre-process of scRNA-seq Data
 For each singl-cell dataset with raw counts, we can first explore the demographic information by the visualization function `DemoPlot`. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us the general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, we derive the following plot:
 
 ```r
@@ -77,7 +75,7 @@ seger.qc$heatfig
 Similarly we can perform clustering QC for single cells from only one subject using function `SCDC_qc_ONE()`.
 
 
-### SCDC on Simulated Data
+## SCDC on Simulated Data
 SCDC allows users to construct pseudo bulk samples in two ways:
 
 - `generateBulk_allcells()`: Sum up gene-wise raw read counts per subject, and the true cell-type proportion is consistent with the single cell clustering result.
@@ -155,7 +153,7 @@ PS_ensemble$w_table
 ```
 In this case, SCDC ENSEMBLE weights suggest that the weight for results from reference dataset Segerstolpe et al. to be one. Hence, the final estimated cell-type proportions can be found at `PS_ensemble$prop.list$seger$prop.est.mvw`.
 
-### SCDC on Real Bulk RNA-seq Data
+## SCDC on Real Bulk RNA-seq Data
 Here, we move on to analyze the real pancreatic islet bulk RNA-seq dataset. Fadista et al. (2014) provided 89 bulk samples, of which 77 samples have the HbA1c level information(an important biomarker for the Type II diabetes). Hence, we focus on the deconvolution for the 77 bulk samples (51 healthy and 26 diabetic).
 To allow the basis matrix to reflect the potentially different gene expression patterns between the cases and controls, we performed the ENSEMBLE weight selection procedures for the samples from the two classes (normal and T2D) separately.
 
