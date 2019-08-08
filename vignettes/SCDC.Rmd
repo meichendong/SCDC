@@ -66,7 +66,7 @@ To make SCDC robust to single-cell clustering, a quality control procedure is pe
 The threshold of keeping a single cell from an assigned cluster is chosen as 0.7 in this illustration example. This user-defined threshold should be selected carefully, to achieve the effect of quality control of single cells without obstructing the performance on the downstream analysis. An unproper threshold could potentially lead to filtering out a large proportion of cells from rare cell types. To be conservative, this can be chosen from (0.5,0.7).
 
 ```r
-seger.qc <- my_qc(seger, ct.varname = "cluster", sample = "sample", scsetname = "Segerstolpe",
+seger.qc <- SCDC_qc(seger, ct.varname = "cluster", sample = "sample", scsetname = "Segerstolpe",
                   ct.sub = c("alpha","beta","delta","gamma","ductal","acinar"), qcthreshold = 0.7) 
 seger.qc$heatfig
 ```
@@ -359,3 +359,6 @@ SCDC_3cl_tree$prop.est
 ```
 The choice of limit for LogFoldChange `LFC.lim=5` could be changed by users. 
 Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.
+
+<!-- ## Mouse Mammary Gland Data Analysis
+pending... -->

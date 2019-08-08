@@ -206,7 +206,7 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample){
 #################################
 #' Clustering QC
 #' @description Single cells Clustering QC
-#' @name my_qc
+#' @name SCDC_qc
 #' @import pheatmap
 #' @param sc.eset ExpressionSet object for single cells
 #' @param ct.varname variable name for 'cell type'
@@ -220,7 +220,7 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample){
 #' @param qcthreshold the probability threshold used to filter out questionable cells
 #' @return a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.
 #' @export
-my_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
+SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
                    ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.01, arow =NULL,
                    qcthreshold = 0.7, ...) {
   sc.basis = SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
@@ -833,7 +833,7 @@ SCDC_prop_subcl_marker <- function(bulk.eset, sc.eset, ct.varname, fl.varname, s
   peval <- NULL
   if (!is.null(truep)){
     peval <- SCDC_peval(ptrue= truep, pest = prop.est, pest.names = c('SCDC'),
-                       select.ct = ct.sub, bulk_obj = bulk.eset)
+                       select.ct = ct.sub)
   }
 
   return(list(prop.est = prop.est, prop.wt.fl = prop.wt.fl, basis.mvw = basis.mvw, peval = peval,

@@ -22,9 +22,6 @@
     <loc>https://meichendong.github.io/SCDC//reference/getSearchGrid.html</loc>
   </url>
   <url>
-    <loc>https://meichendong.github.io/SCDC//reference/my_qc.html</loc>
-  </url>
-  <url>
     <loc>https://meichendong.github.io/SCDC//reference/SCDC_basis.html</loc>
   </url>
   <url>
@@ -50,6 +47,9 @@
   </url>
   <url>
     <loc>https://meichendong.github.io/SCDC//reference/SCDC_prop_subcl_marker.html</loc>
+  </url>
+  <url>
+    <loc>https://meichendong.github.io/SCDC//reference/SCDC_qc.html</loc>
   </url>
   <url>
     <loc>https://meichendong.github.io/SCDC//reference/SCDC_qc_ONE.html</loc>

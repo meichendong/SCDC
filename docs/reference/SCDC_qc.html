@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • SCDC</title>
+<title>Clustering QC — SCDC_qc • SCDC</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,7 +32,10 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Clustering QC — SCDC_qc" />
+
+<meta property="og:description" content="Single cells Clustering QC" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -50,7 +53,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -112,150 +115,82 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Clustering QC</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meichendong/SCDC/blob/master/R/Deconvolution.R'><code>R/Deconvolution.R</code></a></small>
+    <div class="hidden name"><code>SCDC_qc.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>Single cells Clustering QC</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="DemoPlot.html">DemoPlot()</a></code> </p>
-        </td>
-        <td><p>Demographic figure for single cells</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="generateBulk_allcells.html">generateBulk_allcells()</a></code> </p>
-        </td>
-        <td><p>Construct Pseudo bulk samples</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="generateBulk_norep.html">generateBulk_norep()</a></code> </p>
-        </td>
-        <td><p>Construct Pseudo bulk samples -- random</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getCPM0.html">getCPM0()</a></code> </p>
-        </td>
-        <td><p>Normalize matrix / vector</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getESET.html">getESET</a></code> </p>
-        </td>
-        <td><p>Get ExpressionSet</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getSearchGrid.html">getSearchGrid()</a></code> </p>
-        </td>
-        <td><p>Grid search matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_basis.html">SCDC_basis()</a></code> </p>
-        </td>
-        <td><p>Basis Matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_basis_ONE.html">SCDC_basis_ONE()</a></code> </p>
-        </td>
-        <td><p>Basis matrix for single cells from one subject</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_ENSEMBLE.html">SCDC_ENSEMBLE()</a></code> </p>
-        </td>
-        <td><p>ENSEMBL function</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_ENSEMBLE_subcl.html">SCDC_ENSEMBLE_subcl()</a></code> </p>
-        </td>
-        <td><p>ENSEMBL function for manually input deconvolution results</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_peval.html">SCDC_peval()</a></code> </p>
-        </td>
-        <td><p>Evaluate deconvolved proportions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_prop.html">SCDC_prop()</a></code> </p>
-        </td>
-        <td><p>Proportion estimation</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_prop_ONE.html">SCDC_prop_ONE()</a></code> </p>
-        </td>
-        <td><p>Proportion estimation function for one-subject case</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_prop_ONE_subcl_marker.html">SCDC_prop_ONE_subcl_marker()</a></code> </p>
-        </td>
-        <td><p>Tree-guided proportion estimation for ONE subject</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_prop_subcl_marker.html">SCDC_prop_subcl_marker()</a></code> </p>
-        </td>
-        <td><p>Tree-guided proportion estimation</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_qc.html">SCDC_qc()</a></code> </p>
-        </td>
-        <td><p>Clustering QC</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_qc_ONE.html">SCDC_qc_ONE()</a></code> </p>
-        </td>
-        <td><p>Clustering QC for single cells from one subject</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_yeval.html">SCDC_yeval()</a></code> </p>
-        </td>
-        <td><p>Evaluate predicted gene expression levels</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="wheat_map.html">wheat_map()</a></code> </p>
-        </td>
-        <td><p>Heatmap for ENSEMBL weight selection, with four measures</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>SCDC_qc</span>(<span class='no'>sc.eset</span>, <span class='no'>ct.varname</span>, <span class='no'>sample</span>, <span class='kw'>scsetname</span> <span class='kw'>=</span> <span class='st'>"Single Cell"</span>, <span class='no'>ct.sub</span>,
+  <span class='kw'>iter.max</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>nu</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.01</span>, <span class='kw'>arow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>qcthreshold</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='no'>...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>sc.eset</th>
+      <td><p>ExpressionSet object for single cells</p></td>
+    </tr>
+    <tr>
+      <th>ct.varname</th>
+      <td><p>variable name for 'cell type'</p></td>
+    </tr>
+    <tr>
+      <th>sample</th>
+      <td><p>variable name for subject/sample</p></td>
+    </tr>
+    <tr>
+      <th>scsetname</th>
+      <td><p>the name for the single cell dataset</p></td>
+    </tr>
+    <tr>
+      <th>ct.sub</th>
+      <td><p>a subset of cell types that are selected to construct basis matrix</p></td>
+    </tr>
+    <tr>
+      <th>iter.max</th>
+      <td><p>the maximum number of iteration in WNNLS</p></td>
+    </tr>
+    <tr>
+      <th>nu</th>
+      <td><p>a small constant to facilitate the calculation of variance</p></td>
+    </tr>
+    <tr>
+      <th>epsilon</th>
+      <td><p>a small constant number used for convergence criteria</p></td>
+    </tr>
+    <tr>
+      <th>arow</th>
+      <td><p>annotation of rows for pheatmap</p></td>
+    </tr>
+    <tr>
+      <th>qcthreshold</th>
+      <td><p>the probability threshold used to filter out questionable cells</p></td>
+    </tr>
     </table>
-  </div>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.</p>
+    
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
-    </ul>
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+          </ul>
+
   </div>
 </div>
 

@@ -111,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   357   447   116   354    76</span>
-<span class="co">#&gt; gene2   467    36    55   332   438</span>
-<span class="co">#&gt; gene3   144   100   380   439   119</span>
-<span class="co">#&gt; gene4    47   231   470   400   396</span>
-<span class="co">#&gt; gene5   298    98   233   113   376</span>
+<span class="co">#&gt; gene1     4   260    59    85   329</span>
+<span class="co">#&gt; gene2   443    38   294   426   238</span>
+<span class="co">#&gt; gene3   277     3    83   153    96</span>
+<span class="co">#&gt; gene4    74   338    70   183    27</span>
+<span class="co">#&gt; gene5   231   372   127   452   381</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -137,7 +137,7 @@ seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/
 <img src="demoplot.png" alt="scRNA-seq from Segerstolpe et al."><p class="caption">scRNA-seq from Segerstolpe et al.</p>
 </div>
 <p>To make SCDC robust to single-cell clustering, a quality control procedure is performed as a first step to remove cells with questionable cell-type assignments, as well as cells with low library preparation and sequencing quality. Specifically, each single cell is treated as a “bulk” sample and its cell-type composition can be derived by a first-pass run of SCDC. The threshold of keeping a single cell from an assigned cluster is chosen as 0.7 in this illustration example. This user-defined threshold should be selected carefully, to achieve the effect of quality control of single cells without obstructing the performance on the downstream analysis. An unproper threshold could potentially lead to filtering out a large proportion of cells from rare cell types. To be conservative, this can be chosen from (0.5,0.7).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">seger.qc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/my_qc.html">my_qc</a></span>(seger, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">scsetname =</span> <span class="st">"Segerstolpe"</span>,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">seger.qc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_qc.html">SCDC_qc</a></span>(seger, <span class="dt">ct.varname =</span> <span class="st">"cluster"</span>, <span class="dt">sample =</span> <span class="st">"sample"</span>, <span class="dt">scsetname =</span> <span class="st">"Segerstolpe"</span>,
                   <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>), <span class="dt">qcthreshold =</span> <span class="fl">0.7</span>) 
 seger.qc<span class="op">$</span>heatfig</code></pre></div>
 <div class="figure">
@@ -397,6 +397,8 @@ SCDC_3cl_tree<span class="op">$</span>prop.est
 <span class="co">#&gt;        MCF7 MDA-MB468 NormalFibroblast</span>
 <span class="co">#&gt; 1 0.2561348 0.6367564        0.1071088</span></code></pre></div>
 <p>The choice of limit for LogFoldChange <code>LFC.lim=5</code> could be changed by users. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.</p>
+<!-- ## Mouse Mammary Gland Data Analysis
+pending... -->
 </div>
   </div>
 
