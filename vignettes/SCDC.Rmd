@@ -49,7 +49,7 @@ eset <- getESET(counts, fdata = fdata, pdata = pdata)
 class(eset)
 ```
 
-As an illustration of the **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from Baron et al.(2017), Segerstolpe et al.(2016) and Xin et al.(2016) are used; a bulk RNA-seq dataset from Fadista et al.(2014) is used in the real data analysis. 
+As an illustration of the **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from [Baron et al.(2016)](https://www.sciencedirect.com/science/article/pii/S2405471216302666?via%3Dihub), [Segerstolpe et al.(2016)](https://www.sciencedirect.com/science/article/pii/S1550413116304363?via%3Dihub) and [Xin et al.(2016)](https://www.sciencedirect.com/science/article/pii/S155041311630434X?via%3Dihub) are used; a bulk RNA-seq dataset from [Fadista et al.(2014)](https://www.pnas.org/content/111/38/13924) is used in the real data analysis. 
 We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.
 
 The processed data is available for download at the [SCDC data page](https://meichendong.github.io/SCDC/articles/web/SCDC_data.html).
