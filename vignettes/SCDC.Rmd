@@ -52,7 +52,7 @@ We also applied our method to a three-cell-line mixture data from Perou lab, whe
 
 The processed data is available for download at the [SCDC data page](https://meichendong.github.io/SCDC/articles/web/SCDC_data.html).
 
-## SCDC pre-process of scRNA-seq Data
+## SCDC Pre-process of scRNA-seq Data
 For each single-cell dataset with raw counts, we can first explore the demographic information by the visualization function `DemoPlot`. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us a general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, and we derive the following plot:
 
 ```r
@@ -126,7 +126,7 @@ bulkseger.scxin$peval$evals.table
 We can observe the discrepancy of performance using different datasets. In this example, when using single cells from the reference dataset Segerstolpe et al., we derive the highest Pearson correlation, and the lowest RMSD and mAD.
 
 Next, we will explore the ENSEMBLE method integrating all the three scRNA-seq reference datasets using the pseudo bulk samples constructed above.
-Here we offered three methods to derive the ENSEMBLE weights: 'Grid search','LAD', and 'NNLS'. The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method. 
+Here we offered three methods to derive the ENSEMBLE weights: 'Grid search', 'LAD', and 'NNLS'. The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method. 
 ```r
 #input the list of single cell ExpressionSet objects
 pancreas.sc <- list(baron = qc.baron$sc.eset.qc,
@@ -357,4 +357,5 @@ SCDC_3cl_tree$prop.est
 #>        MCF7 MDA-MB468 NormalFibroblast
 #> 1 0.2561348 0.6367564        0.1071088
 ```
-The choice of limit for LogFoldChange `LFC.lim=5` could be changed by users. A more robust way is to select a reasonable range of threshold, for example, in this case, we choose from 3 to 6, and then estimate the proportions using different threshold. Say we calculated proportions from 3 to 6 by 0.1, we will derive 30 different estimated proportions results. We can calculate the mean from these results, or we can take the median of the value of each estimated cell type, and normalize the sample-wise proportions to 1. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.
+The choice of limit for LogFoldChange `LFC.lim=5` could be changed by users. 
+Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.

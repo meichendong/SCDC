@@ -111,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   312   174   222    65   366</span>
-<span class="co">#&gt; gene2   453   377   206   127   276</span>
-<span class="co">#&gt; gene3   214   133   476   152   131</span>
-<span class="co">#&gt; gene4    51   138   487   348   297</span>
-<span class="co">#&gt; gene5   155   143   109   412   116</span>
+<span class="co">#&gt; gene1   357   447   116   354    76</span>
+<span class="co">#&gt; gene2   467    36    55   332   438</span>
+<span class="co">#&gt; gene3   144   100   380   439   119</span>
+<span class="co">#&gt; gene4    47   231   470   400   396</span>
+<span class="co">#&gt; gene5   298    98   233   113   376</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -128,7 +128,7 @@ eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESE
 </div>
 <div id="scdc-pre-process-of-scrna-seq-data" class="section level2">
 <h2 class="hasAnchor">
-<a href="#scdc-pre-process-of-scrna-seq-data" class="anchor"></a>SCDC pre-process of scRNA-seq Data</h2>
+<a href="#scdc-pre-process-of-scrna-seq-data" class="anchor"></a>SCDC Pre-process of scRNA-seq Data</h2>
 <p>For each single-cell dataset with raw counts, we can first explore the demographic information by the visualization function <code>DemoPlot</code>. Here, single cells from each subject are summarized by total counts, counts per cell type, and the overall composition. This gives us a general understanding of a dataset. Take scRNA-seq data of healthy subjects from Segerstolpe et al. as an example, and we derive the following plot:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ct1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mediumorchid1"</span>,<span class="st">"mediumpurple1"</span>,<span class="st">"lightskyblue"</span>,<span class="st">"seagreen1"</span>,<span class="st">"yellow"</span>,<span class="st">"tan1"</span>,<span class="st">"azure3"</span>)
 seger &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"segerstolpe.rds"</span>)
@@ -185,7 +185,7 @@ bulkseger.scxin<span class="op">$</span>peval<span class="op">$</span>evals.tabl
 <span class="co">#&gt;         RMSD     mAD      R</span>
 <span class="co">#&gt; SCDC 0.19058 0.15449 0.9331</span></code></pre></div>
 <p>We can observe the discrepancy of performance using different datasets. In this example, when using single cells from the reference dataset Segerstolpe et al., we derive the highest Pearson correlation, and the lowest RMSD and mAD.</p>
-<p>Next, we will explore the ENSEMBLE method integrating all the three scRNA-seq reference datasets using the pseudo bulk samples constructed above. Here we offered three methods to derive the ENSEMBLE weights: ‘Grid search’,‘LAD’, and ‘NNLS’. The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method.</p>
+<p>Next, we will explore the ENSEMBLE method integrating all the three scRNA-seq reference datasets using the pseudo bulk samples constructed above. Here we offered three methods to derive the ENSEMBLE weights: ‘Grid search’, ‘LAD’, and ‘NNLS’. The default setting is using all these three methods. The search length is a parameter representing the search step size, which is related to the grid search method.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#input the list of single cell ExpressionSet objects</span>
 pancreas.sc &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">baron =</span> qc.baron<span class="op">$</span>sc.eset.qc,
                     <span class="dt">seger =</span> qc.seger<span class="op">$</span>sc.eset.qc,
@@ -396,7 +396,7 @@ SCDC_3cl_tree &lt;-<span class="st"> </span><span class="kw"><a href="../referen
 SCDC_3cl_tree<span class="op">$</span>prop.est
 <span class="co">#&gt;        MCF7 MDA-MB468 NormalFibroblast</span>
 <span class="co">#&gt; 1 0.2561348 0.6367564        0.1071088</span></code></pre></div>
-<p>The choice of limit for LogFoldChange <code>LFC.lim=5</code> could be changed by users. A more robust way is to select a reasonable range of threshold, for example, in this case, we choose from 3 to 6, and then estimate the proportions using different threshold. Say we calculated proportions from 3 to 6 by 0.1, we will derive 30 different estimated proportions results. We can calculate the mean from these results, or we can take the median of the value of each estimated cell type, and normalize the sample-wise proportions to 1. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.</p>
+<p>The choice of limit for LogFoldChange <code>LFC.lim=5</code> could be changed by users. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.</p>
 </div>
   </div>
 
@@ -407,7 +407,7 @@ SCDC_3cl_tree<span class="op">$</span>prop.est
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#installation">Installation</a></li>
       <li><a href="#data-input">Data Input</a></li>
-      <li><a href="#scdc-pre-process-of-scrna-seq-data">SCDC pre-process of scRNA-seq Data</a></li>
+      <li><a href="#scdc-pre-process-of-scrna-seq-data">SCDC Pre-process of scRNA-seq Data</a></li>
       <li><a href="#scdc-on-simulated-data">SCDC on Simulated Data</a></li>
       <li><a href="#scdc-on-real-bulk-rna-seq-data">SCDC on Real Bulk RNA-seq Data</a></li>
       <li><a href="#three-cell-line-mixture-data-analysis">Three Cell-line Mixture Data Analysis</a></li>
