@@ -2,7 +2,7 @@
 % Please edit documentation in R/ENSEMBLE.R
 \name{SCDC_ENSEMBLE}
 \alias{SCDC_ENSEMBLE}
-\title{ENSEMBL function}
+\title{ENSEMBLE function}
 \usage{
 SCDC_ENSEMBLE(bulk.eset, sc.eset.list, ct.varname, sample, ct.sub,
   search.method = c("Grid search", "LAD", "NNLS"),
@@ -20,7 +20,7 @@ SCDC_ENSEMBLE(bulk.eset, sc.eset.list, ct.varname, sample, ct.sub,
 
 \item{ct.sub}{a subset of cell types that are selected to construct basis matrix}
 
-\item{search.method}{method to derive the ENSEMBL weights, including "Grid search", "LAD", "NNLS".}
+\item{search.method}{method to derive the ENSEMBLE weights, including "Grid search", "LAD", "NNLS".}
 
 \item{search.length}{if using "Grid search", the step length used.}
 
@@ -33,5 +33,5 @@ SCDC_ENSEMBLE(bulk.eset, sc.eset.list, ct.varname, sample, ct.sub,
 \item{truep}{true cell-type proportions for bulk samples if known}
 }
 \description{
-ENSEMBL function for deconvolution results output from SCDC_prop
+ENSEMBLE function for deconvolution results output from SCDC_prop
 }

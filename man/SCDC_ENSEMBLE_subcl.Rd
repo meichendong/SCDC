@@ -2,7 +2,7 @@
 % Please edit documentation in R/ENSEMBLE.R
 \name{SCDC_ENSEMBLE_subcl}
 \alias{SCDC_ENSEMBLE_subcl}
-\title{ENSEMBL function for manually input deconvolution results}
+\title{ENSEMBLE function for manually input deconvolution results}
 \usage{
 SCDC_ENSEMBLE_subcl(bulk.eset, prop.list, truep = NULL, ct.sub,
   search.length = 0.05, search.method = c("Grid search", "LAD",
@@ -19,7 +19,7 @@ SCDC_ENSEMBLE_subcl(bulk.eset, prop.list, truep = NULL, ct.sub,
 
 \item{search.length}{if using "Grid search", the step length used.}
 
-\item{search.method}{method to derive the ENSEMBL weights, including "Grid search", "LAD", "NNLS".}
+\item{search.method}{method to derive the ENSEMBLE weights, including "Grid search", "LAD", "NNLS".}
 
 \item{iter.max}{the maximum number of iteration in WNNLS}
 
@@ -32,5 +32,5 @@ SCDC_ENSEMBLE_subcl(bulk.eset, prop.list, truep = NULL, ct.sub,
 \item{sample}{variable name for subject/samples}
 }
 \description{
-ENSEMBL function for manually input deconvolution results
+ENSEMBLE function for manually input deconvolution results
 }

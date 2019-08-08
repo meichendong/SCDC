@@ -1,18 +1,18 @@
 ##################################
-#####   ENSEMBL PROCEDURE    #####
+#####   ENSEMBLE PROCEDURE    #####
 ##################################
 library(L1pack)
 
 ##################################################
-#' ENSEMBL function
-#' @description ENSEMBL function for deconvolution results output from SCDC_prop
+#' ENSEMBLE function
+#' @description ENSEMBLE function for deconvolution results output from SCDC_prop
 #' @name SCDC_ENSEMBLE
 #' @param bulk.eset ExpressionSet object for bulk samples
 #' @param sc.eset.list list of ExpressionSet objects for single cell reference datasets
 #' @param ct.sub a subset of cell types that are selected to construct basis matrix
 #' @param ct.varname variable name for 'cell types'
 #' @param sample variable name for subject/samples
-#' @param search.method method to derive the ENSEMBL weights, including "Grid search", "LAD", "NNLS".
+#' @param search.method method to derive the ENSEMBLE weights, including "Grid search", "LAD", "NNLS".
 #' @param search.length if using "Grid search", the step length used.
 #' @param iter.max the maximum number of iteration in WNNLS
 #' @param nu a small constant to facilitate the calculation of variance
@@ -172,15 +172,15 @@ SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list, ct.varname, sample,
 
 
 ############################################################
-#' ENSEMBL function for manually input deconvolution results
-#' @description ENSEMBL function for manually input deconvolution results
+#' ENSEMBLE function for manually input deconvolution results
+#' @description ENSEMBLE function for manually input deconvolution results
 #' @name SCDC_ENSEMBLE_subcl
 #' @param bulk.eset ExpressionSet object for bulk samples
 #' @param prop.list list of deconvolution results. should include: yhat (genes by samples), prop.est(samples by cell types). It's recommended to use as many genes as possible.
 #' @param ct.sub a subset of cell types that are selected to construct basis matrix
 #' @param ct.varname variable name for 'cell types'
 #' @param sample variable name for subject/samples
-#' @param search.method method to derive the ENSEMBL weights, including "Grid search", "LAD", "NNLS".
+#' @param search.method method to derive the ENSEMBLE weights, including "Grid search", "LAD", "NNLS".
 #' @param search.length if using "Grid search", the step length used.
 #' @param iter.max the maximum number of iteration in WNNLS
 #' @param nu a small constant to facilitate the calculation of variance
