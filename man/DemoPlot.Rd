@@ -4,7 +4,9 @@
 \alias{DemoPlot}
 \title{Demographic figure for single cells}
 \usage{
-DemoPlot(eset, cluster, sample, select.ct, Palette = cbPalette)
+DemoPlot(eset, cluster, sample, select.ct, Palette = c("#999999",
+  "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00",
+  "#CC79A7"))
 }
 \arguments{
 \item{eset}{ExpressionSet object of the single cell data}
