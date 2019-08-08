@@ -375,3 +375,8 @@ Empirically, a good threshold value would cut the number of genes to 1000, which
 
 <!-- ## Mouse Mammary Gland Data Analysis
 pending... -->
+
+<font color='blue'>
+_Thanks for using SCDC!_
+</font>
+

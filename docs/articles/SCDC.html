@@ -111,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1    18    79   367   310   339</span>
-<span class="co">#&gt; gene2   429   432   126    42   445</span>
-<span class="co">#&gt; gene3   188   324   206   119   453</span>
-<span class="co">#&gt; gene4   380   301    87   423   333</span>
-<span class="co">#&gt; gene5   182   386   448    57   127</span>
+<span class="co">#&gt; gene1   333   183    41   250     7</span>
+<span class="co">#&gt; gene2   236    75    71   230    53</span>
+<span class="co">#&gt; gene3   198   378   414   104    86</span>
+<span class="co">#&gt; gene4   343     1   381   318   387</span>
+<span class="co">#&gt; gene5   134    45    17    83    39</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -401,6 +401,7 @@ SCDC_3cl_tree<span class="op">$</span>prop.est
 <p>The choice of limit for LogFoldChange <code>LFC.lim=5</code> could be changed by users. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.</p>
 <!-- ## Mouse Mammary Gland Data Analysis
 pending... -->
+<p><font color="blue"> <em>Thanks for using SCDC!</em> </font></p>
 </div>
   </div>
 
