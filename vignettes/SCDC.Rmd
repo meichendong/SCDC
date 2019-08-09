@@ -373,8 +373,18 @@ SCDC_3cl_tree$prop.est
 The choice of limit for LogFoldChange `LFC.lim=5` could be changed by users. 
 Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.
 
-<!-- ## Mouse Mammary Gland Data Analysis
+
+
+## Mouse Mammary Gland Data Analysis
+Deconvolution of mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X.
+
+
+
+<!-- 
 pending... -->
+
+
+
 
 <font color='blue'>
 _Thanks for using SCDC!_

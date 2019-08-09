@@ -111,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   332    51   173   464   239</span>
-<span class="co">#&gt; gene2   250   204   363    54    53</span>
-<span class="co">#&gt; gene3   309   452   161   181   206</span>
-<span class="co">#&gt; gene4   158   155   473   468    80</span>
-<span class="co">#&gt; gene5   318   197   443   383    52</span>
+<span class="co">#&gt; gene1   417   468   112   214    69</span>
+<span class="co">#&gt; gene2   442   459   194   477   285</span>
+<span class="co">#&gt; gene3    30    54   246   286     1</span>
+<span class="co">#&gt; gene4   476   463   353   435    76</span>
+<span class="co">#&gt; gene5   297   443   451   296   259</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -399,7 +399,12 @@ SCDC_3cl_tree<span class="op">$</span>prop.est
 <span class="co">#&gt;        MCF7 MDA-MB468 NormalFibroblast</span>
 <span class="co">#&gt; 1 0.2561348 0.6367564        0.1071088</span></code></pre></div>
 <p>The choice of limit for LogFoldChange <code>LFC.lim=5</code> could be changed by users. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.</p>
-<!-- ## Mouse Mammary Gland Data Analysis
+</div>
+<div id="mouse-mammary-gland-data-analysis" class="section level2">
+<h2 class="hasAnchor">
+<a href="#mouse-mammary-gland-data-analysis" class="anchor"></a>Mouse Mammary Gland Data Analysis</h2>
+<p>Deconvolution of mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X.</p>
+<!-- 
 pending... -->
 <p><font color="blue"> <em>Thanks for using SCDC!</em> </font></p>
 </div>
@@ -416,6 +421,7 @@ pending... -->
       <li><a href="#scdc-on-simulated-data">SCDC on Simulated Data</a></li>
       <li><a href="#scdc-on-real-bulk-rna-seq-data">SCDC on Real Bulk RNA-seq Data</a></li>
       <li><a href="#three-cell-line-mixture-data-analysis">Three Cell-line Mixture Data Analysis</a></li>
+      <li><a href="#mouse-mammary-gland-data-analysis">Mouse Mammary Gland Data Analysis</a></li>
       </ul>
 </div>
       </div>

@@ -17,5 +17,13 @@ Pancreatic islets datasets:
 - [bulk RNA-seq data from Fadista et al. (2014)](https://github.com/meichendong/SCDC/tree/master/vignettes/data/fadista_77.rds)
 
 Three Cell-line Mixture:
+
 - [scRNA-seq data](https://github.com/meichendong/SCDC/tree/master/vignettes/data/MIX3cl_scESET.rds)
 - [bulk RNA-seq data](https://github.com/meichendong/SCDC/tree/master/vignettes/data/MIX3cl_bulkESET.rds)
+
+Mouse mammary gland datasets:
+
+- [scRNA-seq from Perou Lab](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_perou.rds)
+- [scRNA-seq from Tabula Muris](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_tmouse.rds)
+- [bulk RNA-seq data from Perou Lab -- 10X](https://github.com/meichendong/SCDC/tree/master/vignettes/data/peroubulk10x_fvb34.rds)
+- [bulk RNA-seq data from Perou Lab -- Fresh-frozen](https://github.com/meichendong/SCDC/tree/master/vignettes/data/peroubulkff_fvb34.rds)
