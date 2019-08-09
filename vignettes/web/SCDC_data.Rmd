@@ -4,6 +4,7 @@ author: "Meichen"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
+For more detailed data description and analysis, please refer to the SCDC manuscript.
 
 Pancreatic islets datasets:
 
