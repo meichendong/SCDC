@@ -371,15 +371,61 @@ SCDC_3cl_tree$prop.est
 #> 1 0.2561348 0.6367564        0.1071088
 ```
 The choice of limit for LogFoldChange `LFC.lim=5` could be changed by users. 
-Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.
+Empirically, a good threshold value would cut the number of genes to 1000~2000, which we believe is an adequate number to detect the inter-cell-type variations.
 
 
 
 ## Mouse Mammary Gland Data Analysis
 Using the single cell clustering package [Seurat](https://satijalab.org/seurat/), we classified the mouse mammary gland single cells into five cell types of interest: endothelial, fibroblast, luminal, basal and immune cells.
 Then we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper.
+We will show deconvolution of the 10X bulk samples as follows. The processed fresh-frozen bulk RNA-seq data is also available at our data download page.
 
+First we show the deconvolution using function `SCDC_prop_subcl_marker()` utilizing each of the single cell reference dataset separately.
+```r
+## read in ExpressionSet object from Perou lab, and Tabula Muris
+bulk10x <- readRDS("peroubulk10x_fvb34.rds")
+qc.perou<- readRDS("qc_perou.rds")
+qc.tmouse<- readRDS("qc_tmouse.rds")
 
+## you could try the SCDC_prop() function for deconvolution without tree-guided structure first, 
+## but based on biological knowledge and the single cell information we have now, the proportions estimation result
+## might not reflect the proportions that are close to truth.
+
+## here, tree-guided two-level deconvolution is performed (takes around 2 min):
+perou <- qc.perou$sc.eset.qc
+tmouse <- qc.tmouse$sc.eset.qc
+
+perou$metacluster2[perou$md_cluster %in% c( "immune")] <- "immune"
+perou$metacluster2[perou$md_cluster %in% c("basal","luminal","fibroblast","endothelial")] <- "BaLuFibEndo"
+subcl.10x.perou <- SCDC_prop_subcl_marker(bulk.eset = bulk10x, sc.eset = perou, ct.varname = "md_cluster", fl.varname = "metacluster2",
+                                       sample = "subj", ct.sub = c("endothelial","fibroblast","immune","luminal","basal"),
+                                       ct.fl.sub = unique(perou$metacluster2), select.marker = T, LFC.lim = 5)
+
+tmouse$metacluster2[tmouse$md_cluster %in% c("immune")] <- "immune"
+tmouse$metacluster2[tmouse$md_cluster %in% c("endothelial", "fibroblast","luminal","basal")] <- "BaLuFibEndo"
+subcl.10x.tmouse <- SCDC_prop_subcl_marker(bulk.eset = bulk10x, sc.eset = tmouse, ct.varname = "md_cluster", fl.varname = "metacluster2",
+                                        sample = "subj", ct.sub = c("endothelial","fibroblast","immune","luminal","basal"),
+                                        ct.fl.sub = unique(tmouse$metacluster2), select.marker = T, LFC.lim = 5)
+```   
+
+Then we proceed with the ENSEMBLE step. Note that you can also input the deconvolution results from other methods like MuSiC, CIBERSORTx, Bisque, etc. If the predicted gene expression levels are not available from your one-reference deconvolution results, the input elements we require here consist of at least two parts: the basis/signature/feature/profile matrix (genes by cell types), and the estimated cell-type proportions matrix (cell types by samples).
+```r                                    
+## The above subcl.10x.tmouse and subcl.10x.perou objects do not include a predicted gene expression levels element (yhat), here we calculate yhat first:
+yhat.10x.perou <- subcl.10x.perou$sc.basis$basis.mvw %*% t(subcl.10x.perou$prop.est)[colnames(subcl.10x.perou$sc.basis$basis.mvw)]
+yhat.10x.tmouse <- subcl.10x.tmouse$sc.basis$basis.mvw %*% t(subcl.10x.tmouse$prop.est)[colnames(subcl.10x.tmouse$sc.basis$basis.mvw)]
+subcl.10x.perou$yhat <- yhat.10x.perou
+subcl.10x.tmouse$yhat <- yhat.10x.tmouse
+
+## integrate the deconvolution results from the tree-guided functions:
+ens_subcl_perou10x <- SCDC_ENSEMBLE_subcl(bulk.eset = bulk10x, prop.list = list(tmouse.subcl = subcl.10x.tmouse, perou.subcl = subcl.10x.perou),
+                                          ct.sub = c("endothelial","fibroblast","immune","luminal","basal"), search.length = 0.01)
+## now calculate the ENSEMBLE cell-type proportions
+ens.10x.prop <- ENSEMBLE_prop(ENSobject = ens_subcl_perou10x)
+ens.10x.prop
+#>         basal endothelial fibroblast   luminal    immune
+#> FVB3 0.1631129   0.1579636  0.3522990 0.1788436 0.1477809
+#> FVB4 0.1611617   0.1544663  0.3448059 0.1760214 0.1635448
+```
 
 
 

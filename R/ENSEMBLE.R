@@ -318,3 +318,36 @@ SCDC_ENSEMBLE_subcl <- function(bulk.eset, prop.list, truep = NULL,
   }
   return(list(w_table = w_table, prop.list = prop.list, gridres = gridres))
 }
+
+
+############################################################
+#' calculate weighted proportions after ENSEMBLE step
+#' @description ENSEMBLE function for manually input deconvolution results
+#' @name ENSEMBLE_prop
+#' @param ENSobject The object from the ENSEMBLE result, either from SCDC_ENSEMBLE_subcl() or SCDC_ENSEMBLE() or you can create one by yourself: list(w_table=, prop.list=), where w_table contains weights for each reference dataset, and prop.list is a list of deconvolution results (with prop.est)
+#' @param weight_method Specify which set of weights you want to use to ENSEMBLE. Suggested are "mAD_Y_LAD", "min.mAD_Y", "Spearman", "NNLS". If not using the suggested methods, you can input your own designed weights.
+#' @param other_wts Specify your own designed weights. If you use the suggested methods, leave this as NULL value.
+#' @export
+ENSEMBLE_prop <- function(ENSobject, weight_method = "mAD_Y_LAD", other_wts = NULL){
+  nref <- length(ENSobject$prop.list)
+  wts <- ENSobject$w_table[grep(weight_method, rownames(ENSobject$w_table)),1:nref]
+  if (dim(wts)[1] == 0){
+    message("Please select the ENSEMBLE weights methods from ENSobject$w_table, or input your own designed weights for each reference...")
+    if (is.null(other_wts)){
+      wts <- matrix(data = c(1,rep(0, nref-1)), nrow = 1)
+    } else {
+      wts <- as.matrix(other_wts)
+    }
+  }
+  nrow <- nrow(ENSobject$prop.list[[1]]$prop.est)
+  ncol <- ncol(ENSobject$prop.list[[1]]$prop.est)
+  prop.ens <- matrix(0, nrow = nrow, ncol = ncol)
+  for(i in 1:nref){
+    prop <- ENSobject$prop.list[[i]]$prop.est * wts[,i]
+    if (i>1){
+      prop.ens <- prop.ens[rownames(prop),colnames(prop)]
+    }
+    prop.ens <- prop.ens + prop
+  }
+  return(prop.ens)
+}

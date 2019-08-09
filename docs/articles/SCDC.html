@@ -111,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   179   259   241   431    77</span>
-<span class="co">#&gt; gene2   493    59   491    92   171</span>
-<span class="co">#&gt; gene3   291   427   423    13   262</span>
-<span class="co">#&gt; gene4     1   306     3    91   159</span>
-<span class="co">#&gt; gene5   235   444    69   148   409</span>
+<span class="co">#&gt; gene1    16    45     2    40    66</span>
+<span class="co">#&gt; gene2   227   195    20   409   400</span>
+<span class="co">#&gt; gene3    81   192    22    13   202</span>
+<span class="co">#&gt; gene4   345   338   495   351   105</span>
+<span class="co">#&gt; gene5     8    41    70   207    38</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -398,12 +398,53 @@ SCDC_3cl_tree &lt;-<span class="st"> </span><span class="kw"><a href="../referen
 SCDC_3cl_tree<span class="op">$</span>prop.est
 <span class="co">#&gt;        MCF7 MDA-MB468 NormalFibroblast</span>
 <span class="co">#&gt; 1 0.2561348 0.6367564        0.1071088</span></code></pre></div>
-<p>The choice of limit for LogFoldChange <code>LFC.lim=5</code> could be changed by users. Empirically, a good threshold value would cut the number of genes to 1000, which we believe is an adequate number to detect the inter-cell-type variations.</p>
+<p>The choice of limit for LogFoldChange <code>LFC.lim=5</code> could be changed by users. Empirically, a good threshold value would cut the number of genes to 1000~2000, which we believe is an adequate number to detect the inter-cell-type variations.</p>
 </div>
 <div id="mouse-mammary-gland-data-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mouse-mammary-gland-data-analysis" class="anchor"></a>Mouse Mammary Gland Data Analysis</h2>
-<p>Deconvolution of mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X.</p>
+<p>Using the single cell clustering package <a href="https://satijalab.org/seurat/">Seurat</a>, we classified the mouse mammary gland single cells into five cell types of interest: endothelial, fibroblast, luminal, basal and immune cells. Then we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper. We will show deconvolution of the 10X bulk samples as follows. The processed fresh-frozen bulk RNA-seq data is also available at our data download page.</p>
+<p>First we show the deconvolution using function <code><a href="../reference/SCDC_prop_subcl_marker.html">SCDC_prop_subcl_marker()</a></code> utilizing each of the single cell reference dataset separately.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## read in ExpressionSet object from Perou lab, and Tabula Muris
+bulk10x &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"peroubulk10x_fvb34.rds"</span>)
+qc.perou&lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"qc_perou.rds"</span>)
+qc.tmouse&lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"qc_tmouse.rds"</span>)
+
+## you could try the SCDC_prop() function for deconvolution without tree-guided structure first, 
+## but based on biological knowledge and the single cell information we have now, the proportions estimation result
+## might not reflect the proportions that are close to truth.
+
+## here, tree-guided two-level deconvolution is performed (takes around 2 min):
+perou &lt;-<span class="st"> </span>qc.perou<span class="op">$</span>sc.eset.qc
+tmouse &lt;-<span class="st"> </span>qc.tmouse<span class="op">$</span>sc.eset.qc
+
+perou<span class="op">$</span>metacluster2[perou<span class="op">$</span>md_cluster <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>( <span class="st">"immune"</span>)] &lt;-<span class="st"> "immune"</span>
+perou<span class="op">$</span>metacluster2[perou<span class="op">$</span>md_cluster <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"basal"</span>,<span class="st">"luminal"</span>,<span class="st">"fibroblast"</span>,<span class="st">"endothelial"</span>)] &lt;-<span class="st"> "BaLuFibEndo"</span>
+subcl.10x.perou &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_prop_subcl_marker.html">SCDC_prop_subcl_marker</a></span>(<span class="dt">bulk.eset =</span> bulk10x, <span class="dt">sc.eset =</span> perou, <span class="dt">ct.varname =</span> <span class="st">"md_cluster"</span>, <span class="dt">fl.varname =</span> <span class="st">"metacluster2"</span>,
+                                       <span class="dt">sample =</span> <span class="st">"subj"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"endothelial"</span>,<span class="st">"fibroblast"</span>,<span class="st">"immune"</span>,<span class="st">"luminal"</span>,<span class="st">"basal"</span>),
+                                       <span class="dt">ct.fl.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(perou<span class="op">$</span>metacluster2), <span class="dt">select.marker =</span> T, <span class="dt">LFC.lim =</span> <span class="dv">5</span>)
+
+tmouse<span class="op">$</span>metacluster2[tmouse<span class="op">$</span>md_cluster <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"immune"</span>)] &lt;-<span class="st"> "immune"</span>
+tmouse<span class="op">$</span>metacluster2[tmouse<span class="op">$</span>md_cluster <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"endothelial"</span>, <span class="st">"fibroblast"</span>,<span class="st">"luminal"</span>,<span class="st">"basal"</span>)] &lt;-<span class="st"> "BaLuFibEndo"</span>
+subcl.10x.tmouse &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_prop_subcl_marker.html">SCDC_prop_subcl_marker</a></span>(<span class="dt">bulk.eset =</span> bulk10x, <span class="dt">sc.eset =</span> tmouse, <span class="dt">ct.varname =</span> <span class="st">"md_cluster"</span>, <span class="dt">fl.varname =</span> <span class="st">"metacluster2"</span>,
+                                        <span class="dt">sample =</span> <span class="st">"subj"</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"endothelial"</span>,<span class="st">"fibroblast"</span>,<span class="st">"immune"</span>,<span class="st">"luminal"</span>,<span class="st">"basal"</span>),
+                                        <span class="dt">ct.fl.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(tmouse<span class="op">$</span>metacluster2), <span class="dt">select.marker =</span> T, <span class="dt">LFC.lim =</span> <span class="dv">5</span>)</code></pre></div>
+<p>Then we proceed with the ENSEMBLE step. Note that you can also input the deconvolution results from other methods like MuSiC, CIBERSORTx, Bisque, etc. If the predicted gene expression levels are not available from your one-reference deconvolution results, the input elements we require here consist of at least two parts: the basis/signature/feature/profile matrix (genes by cell types), and the estimated cell-type proportions matrix (cell types by samples).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## The above subcl.10x.tmouse and subcl.10x.perou objects do not include a predicted gene expression levels element (yhat), here we calculate yhat first:
+yhat.10x.perou &lt;-<span class="st"> </span>subcl.10x.perou<span class="op">$</span>sc.basis<span class="op">$</span>basis.mvw <span class="op">%*%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(subcl.10x.perou<span class="op">$</span>prop.est)[<span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(subcl.10x.perou<span class="op">$</span>sc.basis<span class="op">$</span>basis.mvw)]
+yhat.10x.tmouse &lt;-<span class="st"> </span>subcl.10x.tmouse<span class="op">$</span>sc.basis<span class="op">$</span>basis.mvw <span class="op">%*%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(subcl.10x.tmouse<span class="op">$</span>prop.est)[<span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(subcl.10x.tmouse<span class="op">$</span>sc.basis<span class="op">$</span>basis.mvw)]
+subcl.10x.perou<span class="op">$</span>yhat &lt;-<span class="st"> </span>yhat.10x.perou
+subcl.10x.tmouse<span class="op">$</span>yhat &lt;-<span class="st"> </span>yhat.10x.tmouse
+
+## integrate the deconvolution results from the tree-guided functions:
+ens_subcl_perou10x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SCDC_ENSEMBLE_subcl.html">SCDC_ENSEMBLE_subcl</a></span>(<span class="dt">bulk.eset =</span> bulk10x, <span class="dt">prop.list =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">tmouse.subcl =</span> subcl.10x.tmouse, <span class="dt">perou.subcl =</span> subcl.10x.perou),
+                                          <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"endothelial"</span>,<span class="st">"fibroblast"</span>,<span class="st">"immune"</span>,<span class="st">"luminal"</span>,<span class="st">"basal"</span>), <span class="dt">search.length =</span> <span class="fl">0.01</span>)
+## now calculate the ENSEMBLE cell-type proportions
+ens.10x.prop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/ENSEMBLE_prop.html">ENSEMBLE_prop</a></span>(<span class="dt">ENSobject =</span> ens_subcl_perou10x)
+ens.10x.prop
+<span class="co">#&gt;         basal endothelial fibroblast   luminal    immune</span>
+<span class="co">#&gt; FVB3 0.1631129   0.1579636  0.3522990 0.1788436 0.1477809</span>
+<span class="co">#&gt; FVB4 0.1611617   0.1544663  0.3448059 0.1760214 0.1635448</span></code></pre></div>
 <!-- 
 pending... -->
 <p><font color="blue"> <em>Thanks for using SCDC!</em> </font></p>

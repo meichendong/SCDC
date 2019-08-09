@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • SCDC</title>
+<title>calculate weighted proportions after ENSEMBLE step — ENSEMBLE_prop • SCDC</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,7 +32,10 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="calculate weighted proportions after ENSEMBLE step — ENSEMBLE_prop" />
+
+<meta property="og:description" content="ENSEMBLE function for manually input deconvolution results" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -50,7 +53,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -112,156 +115,46 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>calculate weighted proportions after ENSEMBLE step</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meichendong/SCDC/blob/master/R/ENSEMBLE.R'><code>R/ENSEMBLE.R</code></a></small>
+    <div class="hidden name"><code>ENSEMBLE_prop.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>ENSEMBLE function for manually input deconvolution results</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="DemoPlot.html">DemoPlot()</a></code> </p>
-        </td>
-        <td><p>Demographic figure for single cells</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ENSEMBLE_prop.html">ENSEMBLE_prop()</a></code> </p>
-        </td>
-        <td><p>calculate weighted proportions after ENSEMBLE step</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="generateBulk_allcells.html">generateBulk_allcells()</a></code> </p>
-        </td>
-        <td><p>Construct Pseudo bulk samples</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="generateBulk_norep.html">generateBulk_norep()</a></code> </p>
-        </td>
-        <td><p>Construct Pseudo bulk samples -- random</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getCPM0.html">getCPM0()</a></code> </p>
-        </td>
-        <td><p>Normalize matrix / vector</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getESET.html">getESET</a></code> </p>
-        </td>
-        <td><p>Get ExpressionSet</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getSearchGrid.html">getSearchGrid()</a></code> </p>
-        </td>
-        <td><p>Grid search matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_basis.html">SCDC_basis()</a></code> </p>
-        </td>
-        <td><p>Basis Matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_basis_ONE.html">SCDC_basis_ONE()</a></code> </p>
-        </td>
-        <td><p>Basis matrix for single cells from one subject</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_ENSEMBLE.html">SCDC_ENSEMBLE()</a></code> </p>
-        </td>
-        <td><p>ENSEMBLE function</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_ENSEMBLE_subcl.html">SCDC_ENSEMBLE_subcl()</a></code> </p>
-        </td>
-        <td><p>ENSEMBLE function for manually input deconvolution results</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_peval.html">SCDC_peval()</a></code> </p>
-        </td>
-        <td><p>Evaluate deconvolved proportions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_prop.html">SCDC_prop()</a></code> </p>
-        </td>
-        <td><p>Proportion estimation</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_prop_ONE.html">SCDC_prop_ONE()</a></code> </p>
-        </td>
-        <td><p>Proportion estimation function for one-subject case</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_prop_ONE_subcl_marker.html">SCDC_prop_ONE_subcl_marker()</a></code> </p>
-        </td>
-        <td><p>Tree-guided proportion estimation for ONE subject</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_prop_subcl_marker.html">SCDC_prop_subcl_marker()</a></code> </p>
-        </td>
-        <td><p>Tree-guided proportion estimation</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_qc.html">SCDC_qc()</a></code> </p>
-        </td>
-        <td><p>Clustering QC</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_qc_ONE.html">SCDC_qc_ONE()</a></code> </p>
-        </td>
-        <td><p>Clustering QC for single cells from one subject</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SCDC_yeval.html">SCDC_yeval()</a></code> </p>
-        </td>
-        <td><p>Evaluate predicted gene expression levels</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="wheat_map.html">wheat_map()</a></code> </p>
-        </td>
-        <td><p>Heatmap for ENSEMBL weight selection, with four measures</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>ENSEMBLE_prop</span>(<span class='no'>ENSobject</span>, <span class='kw'>weight_method</span> <span class='kw'>=</span> <span class='st'>"mAD_Y_LAD"</span>, <span class='kw'>other_wts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>ENSobject</th>
+      <td><p>The object from the ENSEMBLE result, either from SCDC_ENSEMBLE_subcl() or SCDC_ENSEMBLE() or you can create one by yourself: list(w_table=, prop.list=), where w_table contains weights for each reference dataset, and prop.list is a list of deconvolution results (with prop.est)</p></td>
+    </tr>
+    <tr>
+      <th>weight_method</th>
+      <td><p>Specify which set of weights you want to use to ENSEMBLE. Suggested are "mAD_Y_LAD", "min.mAD_Y", "Spearman", "NNLS". If not using the suggested methods, you can input your own designed weights.</p></td>
+    </tr>
+    <tr>
+      <th>other_wts</th>
+      <td><p>Specify your own designed weights. If you use the suggested methods, leave this as NULL value.</p></td>
+    </tr>
     </table>
-  </div>
+    
 
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
-    </ul>
+      <li><a href="#arguments">Arguments</a></li>
+                </ul>
+
   </div>
 </div>
 

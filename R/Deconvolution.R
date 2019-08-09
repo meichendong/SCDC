@@ -774,7 +774,7 @@ SCDC_prop_subcl_marker <- function(bulk.eset, sc.eset, ct.varname, fl.varname, s
       sub.cl <- rownames(rt)[rt[,j] >0]
       if (length(sub.cl) > 1 & prop.wt.fl[colnames(rt)[j]] > 0) {
         if (is.null(dim(prop.wt.fl))){
-          # specify genes in xbulk.j??? first level genes?
+          # specify genes in xbulk.j ... first level genes ...
           xbulk.j <- basis.mvw.fl[,j]*prop.wt.fl[j] + (xbulk.temp - basis.mvw.fl %*% lm.wt$x)*prop.wt.fl[j]
         } else {
           xbulk.j <- basis.mvw.fl[,j]*prop.wt.fl[,j] + (xbulk.temp - basis.mvw.fl %*% lm.wt$x)*prop.wt.fl[,j]
