@@ -430,6 +430,8 @@ ens.10x.prop
 #> FVB4 0.1611617   0.1544663  0.3448059 0.1760214 0.1635448
 ```
 
+Visualization of the proportion estimation results:
+![](mammarygland.png)
 
 
 <!-- 
