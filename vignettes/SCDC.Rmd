@@ -1,5 +1,5 @@
 ---
-title: "SCDC: leverage multiple Single-Cell RNA-seq reference sets for bulk gene expression DeConvolution"
+title: "SCDC: Deconvolution of Bulk Gene Expression by Single-Cell RNA Sequencing Data"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SCDC}
