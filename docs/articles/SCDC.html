@@ -111,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1    19   231   287   377   466</span>
-<span class="co">#&gt; gene2   176   135   126    47   124</span>
-<span class="co">#&gt; gene3   455    51   312   178   132</span>
-<span class="co">#&gt; gene4   175   498     3   103   136</span>
-<span class="co">#&gt; gene5   272   335   486   412   379</span>
+<span class="co">#&gt; gene1   290   144   336   349   160</span>
+<span class="co">#&gt; gene2   328   124   270    48   284</span>
+<span class="co">#&gt; gene3   123   334   401   115   245</span>
+<span class="co">#&gt; gene4    18   438   187   263   468</span>
+<span class="co">#&gt; gene5   457   100   195   301   460</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -403,7 +403,8 @@ SCDC_3cl_tree<span class="op">$</span>prop.est
 <div id="mouse-mammary-gland-data-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mouse-mammary-gland-data-analysis" class="anchor"></a>Mouse Mammary Gland Data Analysis</h2>
-<p>Using the single cell clustering package <a href="https://satijalab.org/seurat/">Seurat</a>, we classified the mouse mammary gland single cells into five cell types of interest: endothelial, fibroblast, luminal, basal and immune cells. In our paper, we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper. As an illustration for our functions, we only show how deconvolution of the 10X bulk samples is performed as follows. The processed fresh-frozen bulk RNA-seq data is also available at our data download page.</p>
+<p>Using the single cell clustering package <a href="https://satijalab.org/seurat/">Seurat</a>, we classified the mouse mammary gland single cells into five cell types of interest: endothelial, fibroblast, luminal, basal and immune cells. In our paper, we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper.</p>
+<p>As an illustration for our functions, we only show how deconvolution of the 10X bulk samples is performed as follows. The processed fresh-frozen bulk RNA-seq data is also available at our data download page.</p>
 <p>First we show the deconvolution using function <code><a href="../reference/SCDC_prop_subcl_marker.html">SCDC_prop_subcl_marker()</a></code> utilizing each of the single cell reference dataset separately.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## read in ExpressionSet object from Perou lab, and Tabula Muris
 bulk10x &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="st">"peroubulk10x_fvb34.rds"</span>)

@@ -376,11 +376,12 @@ Empirically, a good threshold value would cut the number of genes to 1000~2000, 
 
 
 ## Mouse Mammary Gland Data Analysis
-Using the single cell clustering package [Seurat](https://satijalab.org/seurat/), we classified the mouse mammary gland single cells into five cell types of interest: endothelial, fibroblast, luminal, basal and immune cells.
-In our paper, we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper.
+Using the single cell clustering package [Seurat](https://satijalab.org/seurat/), we classified the mouse mammary gland single cells into five cell types of interest: endothelial, fibroblast, luminal, basal and immune cells. In our paper, we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper.
+
 As an illustration for our functions, we only show how deconvolution of the 10X bulk samples is performed as follows. The processed fresh-frozen bulk RNA-seq data is also available at our data download page.
 
 First we show the deconvolution using function `SCDC_prop_subcl_marker()` utilizing each of the single cell reference dataset separately.
+
 ```r
 ## read in ExpressionSet object from Perou lab, and Tabula Muris
 bulk10x <- readRDS("peroubulk10x_fvb34.rds")
@@ -409,6 +410,7 @@ subcl.10x.tmouse <- SCDC_prop_subcl_marker(bulk.eset = bulk10x, sc.eset = tmouse
 ```   
 
 Then we proceed with the ENSEMBLE step. Note that you can also input the deconvolution results from other methods like MuSiC, CIBERSORTx, Bisque, etc. If the predicted gene expression levels are not available from your one-reference deconvolution results, the input elements we require here consist of at least two parts: the basis/signature/feature/profile matrix (genes by cell types), and the estimated cell-type proportions matrix (cell types by samples).
+
 ```r                                    
 ## The above subcl.10x.tmouse and subcl.10x.perou objects do not include a predicted gene expression levels element (yhat), here we calculate yhat first:
 yhat.10x.perou <- subcl.10x.perou$sc.basis$basis.mvw %*% t(subcl.10x.perou$prop.est)[colnames(subcl.10x.perou$sc.basis$basis.mvw)]
