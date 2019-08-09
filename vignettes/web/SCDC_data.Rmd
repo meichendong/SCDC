@@ -28,3 +28,5 @@ Mouse mammary gland datasets:
 - [scRNA-seq from Tabula Muris (2018) after clustering QC](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_tmouse.rds)
 - [bulk RNA-seq data from Perou Lab -- 10X](https://github.com/meichendong/SCDC/tree/master/vignettes/data/peroubulk10x_fvb34.rds)
 - [bulk RNA-seq data from Perou Lab -- Fresh-frozen](https://github.com/meichendong/SCDC/tree/master/vignettes/data/peroubulkff_fvb34.rds)
+
+Raw and processed three-cell-line mixture data and mouse mammary gland data are available at GEO database: .

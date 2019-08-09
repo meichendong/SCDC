@@ -376,7 +376,10 @@ Empirically, a good threshold value would cut the number of genes to 1000, which
 
 
 ## Mouse Mammary Gland Data Analysis
-Deconvolution of mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X.
+Using the single cell clustering package [Seurat](https://satijalab.org/seurat/), we classified the mouse mammary gland single cells into five cell types of interest: endothelial, fibroblast, luminal, basal and immune cells.
+Then we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper.
+
+
 
 
 
