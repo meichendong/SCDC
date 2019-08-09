@@ -431,8 +431,10 @@ ens.10x.prop
 ```
 
 Visualization of the proportion estimation results:
-![](mammarygland.png)
 
+<center>
+![](mammarygland.png)
+</center>
 
 <!-- 
 pending... -->
