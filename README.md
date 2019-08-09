@@ -1,4 +1,5 @@
-# SCDC: leverage multiple Single-Cell RNA-seq reference sets for bulk gene expression DeConvolution
+# SCDC: Deconvolution of Bulk Gene Expression by Single-Cell RNA Sequencing Data
+
 To install SCDC R package, please use
 
 ```{R}

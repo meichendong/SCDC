@@ -12,14 +12,14 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# SCDC
+# SCDC: Deconvolution of Bulk Gene Expression by Single-Cell RNA Sequencing Data
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.org/meichendong/SCDC.svg?branch=master)](https://travis-ci.org/meichendong/SCDC)
 [![CRAN status](https://www.r-pkg.org/badges/version/SCDC)](https://CRAN.R-project.org/package=SCDC)
 <!-- badges: end -->
 
-SCDC is a [deconvolution](https://en.wikipedia.org/wiki/Deconvolution) method for bulk [RNA-seq](https://en.wikipedia.org/wiki/RNA-Seq) that leverages cell-type specific gene expressions from multiple [scRNA-seq](https://en.wikipedia.org/wiki/Single_cell_sequencing) reference datasets.
+SCDC is a [deconvolution](https://en.wikipedia.org/wiki/Deconvolution) method for bulk [RNA-seq](https://en.wikipedia.org/wiki/RNA-Seq) that leverages cell-type specific gene expressions from **multiple [scRNA-seq](https://en.wikipedia.org/wiki/Single_cell_sequencing) reference datasets**.
 SCDC adopts an ENSEMBLE method to integrate deconvolution results from different scRNA-seq datasets that are produced in different laboratories and at different times, implicitly addressing the [batch-effect](http://www.molmine.com/magma/global_analysis/batch_effect.html) confounding.
 
 ![SCDC framework](framework.PNG)
