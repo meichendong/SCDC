@@ -377,8 +377,8 @@ Empirically, a good threshold value would cut the number of genes to 1000~2000, 
 
 ## Mouse Mammary Gland Data Analysis
 Using the single cell clustering package [Seurat](https://satijalab.org/seurat/), we classified the mouse mammary gland single cells into five cell types of interest: endothelial, fibroblast, luminal, basal and immune cells.
-Then we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper.
-We will show deconvolution of the 10X bulk samples as follows. The processed fresh-frozen bulk RNA-seq data is also available at our data download page.
+In our paper, we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper.
+As an illustration for our functions, we only show how deconvolution of the 10X bulk samples is performed as follows. The processed fresh-frozen bulk RNA-seq data is also available at our data download page.
 
 First we show the deconvolution using function `SCDC_prop_subcl_marker()` utilizing each of the single cell reference dataset separately.
 ```r
@@ -420,6 +420,7 @@ subcl.10x.tmouse$yhat <- yhat.10x.tmouse
 ens_subcl_perou10x <- SCDC_ENSEMBLE_subcl(bulk.eset = bulk10x, prop.list = list(tmouse.subcl = subcl.10x.tmouse, perou.subcl = subcl.10x.perou),
                                           ct.sub = c("endothelial","fibroblast","immune","luminal","basal"), search.length = 0.01)
 ## now calculate the ENSEMBLE cell-type proportions
+## the default weights are selected from the LAD regression method. You can also specify other methods, see the function details.
 ens.10x.prop <- ENSEMBLE_prop(ENSobject = ens_subcl_perou10x)
 ens.10x.prop
 #>         basal endothelial fibroblast   luminal    immune
