@@ -8,7 +8,7 @@ output: html_document
 Pancreatic islets datasets:
 
 - [scRNA-seq data from Segerstolpe et al. (2016)](https://github.com/meichendong/SCDC/tree/master/vignettes/data/segerstolpe.rds)
-- [scRNA-seq data from Baron et al. (2017) QC](https://github.com/meichendong/SCDC/tree/master/vignettes/data/baron.rds)
+- [scRNA-seq data from Baron et al. (2017)](https://github.com/meichendong/SCDC/tree/master/vignettes/data/baron.rds)
 
 - [scRNA-seq data from Segerstolpe et al. (2016) after clustering QC](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_segerstolpe.rds)
 - [scRNA-seq data from Baron et al. (2017) after clustering QC](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_baron.rds)
@@ -23,7 +23,7 @@ Three Cell-line Mixture:
 
 Mouse mammary gland datasets:
 
-- [scRNA-seq from Perou Lab](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_perou.rds)
-- [scRNA-seq from Tabula Muris](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_tmouse.rds)
+- [scRNA-seq from Perou Lab after clustering QC](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_perou.rds)
+- [scRNA-seq from Tabula Muris (2018) after clustering QC](https://github.com/meichendong/SCDC/tree/master/vignettes/data/qc_tmouse.rds)
 - [bulk RNA-seq data from Perou Lab -- 10X](https://github.com/meichendong/SCDC/tree/master/vignettes/data/peroubulk10x_fvb34.rds)
 - [bulk RNA-seq data from Perou Lab -- Fresh-frozen](https://github.com/meichendong/SCDC/tree/master/vignettes/data/peroubulkff_fvb34.rds)
