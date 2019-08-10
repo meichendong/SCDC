@@ -32,7 +32,7 @@ devtools::install_github("meichendong/SCDC")
 
 ## Data Input
 
-SCDC takes `ExpressionSet` objects with raw read counts as input. `ExpressionSet` object is based on the package _Biobase_, which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples, like the clustering results, subjects, conditions).
+SCDC takes `ExpressionSet` objects with raw read counts as input. `ExpressionSet` object is based on the package [_Biobase_](https://bioconductor.org/packages/release/bioc/html/Biobase.html), which mainly stores data matrix (genes by samples), featureData (information about genes), and phenoData (information about samples, like the clustering results, subjects, conditions).
 We also enable a quick construction of the ExpressionSet object by the function `getESET()`. Here we show a toy example:
 
 ```{r, message=F}
@@ -48,7 +48,7 @@ class(eset)
 ```
 
 As an illustration of the **SCDC** framework, we analyze the pancreatic islet data as presented in our paper. Three public scRNA-seq datasets from [Baron et al. (2016)](https://www.sciencedirect.com/science/article/pii/S2405471216302666?via%3Dihub), [Segerstolpe et al. (2016)](https://www.sciencedirect.com/science/article/pii/S1550413116304363?via%3Dihub) and [Xin et al. (2016)](https://www.sciencedirect.com/science/article/pii/S155041311630434X?via%3Dihub) are used; a bulk RNA-seq dataset from [Fadista et al. (2014)](https://www.pnas.org/content/111/38/13924) is used in the real data analysis. 
-We also applied our method to a three-cell-line mixture data from Perou lab, where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.
+We also applied our method to a three-cell-line mixture data from [Perou lab](https://unclineberger.org/peroulab/), where the cell lines MDA-MB-468, MCF-7, and normal fibroblast cells are cultured by the ratio 6:3:1. Both scRNA-seq and bulk RNA-seq data are available.
 
 The processed data is available for download at the [SCDC data page](https://meichendong.github.io/SCDC/articles/web/SCDC_data.html).
 
@@ -238,8 +238,8 @@ print(fadista.ens.plot)
 </center>
 
 In our paper, we sought to replicate previous findings on the negative correlation
-between the hemoglobin A1c (HbA1c, an important biomarker for type 2 diabetes)
-levels and the beta cell functions (Kanat et al., 2011, Hou et al., 2016). 
+between the [hemoglobin A1c](https://www.webmd.com/diabetes/guide/glycated-hemoglobin-test-hba1c) (HbA1c, an important biomarker for type 2 diabetes)
+levels and the beta cell functions ( [Kanat et al., 2011](https://care.diabetesjournals.org/content/34/4/1006.long), [Hou et al., 2016](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4657079/)). 
 Hence, we constructed a linear model using the estimated cell-type proportions as the response variable and the other covariates (age, gender, BMI, and HbA1c) as predictors. Here we compare deconvolution results from three sources: 1) scRNA-seq from Segerstolpe et al. only; 2) scRNA-seq from Baron et al. only; 3) ENSEMBLE deconvolution results using scRNA-seq from Segerstolpe et al. and Baron et al. separately.
 
 ```r
