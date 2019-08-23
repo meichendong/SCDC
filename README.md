@@ -10,4 +10,4 @@ devtools::install_github("meichendong/SCDC")
 ## Vignettes
 Please see vignettes [here](https://meichendong.github.io/SCDC/index.html).
 
-The SCDC manuscript is available at .
+The SCDC manuscript is available at [bioRxiv](https://www.biorxiv.org/content/10.1101/743591v1?rss=1).

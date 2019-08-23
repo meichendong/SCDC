@@ -92,7 +92,7 @@
     
     
 <p><strong>SCDC</strong> adopts an ENSEMBLE method to integrate deconvolution results across methods and datasets, giving reference data that are more close to the bulk RNA-seq data higher weights, implicitly addressing the batch-effect confounding when multiple scRNA-seq reference sets are available.</p>
-<p>Our manuscript is available at .</p>
+<p>Our manuscript is available at <a href="https://www.biorxiv.org/content/10.1101/743591v1?rss=1">bioRxiv</a>.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -111,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   273   163   408   358    55</span>
-<span class="co">#&gt; gene2   222   473   289   235   232</span>
-<span class="co">#&gt; gene3    64    92   216   487    22</span>
-<span class="co">#&gt; gene4    78   111   107   455   331</span>
-<span class="co">#&gt; gene5   250   153   468   391    48</span>
+<span class="co">#&gt; gene1   271   465   246   241     2</span>
+<span class="co">#&gt; gene2   214   485   483   267   426</span>
+<span class="co">#&gt; gene3   104    19   376   453   111</span>
+<span class="co">#&gt; gene4   390    65   129   217   462</span>
+<span class="co">#&gt; gene5   219   324   206    31   149</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
