@@ -19,7 +19,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-article">
+    <div class="container template-home">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -79,34 +79,17 @@
       
 
       </header><div class="row">
-  <div class="col-md-9 contents">
-    
-
-    
-    
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-<div id="scdc-deconvolution-of-bulk-gene-expression-by-single-cell-rna-sequencing-data" class="section level1">
+  <div class="contents col-md-9">
+<div id="scdc-bulk-gene-expression-deconvolution-by-multiple-single-cell-rna-sequencing-references" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#scdc-deconvolution-of-bulk-gene-expression-by-single-cell-rna-sequencing-data" class="anchor"></a>SCDC: Deconvolution of Bulk Gene Expression by Single-Cell RNA Sequencing Data</h1></div>
-<!-- badges: start -->
-
-<p>SCDC is a <a href="https://en.wikipedia.org/wiki/Deconvolution">deconvolution</a> method for bulk <a href="https://en.wikipedia.org/wiki/RNA-Seq">RNA-seq</a> that leverages cell-type specific gene expressions from <strong>multiple <a href="https://en.wikipedia.org/wiki/Single_cell_sequencing">scRNA-seq</a> reference datasets</strong>. SCDC adopts an ENSEMBLE method to integrate deconvolution results from different scRNA-seq datasets that are produced in different laboratories and at different times, implicitly addressing the <a href="http://www.molmine.com/magma/global_analysis/batch_effect.html">batch-effect</a> confounding.</p>
-<div class="figure">
-<img src="framework.PNG" alt="SCDC framework"><p class="caption">SCDC framework</p>
-</div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the released version of SCDC from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"devtools"</span>)) {
-  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)
-}
-devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"meichendong/SCDC"</span>)</code></pre></div>
-</div>
+<a href="#scdc-bulk-gene-expression-deconvolution-by-multiple-single-cell-rna-sequencing-references" class="anchor"></a>SCDC: Bulk Gene Expression Deconvolution by Multiple Single-Cell RNA Sequencing References</h1></div>
+<p>To install SCDC R package, please use</p>
+<pre class="{r}"><code>library(devtools)
+devtools::install_github("meichendong/SCDC")</code></pre>
 <div id="vignettes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#vignettes" class="anchor"></a>Vignettes</h2>
-<p>Please see the <a href="https://meichendong.github.io/SCDC/articles/SCDC.html">vignettes page</a>.</p>
+<p>Please see vignettes <a href="https://meichendong.github.io/SCDC/index.html">here</a>.</p>
 <p>The SCDC manuscript is available at <a href="https://www.biorxiv.org/content/10.1101/743591v1?rss=1">bioRxiv</a>.</p>
 </div>
 </div>
@@ -135,17 +118,8 @@ devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/
 </ul>
 </div>
 
-      <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://travis-ci.org/meichendong/SCDC"><img src="https://travis-ci.org/meichendong/SCDC.svg?branch=master" alt="Travis build status"></a></li>
-<li><a href="https://CRAN.R-project.org/package=SCDC"><img src="https://www.r-pkg.org/badges/version/SCDC" alt="CRAN status"></a></li>
-</ul>
+  </div>
 </div>
-</div>
-
-</div>
-
 
 
       <footer><div class="copyright">
@@ -153,7 +127,7 @@ devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.9100.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
 </div>
 
       </footer>

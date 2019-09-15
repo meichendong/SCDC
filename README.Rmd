@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# SCDC: Deconvolution of Bulk Gene Expression by Single-Cell RNA Sequencing Data
+# SCDC: Bulk Gene Expression Deconvolution by Multiple Single-Cell RNA Sequencing References
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.org/meichendong/SCDC.svg?branch=master)](https://travis-ci.org/meichendong/SCDC)

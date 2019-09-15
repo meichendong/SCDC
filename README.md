@@ -1,4 +1,4 @@
-# SCDC: Deconvolution of Bulk Gene Expression by Single-Cell RNA Sequencing Data
+# SCDC: Bulk Gene Expression Deconvolution by Multiple Single-Cell RNA Sequencing References
 
 To install SCDC R package, please use
 
