@@ -419,25 +419,32 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
   }
   # link to bisqueRNA, bulk transformation method. https://github.com/cozygene/bisque
   if (Transform_bisque) {
-    ncount <- table(sc.eset@phenoData@data[, sample], sc.eset@phenoData@data[,
-                                                                             ct.varname])
+    GenerateSCReference <- function(sc.eset, ct.sub) {
+      cell.labels <- base::factor(sc.eset[[ct.sub]])
+      all.cell.types <- base::levels(cell.labels)
+      aggr.fn <- function(ct.sub) {
+        base::rowMeans(Biobase::exprs(sc.eset)[,cell.labels == ct.sub, drop=F])
+      }
+      template <- base::numeric(base::nrow(sc.eset))
+      sc.ref <- base::vapply(all.cell.types, aggr.fn, template)
+      return(sc.ref)
+    }
+    sc.ref <- GenerateSCReference(sc.eset, cell.types)[genes, , drop = F]
+    ncount <- table(sc.eset@phenoData@data[, sample], sc.eset@phenoData@data[, ct.varname])
     true.prop <- ncount/rowSums(ncount, na.rm = T)
-    sc.props <- round(true.prop[complete.cases(true.prop),
-                                ], 2)
-    Y.train <- basis.mvw %*% t(sc.props[, colnames(basis.mvw)])
+    sc.props <- round(true.prop[complete.cases(true.prop), ], 2)
+    Y.train <- sc.ref %*% t(sc.props[, colnames(sc.ref)])
     dim(Y.train)
     X.pred <- exprs(bulk.eset)[commongenes, ]
     sample.names <- base::colnames(Biobase::exprs(bulk.eset))
     template <- base::numeric(base::length(sample.names))
     base::names(template) <- sample.names
-    SemisupervisedTransformBulk <- function(gene, Y.train,
-                                            X.pred) {
+    SemisupervisedTransformBulk <- function(gene, Y.train, X.pred) {
       Y.train.scaled <- base::scale(Y.train[gene, , drop = T])
       Y.center <- base::attr(Y.train.scaled, "scaled:center")
       Y.scale <- base::attr(Y.train.scaled, "scaled:scale")
       n <- base::length(Y.train.scaled)
-      shrink.scale <- base::sqrt(base::sum((Y.train[gene,
-                                                    , drop = T] - Y.center)^2)/n + 1)
+      shrink.scale <- base::sqrt(base::sum((Y.train[gene, , drop = T] - Y.center)^2)/n + 1)
       X.pred.scaled <- base::scale(X.pred[gene, , drop = T])
       Y.pred <- base::matrix((X.pred.scaled * shrink.scale) +
                                Y.center, dimnames = base::list(base::colnames(X.pred),
@@ -455,18 +462,18 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
         base::stop("Zero genes left for decomposition.")
       }
       Y.pred <- Y.pred[, !indices, drop = F]
-      basis.mvw <- basis.mvw[!indices, , drop = F]
+      sc.ref <- sc.ref[!indices, , drop = F]
     }
 
     results <- base::as.matrix(base::apply(Y.pred, 1, function(b) {
-      sol <- lsei::pnnls(basis.mvw, b, sum = 1)
+      sol <- lsei::pnnls(sc.ref, b, sum = 1)
       return(sol$x)
     }))
 
     prop.est.mvw <- t(results)
-    colnames(prop.est.mvw) <- colnames(basis.mvw)
+    colnames(prop.est.mvw) <- colnames(sc.ref)
     rownames(prop.est.mvw) <- colnames(bulk.eset)
-    yhat <- basis.mvw %*% results
+    yhat <- sc.ref %*% results
     colnames(yhat) <- colnames(bulk.eset)
     yobs <- exprs(bulk.eset)
     yeval <- SCDC_yeval(y = yobs, yest = yhat, yest.names = c("SCDC"))

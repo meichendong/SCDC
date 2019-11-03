@@ -111,11 +111,11 @@
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)</a>
 <a class="sourceLine" id="cb2-5" data-line-number="5">counts</a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; gene1   205   312   454   332   363</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; gene2   310    65   110    47   421</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; gene3    46    64   272   353    48</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; gene4   133   229   112   366   203</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; gene5   335    14   261   120   410</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; gene1   247    24   435   262   189</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; gene2   460   489   424     8    98</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; gene3   293   317   284   181   107</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; gene4   139   394    46   240   356</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; gene5    81   401   383   400   145</span></a>
 <a class="sourceLine" id="cb2-12" data-line-number="12">fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)</a>
 <a class="sourceLine" id="cb2-13" data-line-number="13">pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))</a>
 <a class="sourceLine" id="cb2-14" data-line-number="14">eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)</a>
