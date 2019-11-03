@@ -4,25 +4,25 @@
 \alias{SCDC_ENSEMBLE}
 \title{ENSEMBLE function}
 \usage{
-SCDC_ENSEMBLE(bulk.eset, sc.eset.list, ct.varname, sample, ct.sub,
-  search.method = c("Grid search", "LAD", "NNLS"),
-  search.length = 0.05, iter.max = 2000, nu = 1e-04,
-  epsilon = 0.001, truep = NULL, weight.basis = T, ...)
+SCDC_ENSEMBLE(bulk.eset, sc.eset.list = NULL, ct.varname, sample, ct.sub,
+  grid.search = F, search.length = 0.05, iter.max = 2000,
+  nu = 1e-04, epsilon = 0.001, truep = NULL, weight.basis = T,
+  prop.input = NULL, Transform_bisque = F, ...)
 }
 \arguments{
 \item{bulk.eset}{ExpressionSet object for bulk samples}
 
-\item{sc.eset.list}{list of ExpressionSet objects for single cell reference datasets}
+\item{sc.eset.list}{list of ExpressionSet objects for single cell reference datasets. Note that the variable names of multiple ExpressionSet objects should be consistent. Not required if prop.input is specified.}
 
-\item{ct.varname}{variable name for 'cell types'}
+\item{ct.varname}{character string specifying the variable name for 'cell types'. Not required if prop.input is specified.}
 
-\item{sample}{variable name for subject/samples}
+\item{sample}{character string specifying the variable name for subject/samples. Not required if prop.input is specified.}
 
-\item{ct.sub}{a subset of cell types that are selected to construct basis matrix}
+\item{ct.sub}{vector. a subset of cell types that are selected to construct basis matrix. Not required if prop.input is specified.}
 
-\item{search.method}{method to derive the ENSEMBLE weights, including "Grid search", "LAD", "NNLS".}
+\item{grid.search}{logical. whether to allow grid search method to derive the ENSEMBLE weights.}
 
-\item{search.length}{if using "Grid search", the step length used.}
+\item{search.length}{a number between 0 to 0.5. if using "Grid search", the step length used. Smaller search.length derives more accurate optimization results.}
 
 \item{iter.max}{the maximum number of iteration in WNNLS}
 
@@ -31,7 +31,9 @@ SCDC_ENSEMBLE(bulk.eset, sc.eset.list, ct.varname, sample, ct.sub,
 \item{epsilon}{a small constant number used for convergence criteria}
 
 \item{truep}{true cell-type proportions for bulk samples if known}
+
+\item{prop.input}{A list of SCDC_prop objects. Default is NULL. Users can use the SCDC function CreateSCDCpropObj to create the SCDC_prop objects first, and then put all objects into a list as this input. This allows users to ENSEMBLE results calculated from other deconvolution methods.}
 }
 \description{
-ENSEMBLE function for deconvolution results output from SCDC_prop
+ENSEMBLE function for deconvolution results output from SCDC_prop.
 }

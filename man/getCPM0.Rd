@@ -4,11 +4,11 @@
 \alias{getCPM0}
 \title{Normalize matrix / vector}
 \usage{
-getCPM0(x)
+getCPM0(x, verbose = F)
 }
 \arguments{
 \item{x}{a matrix or a vector}
 }
 \description{
-Normalize matrix by column or a vector
+Normalize matrix by column or normalize a vector
 }

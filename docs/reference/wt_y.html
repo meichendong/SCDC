@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Normalize matrix / vector — getCPM0 • SCDC</title>
+<title>Calculate cell type proportions by suggested weights — wt_y • SCDC</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Normalize matrix / vector — getCPM0" />
-<meta property="og:description" content="Normalize matrix by column or normalize a vector" />
+<meta property="og:title" content="Calculate cell type proportions by suggested weights — wt_y" />
+<meta property="og:description" content="Calculate proportions by linear combination of a list of proportions" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -119,23 +119,27 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Normalize matrix / vector</h1>
+    <h1>Calculate cell type proportions by suggested weights</h1>
     <small class="dont-index">Source: <a href='https://github.com/meichendong/SCDC/blob/master/R/Basic_Functions.R'><code>R/Basic_Functions.R</code></a></small>
-    <div class="hidden name"><code>getCPM0.Rd</code></div>
+    <div class="hidden name"><code>wt_y.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Normalize matrix by column or normalize a vector</p>
+    <p>Calculate proportions by linear combination of a list of proportions</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getCPM0</span>(<span class='no'>x</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
+    <pre class="usage"><span class='fu'>wt_y</span>(<span class='no'>wt</span>, <span class='kw'>y.list</span> <span class='kw'>=</span> <span class='no'>y.list</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>a matrix or a vector</p></td>
+      <th>wt</th>
+      <td><p>a vector of weights for each reference dataset. Should be of the same length as the y.list.</p></td>
+    </tr>
+    <tr>
+      <th>y.list</th>
+      <td><p>a matrix, with each column containing the vectorized estimated gene expressions from each reference dataset.</p></td>
     </tr>
     </table>
 

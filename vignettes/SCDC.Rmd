@@ -141,22 +141,14 @@ pancreas.sc <- list(baron = qc.baron$sc.eset.qc,
 PS_ensemble <- SCDC_ENSEMBLE(bulk.eset = pseudo.seger$pseudo_eset, sc.eset.list = pancreas.sc, ct.varname = "cluster",
                              sample = "sample", truep = pseudo.seger$truep[complete.cases(pseudo.seger$truep),], ct.sub =  c("alpha","beta","delta","gamma"), search.length = 0.01)
 PS_ensemble$w_table
-#>                              w1        w2   w3    RMSD     mAD Pearson
-#> max.Pearson_prop    0.0200000000 0.9300000 0.05 0.03627 0.02779  0.9913
-#> min.mAD_Y           0.0000000000 1.0000000 0.00 0.03376 0.02509  0.9907
-#> min.RMSD_Y          0.0000000000 1.0000000 0.00 0.03376 0.02509  0.9907
-#> max.Spearman_corr_Y 0.0000000000 0.9600000 0.04 0.03538 0.02712  0.9912
-#> min.mAD_Y_LAD       0.0002156889 0.9997843 0.00 0.03376 0.02509  0.9907
-#> min.RMSD_Y_NNLS     0.0000000000 1.0000000 0.00 0.03376 0.02509  0.9907
-#>                     spearman_Y    RMSD_Y     mAD_Y
-#> max.Pearson_prop       0.91429 0.0003501 2.785e-05
-#> min.mAD_Y              0.91420 0.0003437 2.755e-05
-#> min.RMSD_Y             0.91420 0.0003437 2.755e-05
-#> max.Spearman_corr_Y    0.91449 0.0003467 2.777e-05
-#> min.mAD_Y_LAD          0.91420 0.0003438 2.755e-05
-#> min.RMSD_Y_NNLS        0.91420 0.0003437 2.755e-05
+#               w1   w2   w3   RMSD_Y    mAD_Y Pearson_Y Spearman_Y RMSD_prop mAD_prop R_prop
+#inverse SSE  0.06 0.66 0.28 7.146419 4.415475 0.7545354  0.8478534   0.06692  0.05541 0.9839
+#LAD          0.00 1.00 0.00 6.706079 4.225556 0.8183429  0.8610900   0.03376  0.02511 0.9907
+#Pearson_prop 0.02 0.93 0.05 6.720294 4.237310 0.8155518  0.8608889   0.03627  0.02779 0.9913
+#mAD_Y        0.00 1.00 0.00 6.705799 4.225710 0.8185645  0.8611222   0.03376  0.02509 0.9907
+#Spearman_Y   0.00 0.97 0.03 6.703476 4.229452 0.8192302  0.8613582   0.03483  0.02661 0.9912
 ```
-In this case, SCDC ENSEMBLE weights suggest that the weight for results from reference dataset Segerstolpe et al. to be one. Hence, the final estimated cell-type proportions can be found at `PS_ensemble$prop.list$seger$prop.est.mvw`.
+In this case, SCDC ENSEMBLE weights suggest that the weight for results from reference dataset Segerstolpe et al. to be one. Hence, the final estimated cell-type proportions can be found at `PS_ensemble$prop.only$seger` or `PS_ensemble$prop.list$seger$prop.est.mvw`.
 
 ## SCDC on Real Bulk RNA-seq Data
 Here, we move on to analyze the real pancreatic islet bulk RNA-seq dataset. Fadista et al. (2014) provided 89 bulk samples, of which 77 samples have the HbA1c level information(an important biomarker for the Type II diabetes). Hence, we focus on the deconvolution for the 77 bulk samples (51 healthy and 26 diabetic).
@@ -165,61 +157,60 @@ To allow the basis matrix to reflect the potentially different gene expression p
 ```r
 fadista_77 <- readRDS("fadista_77.rds")
 # setting the search.length as 0.01 might take several minutes to finish the ENSEMBLE procedure.
-fadista.healthy.ens <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "Normal"],
-                                     sc.eset.list = list(baron = qc.baron$sc.eset.qc, seger = qc.seger$sc.eset.qc),
-                                     ct.varname = "cluster", sample = "sample", truep = NULL,
-                                     ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01)
-fadista.t2d.ens <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "T2D"],
-                                 sc.eset.list = list(baron = qc.baron$sc.eset.qc, seger = qc.seger$sc.eset.qc),
-                                 ct.varname = "cluster", sample = "sample", truep = NULL,
-                                 ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01)
-> fadista.healthy.ens$w_table
-#>                           w1        w2 spearman_Y    RMSD_Y     mAD_Y
-#> min.mAD_Y           0.4400000 0.5600000    0.77554 0.0003397 4.710e-05
-#> max.Spearman_corr_Y 0.4200000 0.5800000    0.77559 0.0003434 4.711e-05
-#> min.mAD_Y_LAD       0.4462969 0.5537031    0.77551 0.0003386 4.711e-05
-> fadista.t2d.ens$w_table
-#>                            w1        w2 spearman_Y    RMSD_Y     mAD_Y
-#> min.mAD_Y           0.4900000 0.5100000    0.79769 0.0002810 4.475e-05
-#> max.Spearman_corr_Y 0.5000000 0.5000000    0.79770 0.0002795 4.476e-05
-#> min.mAD_Y_LAD       0.5163056 0.4836944    0.79768 0.0002773 4.478e-05
+fadista.healthy.ens <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "Normal"], sc.eset.list = list(baronh = qc.baron$sc.eset.qc, segerh = qc.seger$sc.eset.qc), ct.varname = "cluster",
+                               sample = "sample", truep = NULL, ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01, grid.search = T)  
+
+fadista.t2d.ens <- SCDC_ENSEMBLE(bulk.eset = fadista_77[,fadista_77$hba1c_class2 == "T2D"], sc.eset.list = list(baronh = qc.baron$sc.eset.qc, segerh = qc.seger$sc.eset.qc), ct.varname = "cluster",
+                               sample = "sample", truep = NULL, ct.sub =  c("alpha","beta","delta","gamma","acinar","ductal"), search.length = 0.01, grid.search = T)  
+#> fadista.healthy.ens$w_table
+#               w1   w2   RMSD_Y    mAD_Y Pearson_Y Spearman_Y
+#inverse SSE  0.37 0.63 12.94834 5.844663 0.3419521  0.6552073
+#LAD          0.17 0.83 12.62988 5.834102 0.3451222  0.6489382 
+#mAD_Y        0.24 0.76 12.68422 5.828969 0.3456796  0.6524225 
+#Spearman_Y   0.40 0.60 13.02000 5.850878 0.3406539  0.6552603
+#> fadista.t2d.ens$w_table
+#               w1   w2   RMSD_Y    mAD_Y Pearson_Y Spearman_Y
+#inverse SSE  0.41 0.59 11.60516 5.492857 0.3950583  0.6889226 
+#LAD          0.33 0.67 11.50850 5.494326 0.3962562  0.6870404 
+#mAD_Y        0.38 0.62 11.56228 5.492216 0.3957707  0.6884008 
+#Spearman_Y   0.48 0.52 11.75522 5.500820 0.3918644  0.6894475
 ```
 To compare the ENSEMBLE results to the deconvolution results using one reference dataset only, we visualize the estimated proportions as following:
 ```r
 library(reshape2)
 library(ggplot2)
-getPropBox <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref){
-  prop.h <- ens_h$prop.list[[1]]$prop.est.mvw*w1h + ens_h$prop.list[[2]]$prop.est.mvw*w2h
-  prop.h <- as.data.frame(prop.h)
-
-  prop.d <- ens_d$prop.list[[1]]$prop.est.mvw*w1d + ens_d$prop.list[[2]]$prop.est.mvw*w2d
-  prop.d <- as.data.frame(prop.d)
-
+getPropBox <- function(ens_h, ens_d, metric = NULL, ref, input_wt = NULL){
+  if (!is.null(input_wt)){
+    prop.h = as.data.frame(wt_prop(input_wt, ens_h$prop.only))
+    prop.d = as.data.frame(wt_prop(input_wt, ens_d$prop.only))
+  } else {
+    prop.h = as.data.frame(wt_prop(ens_h$w_table[metric,1:2], ens_h$prop.only))
+    prop.d = as.data.frame(wt_prop(ens_d$w_table[metric,1:2], ens_d$prop.only))
+  }
   prop2 <- rbind(prop.h, prop.d)
   prop2$condition <- c(rep("Normal", nrow(prop.h)), rep("T2D", nrow(prop.d)))
-
+  
   dtmelt <- melt(prop2, id.vars = "condition")
   dtmelt$ref <- as.factor(ref)
   return(dtmelt)
 }
 
-# Note in the following fdt.ens, the weights 0.45, 0.55, 0.52 and 0.48 are selected through 
-# the previous step from the fadista.healthy.ens$w_table and fadista.t2d.ens$w_table, the 'min.mAD_Y_LAD' method.
-fdt.ens <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, w1h = 0.45, w2h = 0.55, w1d = 0.52, w2d = 0.48, ref = "ENSEMBLE")
-fdt.seger <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, w1h = 0, w2h =1, w1d = 0, w2d = 1, ref = "Segerstolpe")
-fdt.baron <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, w1h = 1, w2h =0, w1d = 1, w2d = 0, ref = "Baron")
-dtall_fadista <- rbind(fdt.ens, fdt.seger, fdt.baron)
+fdt.ens.spearman <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, metric = 1, ref = "ENSEMBLE+SpearmanR")
+fdt.seger <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens,  ref = "Segerstolpe", input_wt = c(0,1))
+fdt.baron <- getPropBox(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens,  ref = "Baron", input_wt = c(1,0))
+dtall_fadista <- rbind(fdt.ens.spearman, fdt.seger, fdt.baron)
 dtall_fadista$refcond <- paste(dtall_fadista$ref, dtall_fadista$condition)
 colfunc <- colorRampPalette(c("red", "white"))
 colfunc2 <- colorRampPalette(c("blue", "white"))
-fadista.ens.plot <- ggplot(dtall_fadista, aes(x=variable, y=value, color = factor(refcond,
-                                                                      levels = c("ENSEMBLE Normal", "Segerstolpe Normal","Baron Normal",
-                                                                                 "ENSEMBLE T2D","Segerstolpe T2D","Baron T2D")))) +
+pfa2 <- ggplot(dtall_fadista[dtall_fadista$refcond %in% c("ENSEMBLE+SpearmanR Normal", "Segerstolpe Normal","Baron Normal",
+                                                          "ENSEMBLE+SpearmanR T2D","Segerstolpe T2D","Baron T2D"),], 
+               aes(x=variable, y=value, color = factor(refcond, levels = c("ENSEMBLE+SpearmanR Normal", "Segerstolpe Normal","Baron Normal",
+                                                                           "ENSEMBLE+SpearmanR T2D","Segerstolpe T2D","Baron T2D")))) +
   geom_boxplot(outlier.size=-1)+
   geom_jitter(aes(x=variable,
                   color = factor(refcond,
-                                 levels = c("ENSEMBLE Normal", "Segerstolpe Normal","Baron Normal",
-                                            "ENSEMBLE T2D" ,"Segerstolpe T2D","Baron T2D"))),
+                                 levels = c("ENSEMBLE+SpearmanR Normal", "Segerstolpe Normal","Baron Normal",
+                                            "ENSEMBLE+SpearmanR T2D","Segerstolpe T2D","Baron T2D"))),
               position = position_dodge(0.75), alpha = 0.5,cex = 0.25)+
   theme(axis.text.x = element_text(angle = 30, hjust = 1, size=10),
         axis.text.y = element_text(size = 10),
@@ -229,9 +220,9 @@ fadista.ens.plot <- ggplot(dtall_fadista, aes(x=variable, y=value, color = facto
         legend.position="top",legend.title = element_blank(),
         legend.text = element_text(size=8),
         legend.box.spacing = unit(0, "mm"))+
-  scale_color_manual(values=c(colfunc(10)[c(3,5,7)],colfunc2(10)[c(3,5,7)])) +
+  scale_color_manual(values=c(colfunc(10)[seq(1,9,3)],colfunc2(10)[seq(1,9,3)])) +
   ylab("") + xlab("")
-print(fadista.ens.plot)
+pfa2
 ```
 <center>
 ![Cell-type proportion estimation for 77 bulk samples from Fadista et al.](fadista_ens.png){width=600px}
@@ -253,19 +244,16 @@ fadista.seger <- SCDC_prop(fadista_77, seger, ct.varname = "cluster", sample = "
 fadista.baron <- SCDC_prop(fadista_77, baron, ct.varname = "cluster", sample = "sample",
                                 ct.sub = c("alpha","beta","delta","gamma","acinar","ductal"))
 ## ENSEMBLE proportions
-getPropbycond <- function(ens_h, ens_d, w1h, w2h, w1d,w2d, ref, hba1clvl){
-  prop.h <- ens_h$prop.list[[1]]$prop.est.mvw*w1h + ens_h$prop.list[[2]]$prop.est.mvw*w2h
-  prop.h <- as.data.frame(prop.h)
-
-  prop.d <- ens_d$prop.list[[1]]$prop.est.mvw*w1d + ens_d$prop.list[[2]]$prop.est.mvw*w2d
-  prop.d <- as.data.frame(prop.d)
-
+getPropbycond <- function(ens_h, ens_d, metric){
+  prop.h = as.data.frame(wt_prop(ens_h$w_table[metric,1:2], ens_h$prop.only))
+  prop.d = as.data.frame(wt_prop(ens_d$w_table[metric,1:2], ens_d$prop.only))
   prop2 <- rbind(prop.h, prop.d)
   prop2$condition <- c(rep("Normal", nrow(prop.h)), rep("T2D", nrow(prop.d)))
   return(prop2)
 }
-fadista_ens_prop <- getPropbycond(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens,
-                                  w1h = 0.45, w2h = 0.55, w1d = 0.52, w2d = 0.48, ref = "ENSEMBLE")
+
+## combine demographic information
+ens.spearman.prop <- getPropbycond(ens_h = fadista.healthy.ens, ens_d = fadista.t2d.ens, metric = 8)
 ```
 
 Fit linear models: beta cell proportion ~ HbA1c + age + BMI + sex.
@@ -305,7 +293,7 @@ getLMpValue <- function(prop_est, method_){
 }
 res.SCDC.seger <- getLMpValue(prop_est = fadista.seger$prop.est.mvw, method_ = "SCDC+Segerstolpe")
 res.SCDC.baron <- getLMpValue(prop_est = fadista.baron$prop.est.mvw, method_ = "SCDC+Baron")
-res.SCDC.ensemble <- getLMpValue(prop_est = fadista_ens_prop, method_ = "SCDC+ENSEMBLE")
+res.SCDC.ensemble <- getLMpValue(prop_est = ens.spearman.prop, method_ = "SCDC+ENSEMBLE")
 ## pool the results together for visualization:
 alldata <- rbind(res.SCDC.seger$meltdata, res.SCDC.ensemble$meltdata,
                  res.SCDC.baron$meltdata)
@@ -378,7 +366,7 @@ Empirically, a good threshold value would cut the number of genes to 1000~2000, 
 ## Mouse Mammary Gland Data Analysis
 Using the single cell clustering package [Seurat](https://satijalab.org/seurat/), we classified the mouse mammary gland single cells into five cell types of interest: endothelial, fibroblast, luminal, basal and immune cells. In our paper, we perform deconvolution for mouse mammary gland tissue bulk RNA-seq data of two forms: fresh-frozen and 10X. The detailed data process structure is shown in the figure 5 of our paper.
 
-As an illustration for our functions, we only show how deconvolution of the 10X bulk samples is performed as follows. The processed fresh-frozen bulk RNA-seq data is also available at our data download page.
+For illustration purpose, we only show how deconvolution of the 10X bulk samples is performed as follows. The processed fresh-frozen bulk RNA-seq data is also available at our data download page.
 
 First we show the deconvolution using function `SCDC_prop_subcl_marker()` utilizing each of the single cell reference dataset separately.
 
@@ -398,36 +386,92 @@ tmouse <- qc.tmouse$sc.eset.qc
 
 perou$metacluster2[perou$md_cluster %in% c( "immune")] <- "immune"
 perou$metacluster2[perou$md_cluster %in% c("basal","luminal","fibroblast","endothelial")] <- "BaLuFibEndo"
-subcl.10x.perou <- SCDC_prop_subcl_marker(bulk.eset = bulk10x, sc.eset = perou, ct.varname = "md_cluster", fl.varname = "metacluster2",
-                                       sample = "subj", ct.sub = c("endothelial","fibroblast","immune","luminal","basal"),
-                                       ct.fl.sub = unique(perou$metacluster2), select.marker = T, LFC.lim = 5)
+perou.subcl <- SCDC_prop_subcl_marker(bulk.eset = bulk10x, sc.eset = perou, ct.varname = "md_cluster", fl.varname = "metacluster2", sample = "subj", ct.sub = c("endothelial","fibroblast","immune","luminal","basal"), ct.fl.sub = unique(perou$metacluster2), select.marker = T, LFC.lim = 5)
 
 tmouse$metacluster2[tmouse$md_cluster %in% c("immune")] <- "immune"
 tmouse$metacluster2[tmouse$md_cluster %in% c("endothelial", "fibroblast","luminal","basal")] <- "BaLuFibEndo"
-subcl.10x.tmouse <- SCDC_prop_subcl_marker(bulk.eset = bulk10x, sc.eset = tmouse, ct.varname = "md_cluster", fl.varname = "metacluster2",
-                                        sample = "subj", ct.sub = c("endothelial","fibroblast","immune","luminal","basal"),
-                                        ct.fl.sub = unique(tmouse$metacluster2), select.marker = T, LFC.lim = 5)
+tmouse.subcl <- SCDC_prop_subcl_marker(bulk.eset = bulk10x, sc.eset = tmouse, ct.varname = "md_cluster", fl.varname = "metacluster2", sample = "subj", ct.sub = c("endothelial","fibroblast","immune","luminal","basal"), ct.fl.sub = unique(tmouse$metacluster2), select.marker = T, LFC.lim = 5)
 ```   
 
-Then we proceed with the ENSEMBLE step. Note that you can also input the deconvolution results from other methods like MuSiC, CIBERSORTx, Bisque, etc. If the predicted gene expression levels are not available from your one-reference deconvolution results, the input elements we require here consist of at least two parts: the basis/signature/feature/profile matrix (genes by cell types), and the estimated cell-type proportions matrix (cell types by samples).
+Then we proceed with the ENSEMBLE step. Note that you can also input the deconvolution results from other methods like MuSiC, CIBERSORTx, Bisque, etc. The input elements we require here consist of at least two parts: the basis/signature/feature/profile matrix (genes by cell types), and the estimated cell-type proportions matrix (cell types by samples). We provide the function `CreateSCDCpropObj` to create object as such input format.
 
 ```r                                    
-## The above subcl.10x.tmouse and subcl.10x.perou objects do not include a predicted gene expression levels element (yhat), here we calculate yhat first:
-yhat.10x.perou <- subcl.10x.perou$sc.basis$basis.mvw %*% t(subcl.10x.perou$prop.est)[colnames(subcl.10x.perou$sc.basis$basis.mvw)]
-yhat.10x.tmouse <- subcl.10x.tmouse$sc.basis$basis.mvw %*% t(subcl.10x.tmouse$prop.est)[colnames(subcl.10x.tmouse$sc.basis$basis.mvw)]
-subcl.10x.perou$yhat <- yhat.10x.perou
-subcl.10x.tmouse$yhat <- yhat.10x.tmouse
+## 
+ens_subcl_perou10x <- SCDC_ENSEMBLE(bulk.eset = bulk10x, prop.input = list(tmouse.subcl = tmouse.subcl, perou.subcl = perou.subcl), ct.sub = c("endothelial","fibroblast","immune","luminal","basal"), search.length = 0.01, grid.search = T)
+ens_subcl_perou10x$w_table
 
-## integrate the deconvolution results from the tree-guided functions:
-ens_subcl_perou10x <- SCDC_ENSEMBLE_subcl(bulk.eset = bulk10x, prop.list = list(tmouse.subcl = subcl.10x.tmouse, perou.subcl = subcl.10x.perou),
-                                          ct.sub = c("endothelial","fibroblast","immune","luminal","basal"), search.length = 0.01)
-## now calculate the ENSEMBLE cell-type proportions
-## the default weights are selected from the LAD regression method. You can also specify other methods, see the function details.
-ens.10x.prop <- ENSEMBLE_prop(ENSobject = ens_subcl_perou10x)
-ens.10x.prop
-#>         basal endothelial fibroblast   luminal    immune
-#> FVB3 0.1631129   0.1579636  0.3522990 0.1788436 0.1477809
-#> FVB4 0.1611617   0.1544663  0.3448059 0.1760214 0.1635448
+getPearson <- function(dt1, dt2, ct, subj){
+  cor(c(dt1[subj,ct]), c(dt2[subj,ct]))
+}
+combo.10x <- lapply(ens_subcl_perou10x$prop.list, function(x){
+  x$prop.est[,c("endothelial","fibroblast","luminal","basal","immune")] 
+})
+ens_res <- function(wt, proplist, subject = c("FVB3","FVB4")){
+  ens <- wt_prop(wt, proplist = proplist) 
+  p.ens <- getPearson(perou_pseudo_all$truep, ens ,
+                      ct = c("endothelial","fibroblast","luminal","basal","immune"), subj = subject)
+  return(list(prop = ens, p = p.ens))
+}
+
+library(ggplot2)
+library(reshape2)
+ct1 <- c("mediumorchid1","mediumpurple1","lightskyblue","seagreen1","yellow","tan1","azure3")
+
+getENSplot <- function(enstable, combo, subject, figname, subcat = NULL){
+  if (!is.null(subcat)){
+    enstable <- enstable[subcat,]
+  }
+  wtres.list <- list()
+  for (i in 1:nrow(enstable)){
+    wtres.list[[i]] <- ens_res(enstable[i,1:2], combo)$prop
+  }
+  names(wtres.list) <- rownames(enstable)
+  pcor.list <- NULL
+  for (i in 1:nrow(enstable)){
+    pcor.list[[i]] <- ens_res(enstable[i,1:2], combo, subject = subject)$p
+  }
+  names(pcor.list) <- rownames(enstable)
+  est.all <- rbind(perou_pseudo_all$truep[,c("endothelial","fibroblast","luminal","basal","immune")],
+                   do.call(rbind, combo), 
+                   do.call(rbind, wtres.list))
+  est.all.3 <- est.all[rownames(est.all) == subject,]
+  rownames(est.all.3) <- as.factor(c("Seurat", "Tabula Muris", "Perou", 
+                                     paste("ENSEMBLE:",names(pcor.list))))
+  
+  p_t <- getPearson(perou_pseudo_all$truep, combo[[1]],
+                    ct = c("endothelial","fibroblast","luminal","basal","immune"), subj = c(subject))
+  p_p <- getPearson(perou_pseudo_all$truep, combo[[2]],
+                    ct = c("endothelial","fibroblast","luminal","basal","immune"), subj = c(subject))
+  dat_text <- data.frame(label = c("",paste("R=", round(c(p_t, p_p, pcor.list),2), sep = "")),
+                         Var1 = as.factor(c("Seurat", "Tabula Muris", "Perou", 
+                                            paste("ENSEMBLE:",names(pcor.list)))),
+                         value =rep(0.9, length(pcor.list)+3),
+                         Var2 = rep("endothelial",length(pcor.list)+3))
+  meltdt <- melt(est.all.3)
+  P <- ggplot(meltdt, aes(x=Var1, y=value, fill = factor(Var2, levels = c("endothelial","fibroblast","luminal","basal","immune")))) +
+    geom_bar(stat = "identity") + xlab("") + ylab("Percentage") +
+    theme(axis.text.x = element_text(angle = 30, hjust = 1, size=10),
+          axis.text.y = element_text(size = 10),
+          text = element_text(size = 10),
+          plot.title = element_text(size=10, face = "bold"),
+          plot.margin=unit(c(1,1,-5,0), "mm"),
+          legend.position="top",legend.title = element_blank(),
+          legend.text = element_text(size=8),
+          legend.box.spacing = unit(0, "mm"),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+    scale_fill_manual(values=ct1) +
+    guides(fill = guide_legend(nrow = 2))+
+    # facet_grid(cols = vars(ref)) +
+    geom_text(data = dat_text,
+              mapping = aes(x=Var1, y=value,label = label),
+              hjust   = 0.5, vjust   = 0)
+  png(file.path(vpath,  "mammarygland.png"), res = 80, height = 300, width = 300)
+  print(P)
+  dev.off()
+}
+
+getENSplot(enstable = ens_subcl_perou10x$w_table, combo=combo.10x, subject = "FVB3", figname="10X_FVB3", subcat = c("Spearman_Y","LAD"))
 ```
 
 Visualization of the proportion estimation results:

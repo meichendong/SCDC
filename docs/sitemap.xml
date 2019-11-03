@@ -4,10 +4,10 @@
     <loc>https://meichendong.github.io/SCDC//index.html</loc>
   </url>
   <url>
-    <loc>https://meichendong.github.io/SCDC//reference/DemoPlot.html</loc>
+    <loc>https://meichendong.github.io/SCDC//reference/CreateSCDCpropObj.html</loc>
   </url>
   <url>
-    <loc>https://meichendong.github.io/SCDC//reference/ENSEMBLE_prop.html</loc>
+    <loc>https://meichendong.github.io/SCDC//reference/DemoPlot.html</loc>
   </url>
   <url>
     <loc>https://meichendong.github.io/SCDC//reference/generateBulk_allcells.html</loc>
@@ -32,9 +32,6 @@
   </url>
   <url>
     <loc>https://meichendong.github.io/SCDC//reference/SCDC_ENSEMBLE.html</loc>
-  </url>
-  <url>
-    <loc>https://meichendong.github.io/SCDC//reference/SCDC_ENSEMBLE_subcl.html</loc>
   </url>
   <url>
     <loc>https://meichendong.github.io/SCDC//reference/SCDC_peval.html</loc>
@@ -62,6 +59,12 @@
   </url>
   <url>
     <loc>https://meichendong.github.io/SCDC//reference/wheat_map.html</loc>
+  </url>
+  <url>
+    <loc>https://meichendong.github.io/SCDC//reference/wt_prop.html</loc>
+  </url>
+  <url>
+    <loc>https://meichendong.github.io/SCDC//reference/wt_y.html</loc>
   </url>
   <url>
     <loc>https://meichendong.github.io/SCDC//articles/SCDC.html</loc>

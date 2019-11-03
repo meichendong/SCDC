@@ -4,13 +4,15 @@
 
 #######################################################
 #' Normalize matrix / vector
-#' @description Normalize matrix by column or a vector
+#' @description Normalize matrix by column or normalize a vector
 #' @name getCPM0
 #' @param x a matrix or a vector
 #' @export
-getCPM0 <- function(x){
+getCPM0 <- function(x, verbose = F){
   if (is.null(dim(x))){
-    message("Normalizing a vector instead of a matrix")
+    if (verbose){
+      message("Normalizing a vector instead of a matrix")
+    }
     vec = as.matrix(x/sum(x))
     vec
   } else {
@@ -400,4 +402,55 @@ SCDC_yeval <- function(y, yest, yest.names=NULL){
   colnames(mADy.sample.table) <- colnames(y)
   return(list(evals = evals, yevals.table = yevals.table, spearmany.sample.table =spearmany.sample.table,
               RMSDy.sample.table = RMSDy.sample.table, mADy.sample.table = mADy.sample.table))
+}
+
+
+###############################################
+#' Calculate cell type proportions by suggested weights
+#' @description Calculate proportions by linear combination of a list of proportions
+#' @name wt_prop
+#' @param wt a vector of weights for each reference dataset. should be of the same length as the proplist.
+#' @param proplist a list of estimated proportions from each reference dataset
+#' @export
+wt_prop <- function(wt, proplist){
+  wt <- as.numeric(wt)
+  combo.list <- list()
+  for (i in 1:length(proplist)){
+    combo.list[[i]] <- proplist[[i]]*wt[i]
+  }
+  combo.prop <- Reduce("+", combo.list)
+  return(combo.prop)
+}
+
+###############################################
+#' Calculate cell type proportions by suggested weights
+#' @description Calculate proportions by linear combination of a list of proportions
+#' @name wt_y
+#' @param wt a vector of weights for each reference dataset. Should be of the same length as the y.list.
+#' @param y.list a matrix, with each column containing the vectorized estimated gene expressions from each reference dataset.
+#' @export
+wt_y <- function(wt, y.list = y.list){
+  wt <- as.numeric(wt)
+  combo.list <- list()
+  for (i in 1:ncol(y.list)){
+    combo.list[[i]] <- y.list[,i]*wt[i]
+  }
+  combo.y <- Reduce("+", combo.list)
+  return(combo.y)
+}
+
+
+###############################################
+#' Create user-defined SCDC_prop object, as the SCDC_ENSEMBLE input
+#' @description Create user-defined SCDC_prop object, as the SCDC_ENSEMBLE input
+#' @name CreateSCDCpropObj
+#' @param p the estimated proportion matrix. sample by cell type.
+#' @param b the estimated signature/feature/basis matrix. gene by cell type.
+#' @export
+CreateSCDCpropObj <- function(p,b){
+  yhat <- b %*% t(p[,colnames(b)])
+  obj <- list(prop.est.mvw = p,
+              basis.mvw = b,
+              yhat = yhat)
+  return(obj)
 }

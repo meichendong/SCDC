@@ -6,7 +6,7 @@
 \usage{
 SCDC_prop(bulk.eset, sc.eset, ct.varname, sample, ct.sub,
   iter.max = 1000, nu = 1e-04, epsilon = 0.01, truep = NULL,
-  weight.basis = T, ...)
+  weight.basis = T, Transform_bisque = F, ...)
 }
 \arguments{
 \item{bulk.eset}{ExpressionSet object for bulk samples}
@@ -26,6 +26,8 @@ SCDC_prop(bulk.eset, sc.eset, ct.varname, sample, ct.sub,
 \item{epsilon}{a small constant number used for convergence criteria}
 
 \item{truep}{true cell-type proportions for bulk samples if known}
+
+\item{Transform_bisque}{The bulk sample transformation from bisqueRNA. Aiming to reduce the systematic difference between single cells and bulk samples.}
 }
 \value{
 Estimated proportion, basis matrix, predicted gene expression levels for bulk samples

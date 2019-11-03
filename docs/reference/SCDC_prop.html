@@ -130,7 +130,7 @@
 
     <pre class="usage"><span class='fu'>SCDC_prop</span>(<span class='no'>bulk.eset</span>, <span class='no'>sc.eset</span>, <span class='no'>ct.varname</span>, <span class='no'>sample</span>, <span class='no'>ct.sub</span>,
   <span class='kw'>iter.max</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>nu</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.01</span>, <span class='kw'>truep</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>weight.basis</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>weight.basis</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>Transform_bisque</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -170,6 +170,10 @@
     <tr>
       <th>truep</th>
       <td><p>true cell-type proportions for bulk samples if known</p></td>
+    </tr>
+    <tr>
+      <th>Transform_bisque</th>
+      <td><p>The bulk sample transformation from bisqueRNA. Aiming to reduce the systematic difference between single cells and bulk samples.</p></td>
     </tr>
     </table>
 
