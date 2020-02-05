@@ -15,6 +15,9 @@ SCDC_qc(
   epsilon = 0.01,
   arow = NULL,
   qcthreshold = 0.7,
+  generate.figure = T,
+  cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
+    "#D55E00", "#CC79A7"),
   ...
 )
 }
@@ -38,6 +41,8 @@ SCDC_qc(
 \item{arow}{annotation of rows for pheatmap}
 
 \item{qcthreshold}{the probability threshold used to filter out questionable cells}
+
+\item{generate.figure}{logical. If generate the heatmap by pheatmap or not. default is TRUE.}
 }
 \value{
 a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.

@@ -218,11 +218,14 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample){
 #' @param epsilon a small constant number used for convergence criteria
 #' @param arow annotation of rows for pheatmap
 #' @param qcthreshold the probability threshold used to filter out questionable cells
+#' @param generate.figure logical. If generate the heatmap by pheatmap or not. default is TRUE.
 #' @return a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.
 #' @export
 SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
                    ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.01, arow =NULL,
-                   qcthreshold = 0.7, ...) {
+                   qcthreshold = 0.7, generate.figure = T,
+                   cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
+                   ...) {
   sc.basis = SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
   M.S <- sc.basis$sum.mat[ct.sub]
   xsc <- getCPM0(exprs(sc.eset)[rownames(sc.basis$basis.mvw),])
@@ -277,11 +280,15 @@ SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
   # name col and row
   colnames(prop.qc) <- colnames(m.basis)
   rownames(prop.qc) <- colnames(xsc)
-  heat.anno <- pheatmap(prop.qc, annotation_row = arow,
-                        annotation_names_row=FALSE, show_rownames = F,
-                        annotation_names_col=FALSE, cutree_rows = length(ct.sub),
-                        color = cbPalette[2:4],
-                        cluster_rows = T, cluster_cols = F)
+  if (generate.figure){
+    heat.anno <- pheatmap(prop.qc, annotation_row = arow,
+                          annotation_names_row=FALSE, show_rownames = F,
+                          annotation_names_col=FALSE, cutree_rows = length(ct.sub),
+                          color = cbPalette[2:4],
+                          cluster_rows = T, cluster_cols = F)
+  } else {
+    heat.anno <- NULL
+  }
 
   prop.qc.keep <- rowSums(prop.qc > qcthreshold) ==1 # truncated values -> F or T
   sc.eset.qc <- sc.eset[,prop.qc.keep]
@@ -302,11 +309,15 @@ SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
 #' @param epsilon a small constant number used for convergence criteria
 #' @param arow annotation of rows for pheatmap
 #' @param qcthreshold the probability threshold used to filter out questionable cells
+#' @param generate.figure logical. If generate the heatmap by pheatmap or not. default is TRUE.
 #' @return a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.
 #' @export
 SCDC_qc_ONE <- function(sc.eset, ct.varname, sample, scsetname = "Single Cell",
                   ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.01,
-                    arow = NULL, weight.basis = F, qcthreshold = 0.7, ...){
+                    arow = NULL, weight.basis = F, qcthreshold = 0.7,
+                  generate.figure = T,
+                  cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
+                  ...){
   sc.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
   if (weight.basis){
     basis.mvw <- sc.basis$basis.mvw[, ct.sub]
@@ -370,11 +381,15 @@ SCDC_qc_ONE <- function(sc.eset, ct.varname, sample, scsetname = "Single Cell",
   rownames(prop.est.mvw) <- colnames(xsc)
 
   ### plot steps:
-  heat.anno <- pheatmap(prop.est.mvw, annotation_row = arow,
-                        annotation_names_row=FALSE, show_rownames = F,
-                        annotation_names_col=FALSE, cutree_rows = length(ct.sub),
-                        color = cbPalette[2:4],
-                        cluster_rows = T, cluster_cols = F) #, main = scsetname
+ if (generate.figure){
+   heat.anno <- pheatmap(prop.est.mvw, annotation_row = arow,
+                         annotation_names_row=FALSE, show_rownames = F,
+                         annotation_names_col=FALSE, cutree_rows = length(ct.sub),
+                         color = cbPalette[2:4],
+                         cluster_rows = T, cluster_cols = F) #, main = scsetname
+ } else {
+   heat.anno <- NULL
+ }
 
   prop.qc.keep <- rowSums(prop.est.mvw > qcthreshold) ==1 # truncated values -> F or T
   sc.eset.qc <- sc.eset[,prop.qc.keep]
