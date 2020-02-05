@@ -4,9 +4,20 @@
 \alias{SCDC_qc_ONE}
 \title{Clustering QC for single cells from one subject}
 \usage{
-SCDC_qc_ONE(sc.eset, ct.varname, sample, scsetname = "Single Cell",
-  ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.01, arow = NULL,
-  weight.basis = F, qcthreshold = 0.7, ...)
+SCDC_qc_ONE(
+  sc.eset,
+  ct.varname,
+  sample,
+  scsetname = "Single Cell",
+  ct.sub,
+  iter.max = 1000,
+  nu = 1e-04,
+  epsilon = 0.01,
+  arow = NULL,
+  weight.basis = F,
+  qcthreshold = 0.7,
+  ...
+)
 }
 \arguments{
 \item{sc.eset}{ExpressionSet object for single cells}

@@ -4,8 +4,7 @@
 \alias{generateBulk_allcells}
 \title{Construct Pseudo bulk samples}
 \usage{
-generateBulk_allcells(eset, ct.varname, sample, disease = NULL,
-  ct.sub = NULL)
+generateBulk_allcells(eset, ct.varname, sample, disease = NULL, ct.sub = NULL)
 }
 \arguments{
 \item{eset}{ExpressionSet object for single cells}

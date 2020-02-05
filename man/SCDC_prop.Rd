@@ -4,9 +4,20 @@
 \alias{SCDC_prop}
 \title{Proportion estimation}
 \usage{
-SCDC_prop(bulk.eset, sc.eset, ct.varname, sample, ct.sub,
-  iter.max = 1000, nu = 1e-04, epsilon = 0.01, truep = NULL,
-  weight.basis = T, Transform_bisque = F, ...)
+SCDC_prop(
+  bulk.eset,
+  sc.eset,
+  ct.varname,
+  sample,
+  ct.sub,
+  iter.max = 1000,
+  nu = 1e-04,
+  epsilon = 0.01,
+  truep = NULL,
+  weight.basis = T,
+  Transform_bisque = F,
+  ...
+)
 }
 \arguments{
 \item{bulk.eset}{ExpressionSet object for bulk samples}

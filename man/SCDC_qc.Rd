@@ -4,9 +4,19 @@
 \alias{SCDC_qc}
 \title{Clustering QC}
 \usage{
-SCDC_qc(sc.eset, ct.varname, sample, scsetname = "Single Cell", ct.sub,
-  iter.max = 1000, nu = 1e-04, epsilon = 0.01, arow = NULL,
-  qcthreshold = 0.7, ...)
+SCDC_qc(
+  sc.eset,
+  ct.varname,
+  sample,
+  scsetname = "Single Cell",
+  ct.sub,
+  iter.max = 1000,
+  nu = 1e-04,
+  epsilon = 0.01,
+  arow = NULL,
+  qcthreshold = 0.7,
+  ...
+)
 }
 \arguments{
 \item{sc.eset}{ExpressionSet object for single cells}

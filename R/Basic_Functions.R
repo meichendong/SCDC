@@ -109,7 +109,6 @@ generateBulk_allcells <- function(eset, ct.varname, sample, disease = NULL, ct.s
 #' @export
 generateBulk_norep <- function(eset, ct.varname, sample, disease = NULL, ct.sub,
                                prop_mat = NULL, nbulk=10, samplewithRep = F){
-  # eset <- seger.eset
   x.sub <- eset[,eset@phenoData@data[,ct.varname] %in% ct.sub]
   # qc: remove non-zero genes
   x.sub <- x.sub[rowSums(exprs(x.sub)) > 0,]
@@ -127,7 +126,6 @@ generateBulk_norep <- function(eset, ct.varname, sample, disease = NULL, ct.sub,
   k <- length(unique(ct.id))
   message(paste('Using',k,'cell types to generate pseudo bulk samples...'))
   # select donors for each pseudo bulk sample
-  # nbulk=10
   pseudo_donors <- sample(sample.id, nbulk, replace = T)
   names(pseudo_donors) <- paste("bulk",1:nbulk, sep = "_")
 
@@ -137,13 +135,16 @@ generateBulk_norep <- function(eset, ct.varname, sample, disease = NULL, ct.sub,
     colnames(true.p1) <- unique(ct.id)[order(unique(ct.id))]
     rownames(true.p1) <- names(pseudo_donors)
     message("Using input proportion matrix to create pseudo bulk samples...")
+    true.ct <- matrix(data = 0,ncol = k, nrow = nbulk) # true number of cells per cell type for each sample
+    colnames(true.ct) <- unique(ct.id)[order(unique(ct.id))]
+    rownames(true.ct) <- paste(pseudo_donors,1:nbulk,sep = "_")
     # make sure if without replacement, number of cells matches the input prop mat...
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   } else {
     true.p1 <- matrix(data = 0,ncol = k, nrow = nbulk)
     colnames(true.p1) <- unique(ct.id)[order(unique(ct.id))]
     rownames(true.p1) <- paste(pseudo_donors,1:nbulk,sep = "_")
-    true.ct <- matrix(data = 0,ncol = k, nrow = nbulk)
+    true.ct <- matrix(data = 0,ncol = k, nrow = nbulk) # true number of cells per cell type for each sample
     colnames(true.ct) <- unique(ct.id)[order(unique(ct.id))]
     rownames(true.ct) <- paste(pseudo_donors,1:nbulk,sep = "_")
     message("Generating random cell type proportions...")
@@ -152,25 +153,31 @@ generateBulk_norep <- function(eset, ct.varname, sample, disease = NULL, ct.sub,
   # create pseudo bulk sample.id according to total available number of cells:
   pseudo_bulk <- NULL
   for(xx in 1:length(pseudo_donors)){ #length(pseudo_donors)
-    # xx = 5
+    # xx = 1
     message('generating bulk ', xx, ' from donor ', pseudo_donors[xx], '...')
     idxd <- sample.id == pseudo_donors[xx] # for a selected donor
     temp <- exprs(x.sub)[,idxd] # his expression matrix
     temp.cluster <- ct.id[idxd] # cluster info for cells
 
     # match names!!!!!!!!!!!!!!!!!
-    # unique(ct.id)
-    # class(temp.cluster)
     temp.ncellk <- table(factor(temp.cluster))
 
-    temp.nct <- ceiling(runif(length(temp.ncellk), min = 0.6, max = 1)*temp.ncellk) # take random number of available single cells
-    true.p1[xx,names(temp.nct)] <- temp.nct/sum(temp.nct) # true proportions
-    true.ct[xx,] <- temp.nct[colnames(true.ct)] # true number of cells in the pseudo bulk.
-    true.p1[is.na(true.p1)] <- 0
-    true.ct[is.na(true.ct)] <- 0
+    if (is.null(prop_mat)){ #if using random proportions
+      temp.nct <- ceiling(runif(length(temp.ncellk), min = 0.6, max = 1)*temp.ncellk) # take random number of available single cells
+      true.p1[xx,names(temp.nct)] <- temp.nct/sum(temp.nct) # true proportions
+      true.ct[xx,] <- temp.nct[colnames(true.ct)] # true number of cells in the pseudo bulk.
+      true.p1[is.na(true.p1)] <- 0
+      true.ct[is.na(true.ct)] <- 0
+    } else { #if using the user-defined proportions
+      if (min(temp.ncellk*true.p1[xx,names(temp.ncellk)]) >0 & min(temp.ncellk*true.p1[xx,names(temp.ncellk)])<1){
+        message("Please check if your input prop_mat is reasonable. The number of cells of certain selected cell type might be too small.")
+      }
+      true.ct[xx,] <- round(temp.ncellk*true.p1[xx,names(temp.ncellk)] ) # true number of cells in the pseudo bulk.
+      true.p1[is.na(true.p1)] <- 0
+      true.ct[is.na(true.ct)] <- 0
+    }
 
     temp.b1 <- sapply(ct.sub, function(ucluster){
-      # ucluster <- ct.sub[4]
       temp.vec <- temp[,temp.cluster %in% ucluster] # for a specific cell type
       if (is.null(dim(temp.vec))){
         temp.sum <- rep(0, length(temp.vec))

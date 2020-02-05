@@ -4,10 +4,23 @@
 \alias{SCDC_ENSEMBLE}
 \title{ENSEMBLE function}
 \usage{
-SCDC_ENSEMBLE(bulk.eset, sc.eset.list = NULL, ct.varname, sample, ct.sub,
-  grid.search = F, search.length = 0.05, iter.max = 2000,
-  nu = 1e-04, epsilon = 0.001, truep = NULL, weight.basis = T,
-  prop.input = NULL, Transform_bisque = F, ...)
+SCDC_ENSEMBLE(
+  bulk.eset,
+  sc.eset.list = NULL,
+  ct.varname,
+  sample,
+  ct.sub,
+  grid.search = F,
+  search.length = 0.05,
+  iter.max = 2000,
+  nu = 1e-04,
+  epsilon = 0.001,
+  truep = NULL,
+  weight.basis = T,
+  prop.input = NULL,
+  Transform_bisque = F,
+  ...
+)
 }
 \arguments{
 \item{bulk.eset}{ExpressionSet object for bulk samples}

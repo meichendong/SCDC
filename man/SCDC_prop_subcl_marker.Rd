@@ -4,11 +4,27 @@
 \alias{SCDC_prop_subcl_marker}
 \title{Tree-guided proportion estimation}
 \usage{
-SCDC_prop_subcl_marker(bulk.eset, sc.eset, ct.varname, fl.varname, sample,
-  ct.sub = NULL, ct.fl.sub, iter.max = 3000, nu = 1e-04,
-  epsilon = 0.001, weight.basis = T, truep = NULL,
-  select.marker = T, markers = NULL, marker.varname = NULL,
-  allgenes.fl = F, pseudocount.use = 1, LFC.lim = 0.5, ...)
+SCDC_prop_subcl_marker(
+  bulk.eset,
+  sc.eset,
+  ct.varname,
+  fl.varname,
+  sample,
+  ct.sub = NULL,
+  ct.fl.sub,
+  iter.max = 3000,
+  nu = 1e-04,
+  epsilon = 0.001,
+  weight.basis = T,
+  truep = NULL,
+  select.marker = T,
+  markers = NULL,
+  marker.varname = NULL,
+  allgenes.fl = F,
+  pseudocount.use = 1,
+  LFC.lim = 0.5,
+  ...
+)
 }
 \arguments{
 \item{bulk.eset}{ExpressionSet object for bulk samples}

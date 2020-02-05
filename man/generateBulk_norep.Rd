@@ -4,8 +4,16 @@
 \alias{generateBulk_norep}
 \title{Construct Pseudo bulk samples -- random}
 \usage{
-generateBulk_norep(eset, ct.varname, sample, disease = NULL, ct.sub,
-  prop_mat = NULL, nbulk = 10, samplewithRep = F)
+generateBulk_norep(
+  eset,
+  ct.varname,
+  sample,
+  disease = NULL,
+  ct.sub,
+  prop_mat = NULL,
+  nbulk = 10,
+  samplewithRep = F
+)
 }
 \arguments{
 \item{eset}{ExpressionSet object for single cells}

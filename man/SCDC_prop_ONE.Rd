@@ -4,9 +4,19 @@
 \alias{SCDC_prop_ONE}
 \title{Proportion estimation function for one-subject case}
 \usage{
-SCDC_prop_ONE(bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
-  ct.sub, iter.max = 2000, nu = 1e-10, epsilon = 0.01,
-  weight.basis = T, ...)
+SCDC_prop_ONE(
+  bulk.eset,
+  sc.eset,
+  ct.varname,
+  sample,
+  truep = NULL,
+  ct.sub,
+  iter.max = 2000,
+  nu = 1e-10,
+  epsilon = 0.01,
+  weight.basis = T,
+  ...
+)
 }
 \arguments{
 \item{bulk.eset}{ExpressionSet object for bulk samples}
