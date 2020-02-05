@@ -128,11 +128,27 @@
     <p>Proportion estimation function for multi-subject case, and apply tree-guided deconvolution</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SCDC_prop_subcl_marker</span>(<span class='no'>bulk.eset</span>, <span class='no'>sc.eset</span>, <span class='no'>ct.varname</span>, <span class='no'>fl.varname</span>, <span class='no'>sample</span>,
-  <span class='kw'>ct.sub</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>ct.fl.sub</span>, <span class='kw'>iter.max</span> <span class='kw'>=</span> <span class='fl'>3000</span>, <span class='kw'>nu</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.001</span>, <span class='kw'>weight.basis</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>truep</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>select.marker</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>markers</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>marker.varname</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>allgenes.fl</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='kw'>pseudocount.use</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>LFC.lim</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>SCDC_prop_subcl_marker</span>(
+  <span class='no'>bulk.eset</span>,
+  <span class='no'>sc.eset</span>,
+  <span class='no'>ct.varname</span>,
+  <span class='no'>fl.varname</span>,
+  <span class='no'>sample</span>,
+  <span class='kw'>ct.sub</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>ct.fl.sub</span>,
+  <span class='kw'>iter.max</span> <span class='kw'>=</span> <span class='fl'>3000</span>,
+  <span class='kw'>nu</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
+  <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.001</span>,
+  <span class='kw'>weight.basis</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>truep</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>select.marker</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>markers</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>marker.varname</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>allgenes.fl</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>pseudocount.use</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>LFC.lim</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -233,7 +249,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

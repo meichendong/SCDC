@@ -128,9 +128,22 @@
     <p>Single cells Clustering QC</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SCDC_qc</span>(<span class='no'>sc.eset</span>, <span class='no'>ct.varname</span>, <span class='no'>sample</span>, <span class='kw'>scsetname</span> <span class='kw'>=</span> <span class='st'>"Single Cell"</span>, <span class='no'>ct.sub</span>,
-  <span class='kw'>iter.max</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>nu</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.01</span>, <span class='kw'>arow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>qcthreshold</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>SCDC_qc</span>(
+  <span class='no'>sc.eset</span>,
+  <span class='no'>ct.varname</span>,
+  <span class='no'>sample</span>,
+  <span class='kw'>scsetname</span> <span class='kw'>=</span> <span class='st'>"Single Cell"</span>,
+  <span class='no'>ct.sub</span>,
+  <span class='kw'>iter.max</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
+  <span class='kw'>nu</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
+  <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
+  <span class='kw'>arow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>qcthreshold</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
+  <span class='kw'>generate.figure</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>cbPalette</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#999999"</span>, <span class='st'>"#E69F00"</span>, <span class='st'>"#56B4E9"</span>, <span class='st'>"#009E73"</span>, <span class='st'>"#F0E442"</span>, <span class='st'>"#0072B2"</span>,
+    <span class='st'>"#D55E00"</span>, <span class='st'>"#CC79A7"</span>),
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -175,6 +188,10 @@
       <th>qcthreshold</th>
       <td><p>the probability threshold used to filter out questionable cells</p></td>
     </tr>
+    <tr>
+      <th>generate.figure</th>
+      <td><p>logical. If generate the heatmap by pheatmap or not. default is TRUE.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -199,7 +216,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>
