@@ -185,7 +185,7 @@ generateBulk_norep <- function(eset, ct.varname, sample, disease = NULL, ct.sub,
         if (dim(temp.vec)[2] == 0){
           temp.sum <- rep(0, dim(temp.vec)[1])
         } else {
-          temp.sample <- sample(1:ncol(temp.vec), temp.nct[ucluster], replace = samplewithRep) # which cells in this cell type will be selected
+          temp.sample <- sample(1:ncol(temp.vec), true.ct[xx, ucluster], replace = samplewithRep) # which cells in this cell type will be selected
           temp.mat <- temp.vec[,temp.sample] # select all those cells
           if (is.null(dim(temp.mat))){
             temp.sum <- temp.mat
