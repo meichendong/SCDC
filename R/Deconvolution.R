@@ -587,26 +587,25 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
 #' @param truep true cell-type proportions for bulk samples if known
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
 #' @export
-SCDC_prop_ONE <- function(bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
-                          ct.sub, iter.max = 2000, nu = 1e-10, epsilon = 0.01,
-                          weight.basis = T, ...){
-  bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset))>0, , drop = FALSE]
-  sc.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
-  # match genes / cells first
-  if (weight.basis){
+SCDC_prop_ONE <- function (bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
+                           ct.sub, iter.max = 2000, nu = 1e-10, epsilon = 0.01, weight.basis = T,
+                           ...) {
+  bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset)) > 0, , drop = FALSE]
+  sc.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.sub,
+                             ct.varname = ct.varname, sample = sample)
+  if (weight.basis) {
     basis <- sc.basis$basis.mvw
-  } else {
+  }
+  else {
     basis <- sc.basis$basis
   }
   commongenes <- intersect(rownames(basis), rownames(bulk.eset))
-  # stop when few common genes exist...
-  if (length(commongenes) < 0.2 * min(dim(sc.eset)[1], dim(bulk.eset)[1])){
-    stop('Too few common genes!')
+  if (length(commongenes) < 0.2 * min(dim(sc.eset)[1], dim(bulk.eset)[1])) {
+    stop("Too few common genes!")
   }
   message(paste("Used", length(commongenes), "common genes..."))
   basis.mvw <- basis[commongenes, ct.sub]
-  xbulk <- getCPM0(exprs(bulk.eset)[commongenes,])
-
+  xbulk <- getCPM0(exprs(bulk.eset)[commongenes, ])
   ALS.S <- sc.basis$sum.mat[ct.sub]
   N.bulk <- ncol(bulk.eset)
   valid.ct <- (colSums(is.na(basis.mvw)) == 0) & (!is.na(ALS.S))
@@ -617,62 +616,60 @@ SCDC_prop_ONE <- function(bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
   basis.mvw <- basis.mvw[, valid.ct]
   ALS.S <- ALS.S[valid.ct]
   prop.est.mvw <- NULL
-
   yhat <- NULL
   yhatgene.temp <- rownames(basis.mvw)
-  # prop estimation for each bulk sample:
   for (i in 1:N.bulk) {
-    xbulk.temp <- xbulk[, i]# *100 # why times 100 if not normalize???
-    message(paste(colnames(xbulk)[i], "has common genes", sum(xbulk[, i] != 0), "..."))
-    # first NNLS:
-    lm <- nnls::nnls(A=basis.mvw,b=xbulk.temp)
+    xbulk.temp <- xbulk[, i]
+    message(paste(colnames(xbulk)[i], "has common genes",
+                  sum(xbulk[, i] != 0), "..."))
+    lm <- nnls::nnls(A = basis.mvw, b = xbulk.temp)
     delta <- lm$residuals
     wt.gene <- 1/(nu + delta^2)
-    x.wt <- xbulk.temp*sqrt(wt.gene)
-    b.wt <- sweep(basis.mvw,1,sqrt(wt.gene),"*")
-
-    lm.wt <- nnls::nnls(A=b.wt, b=x.wt)
+    x.wt <- xbulk.temp * sqrt(wt.gene)
+    b.wt <- sweep(basis.mvw, 1, sqrt(wt.gene), "*")
+    lm.wt <- nnls::nnls(A = b.wt, b = x.wt)
     prop.wt <- lm.wt$x/sum(lm.wt$x)
     delta <- lm.wt$residuals
-
-    for (iter in 1:iter.max){
+    for (iter in 1:iter.max) {
       wt.gene <- 1/(nu + delta^2)
       x.wt <- xbulk.temp * sqrt(wt.gene)
-      b.wt <- sweep(basis.mvw,1,sqrt(wt.gene),"*")
-      lm.wt <- nnls::nnls(A=b.wt, b=x.wt)
+      b.wt <- sweep(basis.mvw, 1, sqrt(wt.gene), "*")
+      lm.wt <- nnls::nnls(A = b.wt, b = x.wt)
       delta.new <- lm.wt$residuals
       prop.wt.new <- lm.wt$x/sum(lm.wt$x)
-
-      if (sum(abs(prop.wt.new - prop.wt)) < epsilon){
+      if (sum(abs(prop.wt.new - prop.wt)) < epsilon) {
         prop.wt <- prop.wt.new
         delta <- delta.new
-        message("WNNLS Converged at iteration ", iter)
+        message("WNNLS Converged at iteration ",
+                iter)
         break
       }
       prop.wt <- prop.wt.new
       delta <- delta.new
     }
-
     prop.est.mvw <- rbind(prop.est.mvw, prop.wt)
     yhat.temp <- basis.mvw %*% as.matrix(lm.wt$x)
     yhatgene.temp <- intersect(rownames(yhat.temp), yhatgene.temp)
-    yhat <- cbind(yhat[yhatgene.temp,], yhat.temp[yhatgene.temp,])
+    yhat <- cbind(yhat[yhatgene.temp, ], yhat.temp[yhatgene.temp,
+                                                   ])
   }
   colnames(prop.est.mvw) <- colnames(basis.mvw)
   rownames(prop.est.mvw) <- colnames(bulk.eset)
   colnames(yhat) <- colnames(bulk.eset)
-
-  ### evaluation steps:
   yobs <- exprs(bulk.eset)
-  yeval <- SCDC_yeval(y=yobs, yest = yhat,
-                      yest.names=c("SCDC"))
+  yeval <- SCDC_yeval(y = yobs, yest = yhat, yest.names = c("SCDC"))
   peval <- NULL
-  if (!is.null(truep)){
-    peval <- SCDC_peval(ptrue= truep, pest = prop.est.mvw, pest.names = c('SCDC'),
-                       select.ct = ct.sub)
+  if (!is.null(truep)) {
+    if (all(rownames(truep) == rownames(prop.est.mvw))){
+      peval <- SCDC_peval(ptrue = truep, pest = prop.est.mvw,
+                          pest.names = c("SCDC"), select.ct = ct.sub)
+    } else {
+      message("Your input sample names for proportion matrix and bulk.eset do not match! Please make sure sample names match.")
+    }
+
   }
-  return(list(prop.est.mvw = prop.est.mvw, basis.mvw = basis.mvw, yhat = yhat,
-              yeval = yeval, peval = peval))
+  return(list(prop.est.mvw = prop.est.mvw, basis.mvw = basis.mvw,
+              yhat = yhat, yeval = yeval, peval = peval))
 }
 
 ############################################

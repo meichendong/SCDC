@@ -169,10 +169,11 @@ generateBulk_norep <- function(eset, ct.varname, sample, disease = NULL, ct.sub,
       true.p1[is.na(true.p1)] <- 0
       true.ct[is.na(true.ct)] <- 0
     } else { #if using the user-defined proportions
-      if (min(temp.ncellk*true.p1[xx,names(temp.ncellk)]) >0 & min(temp.ncellk*true.p1[xx,names(temp.ncellk)])<1){
+      temp.ntotal <- min(temp.ncellk / true.p1[xx,], na.rm = T)
+      if (temp.ntotal <= k){
         message("Please check if your input prop_mat is reasonable. The number of cells of certain selected cell type might be too small.")
       }
-      true.ct[xx,] <- round(temp.ncellk*true.p1[xx,names(temp.ncellk)] ) # true number of cells in the pseudo bulk.
+      true.ct[xx,] <- round(temp.ntotal*true.p1[xx,names(temp.ncellk)] ) # true number of cells in the pseudo bulk.
       true.p1[is.na(true.p1)] <- 0
       true.ct[is.na(true.ct)] <- 0
     }
@@ -219,6 +220,7 @@ generateBulk_norep <- function(eset, ct.varname, sample, disease = NULL, ct.sub,
   return(list(true_p = true.p1, pseudo_bulk = pseudo_bulk, pseudo_eset = pseudo_eset,
               num.real = true.ct, true_p0 = true.p0, true.ct0 = true.ct0, pseudo_eset0 = pseudo_eset0)) # , entropy = entropy
 }
+
 
 
 
