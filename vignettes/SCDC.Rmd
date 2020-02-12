@@ -416,6 +416,7 @@ ens_res <- function(wt, proplist, subject = c("FVB3","FVB4")){
 library(ggplot2)
 library(reshape2)
 ct1 <- c("mediumorchid1","mediumpurple1","lightskyblue","seagreen1","yellow","tan1","azure3")
+perou_pseudo_all <- generateBulk_allcells(perou, ct.varname = 'md_cluster', sample = 'subj', ct.sub = c("endothelial","fibroblast","immune","luminal","basal"))
 
 getENSplot <- function(enstable, combo, subject, figname, subcat = NULL){
   if (!is.null(subcat)){
@@ -466,9 +467,9 @@ getENSplot <- function(enstable, combo, subject, figname, subcat = NULL){
     geom_text(data = dat_text,
               mapping = aes(x=Var1, y=value,label = label),
               hjust   = 0.5, vjust   = 0)
-  png(file.path(vpath,  "mammarygland.png"), res = 80, height = 300, width = 300)
+  # png(file.path(vpath,  "mammarygland.png"), res = 80, height = 300, width = 300)
   print(P)
-  dev.off()
+  # dev.off()
 }
 
 getENSplot(enstable = ens_subcl_perou10x$w_table, combo=combo.10x, subject = "FVB3", figname="10X_FVB3", subcat = c("Spearman_Y","LAD"))

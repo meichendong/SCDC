@@ -111,11 +111,11 @@ counts &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r
 <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">sep =</span> <span class="st">""</span>)
 counts
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1    64   485   194   225   181</span>
-<span class="co">#&gt; gene2   260   451   294   376   197</span>
-<span class="co">#&gt; gene3   123   254   320   380   290</span>
-<span class="co">#&gt; gene4   443   193   479   347    76</span>
-<span class="co">#&gt; gene5   310   494   201   280    85</span>
+<span class="co">#&gt; gene1   216   317    58   495   249</span>
+<span class="co">#&gt; gene2   327   109    10   386   263</span>
+<span class="co">#&gt; gene3    56   124   326   131    30</span>
+<span class="co">#&gt; gene4   423    61   293   347   453</span>
+<span class="co">#&gt; gene5   182   140   128   442    92</span>
 fdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(counts)
 pdata &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">cellname =</span> <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(counts), <span class="dt">subjects =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">5</span>)))
 eset &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getESET.html">getESET</a></span>(counts, <span class="dt">fdata =</span> fdata, <span class="dt">pdata =</span> pdata)
@@ -435,6 +435,7 @@ ens_res &lt;-<span class="st"> </span><span class="cf">function</span>(wt, propl
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(reshape2)
 ct1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"mediumorchid1"</span>,<span class="st">"mediumpurple1"</span>,<span class="st">"lightskyblue"</span>,<span class="st">"seagreen1"</span>,<span class="st">"yellow"</span>,<span class="st">"tan1"</span>,<span class="st">"azure3"</span>)
+perou_pseudo_all &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generateBulk_allcells.html">generateBulk_allcells</a></span>(perou, <span class="dt">ct.varname =</span> <span class="st">'md_cluster'</span>, <span class="dt">sample =</span> <span class="st">'subj'</span>, <span class="dt">ct.sub =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"endothelial"</span>,<span class="st">"fibroblast"</span>,<span class="st">"immune"</span>,<span class="st">"luminal"</span>,<span class="st">"basal"</span>))
 
 getENSplot &lt;-<span class="st"> </span><span class="cf">function</span>(enstable, combo, subject, figname, <span class="dt">subcat =</span> <span class="ot">NULL</span>){
   <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span>(subcat)){
@@ -485,9 +486,9 @@ getENSplot &lt;-<span class="st"> </span><span class="cf">function</span>(enstab
 <span class="st">    </span><span class="kw">geom_text</span>(<span class="dt">data =</span> dat_text,
               <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x=</span>Var1, <span class="dt">y=</span>value,<span class="dt">label =</span> label),
               <span class="dt">hjust   =</span> <span class="fl">0.5</span>, <span class="dt">vjust   =</span> <span class="dv">0</span>)
-  <span class="kw"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(vpath,  <span class="st">"mammarygland.png"</span>), <span class="dt">res =</span> <span class="dv">80</span>, <span class="dt">height =</span> <span class="dv">300</span>, <span class="dt">width =</span> <span class="dv">300</span>)
+  <span class="co"># png(file.path(vpath,  "mammarygland.png"), res = 80, height = 300, width = 300)</span>
   <span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(P)
-  <span class="kw"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span>()
+  <span class="co"># dev.off()</span>
 }
 
 <span class="kw">getENSplot</span>(<span class="dt">enstable =</span> ens_subcl_perou10x<span class="op">$</span>w_table, <span class="dt">combo=</span>combo.10x, <span class="dt">subject =</span> <span class="st">"FVB3"</span>, <span class="dt">figname=</span><span class="st">"10X_FVB3"</span>, <span class="dt">subcat =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Spearman_Y"</span>,<span class="st">"LAD"</span>))</code></pre></div>
