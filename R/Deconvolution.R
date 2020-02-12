@@ -696,44 +696,46 @@ SCDC_prop_ONE <- function (bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
 #' @param truep true cell-type proportions for bulk samples if known
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
 #' @export
-SCDC_prop_subcl_marker <- function(bulk.eset, sc.eset, ct.varname, fl.varname, sample,
-                                   ct.sub = NULL, ct.fl.sub, iter.max = 3000, nu = 1e-04, epsilon = 0.001,
-                                   weight.basis = T, truep = NULL,
-                                   select.marker = T, markers = NULL, marker.varname = NULL, allgenes.fl = F,
-                                   pseudocount.use = 1, LFC.lim = 0.5, ...) {
-  if (is.null(ct.sub)){
-    ct.sub <- unique(sc.eset@phenoData@data[,ct.varname])[!is.na(unique(sc.eset@phenoData@data[,ct.varname]))]
+SCDC_prop_subcl_marker <- function (bulk.eset, sc.eset, ct.varname, fl.varname, sample,
+                                    ct.sub = NULL, ct.fl.sub, iter.max = 3000, nu = 1e-04, epsilon = 0.001,
+                                    weight.basis = T, truep = NULL, select.marker = T, markers = NULL,
+                                    marker.varname = NULL, allgenes.fl = F, pseudocount.use = 1,
+                                    LFC.lim = 0.5, ...)
+{
+  if (is.null(ct.sub)) {
+    ct.sub <- unique(sc.eset@phenoData@data[, ct.varname])[!is.na(unique(sc.eset@phenoData@data[,
+                                                                                                ct.varname]))]
   }
   ct.sub <- ct.sub[!is.na(ct.sub)]
   ct.fl.sub <- ct.fl.sub[!is.na(ct.fl.sub)]
-  bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset))>0, , drop = FALSE]
-  sc.eset <- sc.eset[,sc.eset@phenoData@data[,ct.varname] %in% ct.sub]
-  sc.basis <- SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
+  bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset)) > 0, , drop = FALSE]
+  sc.eset <- sc.eset[, sc.eset@phenoData@data[, ct.varname] %in%
+                       ct.sub]
+  sc.basis <- SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname,
+                         sample = sample)
   sc.fl.basis <- SCDC_basis(x = sc.eset, ct.sub = ct.fl.sub[!is.na(ct.fl.sub)],
                             ct.varname = fl.varname, sample = sample)
-  if (select.marker){
-    if (is.null(marker.varname)){
+  if (select.marker) {
+    if (is.null(marker.varname)) {
       marker.varname <- ct.varname
     }
-    # wilcox test on two groups of cells for marker gene selection... (refer to seurat::FindMarkers)
     countmat <- exprs(sc.eset)
-    ct.group <- sc.eset@phenoData@data[,marker.varname]
+    ct.group <- sc.eset@phenoData@data[, marker.varname]
     markers.wilcox <- NULL
-    # u=1
-    for(u in 1:length(unique(ct.group))){
+    for (u in 1:length(unique(ct.group))) {
       ct.group.temp <- ct.group == unique(ct.group)[u]
-      group.1 <- apply(X = countmat[,ct.group.temp],
+      group.1 <- apply(X = countmat[, ct.group.temp], MARGIN = 1,
+                       FUN = function(x) log(x = mean(x = expm1(x = x)) +
+                                               pseudocount.use))
+      group.2 <- apply(X = countmat[, !ct.group.temp],
                        MARGIN = 1, FUN = function(x) log(x = mean(x = expm1(x = x)) +
                                                            pseudocount.use))
-      group.2 <- apply(X = countmat[,! ct.group.temp],
-                       MARGIN = 1, FUN = function(x) log(x = mean(x = expm1(x = x)) +
-                                                           pseudocount.use))
-      genes.diff <- rownames(sc.eset)[(group.1 - group.2) > LFC.lim]
-      count.use <- countmat[rownames(sc.eset) %in% genes.diff,]
-
-      ##
-      p_val <- sapply(1:nrow(count.use), function(x){
-        wilcox.test(count.use[x,] ~ ct.group.temp)$p.value
+      genes.diff <- rownames(sc.eset)[(group.1 - group.2) >
+                                        LFC.lim]
+      count.use <- countmat[rownames(sc.eset) %in% genes.diff,
+                            ]
+      p_val <- sapply(1:nrow(count.use), function(x) {
+        wilcox.test(count.use[x, ] ~ ct.group.temp)$p.value
       })
       p_val_adj <- p.adjust(p = p_val, method = "bonferroni",
                             n = nrow(count.use))
@@ -741,180 +743,176 @@ SCDC_prop_subcl_marker <- function(bulk.eset, sc.eset, ct.varname, fl.varname, s
       markers.wilcox <- c(markers.wilcox, markers.temp)
     }
     markers <- unique(markers.wilcox)
-    message("Selected ",length(markers), " marker genes by Wilcoxon test...")
-  } # else need input of marker genes for clustering
-
-  # match genes / cells first
-  if (weight.basis){
+    message("Selected ", length(markers), " marker genes by Wilcoxon test...")
+  }
+  if (weight.basis) {
     basis <- sc.basis$basis.mvw
     basis.fl <- sc.fl.basis$basis.mvw
-  } else {
+  }
+  else {
     basis <- sc.basis$basis
     basis.fl <- sc.fl.basis$basis
   }
-  if (!is.null(markers)){
-    commongenes <- Reduce(intersect, list(rownames(basis), rownames(bulk.eset), markers))
-    commongenes.fl <- Reduce(intersect, list(rownames(basis.fl), rownames(bulk.eset), markers))
-  } else {
+  if (!is.null(markers)) {
+    commongenes <- Reduce(intersect, list(rownames(basis),
+                                          rownames(bulk.eset), markers))
+    commongenes.fl <- Reduce(intersect, list(rownames(basis.fl),
+                                             rownames(bulk.eset), markers))
+  }
+  else {
     commongenes <- intersect(rownames(basis), rownames(bulk.eset))
     commongenes.fl <- intersect(rownames(basis.fl), rownames(bulk.eset))
-    # stop when few common genes exist...
-    if (length(commongenes) < 0.2 * min(dim(sc.eset)[1], dim(bulk.eset)[1])){
-      stop('Too few common genes!')
+    if (length(commongenes) < 0.2 * min(dim(sc.eset)[1],
+                                        dim(bulk.eset)[1])) {
+      stop("Too few common genes!")
     }
   }
-
   message(paste("Used", length(commongenes), "common genes for all cell types, \n",
                 "Used", length(commongenes.fl), "common genes for first level cell types..."))
-
   basis.mvw <- basis[commongenes, ct.sub]
   basis.mvw.fl <- basis.fl[commongenes.fl, ct.fl.sub]
-
-  xbulk0 <- getCPM0(exprs(bulk.eset)[commongenes,])
-  xbulk <- as.matrix(xbulk0) ## whether to normalize all /common genes
+  xbulk0 <- getCPM0(exprs(bulk.eset)[commongenes, ])
+  xbulk <- as.matrix(xbulk0)
   colnames(xbulk) <- colnames(bulk.eset)
-  xbulk1 <- getCPM0(exprs(bulk.eset)[commongenes.fl,])
+  xbulk1 <- getCPM0(exprs(bulk.eset)[commongenes.fl, ])
   xbulk.fl <- as.matrix(xbulk1)
-
   ALS.S <- sc.basis$sum.mat[ct.sub]
   N.bulk <- ncol(bulk.eset)
   valid.ct <- (colSums(is.na(basis.mvw)) == 0) & (!is.na(ALS.S))
   ALS.S.fl <- sc.fl.basis$sum.mat[ct.fl.sub]
   valid.ct.fl <- (colSums(is.na(basis.mvw.fl)) == 0) & (!is.na(ALS.S.fl))
-
   if (sum(valid.ct) <= 1) {
     stop("Not enough valid cell type!")
   }
   message(paste("Used", sum(valid.ct), "cell types in deconvolution...\n",
-                "Used", sum(valid.ct.fl),"first level cell types ..."))
-
+                "Used", sum(valid.ct.fl), "first level cell types ..."))
   basis.mvw <- basis.mvw[, valid.ct]
   ALS.S <- ALS.S[valid.ct]
   basis.mvw.fl <- basis.mvw.fl[, valid.ct.fl]
   ALS.S.fl <- ALS.S[valid.ct.fl]
-
   prop.est <- NULL
   rsquared <- NULL
-
-  # prop estimation for each bulk sample:
   for (i in 1:N.bulk) {
-    # i=1
-    xbulk.temp <- xbulk[, i] ## *1e3  will affect a little bit
-    message(paste(colnames(xbulk)[i], "has common genes", sum(xbulk[, i] != 0), "..."))
-    if (allgenes.fl){
+    xbulk.temp <- xbulk[, i]
+    message(paste(colnames(xbulk)[i], "has common genes",
+                  sum(xbulk[, i] != 0), "..."))
+    if (allgenes.fl) {
       markers.fl <- names(xbulk.temp)
-    } else {
+    }
+    else {
       markers.fl <- Reduce(intersect, list(markers, names(xbulk.temp)))
     }
-
-    # first level NNLS:
-    lm <- nnls::nnls(A=basis.mvw.fl[markers.fl,],b=xbulk.temp[markers.fl])
+    lm <- nnls::nnls(A = basis.mvw.fl[markers.fl, ], b = xbulk.temp[markers.fl])
     delta <- lm$residuals
     wt.gene <- 1/(nu + delta^2)
-    x.wt <- xbulk.temp[markers.fl] *sqrt(wt.gene)
-    b.wt <- sweep(basis.mvw.fl[markers.fl,],1,sqrt(wt.gene),"*")
-
-    lm.wt <- nnls::nnls(A=b.wt, b=x.wt)
+    x.wt <- xbulk.temp[markers.fl] * sqrt(wt.gene)
+    b.wt <- sweep(basis.mvw.fl[markers.fl, ], 1, sqrt(wt.gene),
+                  "*")
+    lm.wt <- nnls::nnls(A = b.wt, b = x.wt)
     prop.wt.fl <- lm.wt$x/sum(lm.wt$x)
     delta <- lm.wt$residuals
-
-    for (iter in 1:iter.max){
+    for (iter in 1:iter.max) {
       wt.gene <- 1/(nu + delta^2)
       x.wt <- xbulk.temp[markers.fl] * sqrt(wt.gene)
-      b.wt <- sweep(basis.mvw.fl[markers.fl,],1,sqrt(wt.gene),"*")
-      lm.wt <- nnls::nnls(A=b.wt, b=x.wt)
+      b.wt <- sweep(basis.mvw.fl[markers.fl, ], 1, sqrt(wt.gene),
+                    "*")
+      lm.wt <- nnls::nnls(A = b.wt, b = x.wt)
       delta.new <- lm.wt$residuals
       prop.wt.fl.new <- lm.wt$x/sum(lm.wt$x)
-
-      if (sum(abs(prop.wt.fl.new - prop.wt.fl)) < epsilon){
+      if (sum(abs(prop.wt.fl.new - prop.wt.fl)) < epsilon) {
         prop.wt.fl <- prop.wt.fl.new
         delta <- delta.new
-        message("WNNLS for First level clusters Converged at iteration ", iter)
+        message("WNNLS for First level clusters Converged at iteration ",
+                iter)
         break
       }
       prop.wt.fl <- prop.wt.fl.new
       delta <- delta.new
     }
     names(prop.wt.fl) <- colnames(basis.mvw.fl)
-
-    # relationship between first level and overall
-    rt <- table(sc.eset@phenoData@data[,ct.varname], sc.eset@phenoData@data[,fl.varname])
-    rt <- rt[,ct.fl.sub]
+    rt <- table(sc.eset@phenoData@data[, ct.varname], sc.eset@phenoData@data[,
+                                                                             fl.varname])
+    rt <- rt[, ct.fl.sub]
     rt.list <- list()
     prop.wt <- NULL
-
-    # prop.wt
-    for (j in 1:ncol(rt)){ # for each first level cluster
-      # j=1
-      rt.list[[j]] <- rownames(rt)[rt[,j] >0]
+    for (j in 1:ncol(rt)) {
+      rt.list[[j]] <- rownames(rt)[rt[, j] > 0]
       names(rt.list)[j] <- colnames(rt)[j]
-      sub.cl <- rownames(rt)[rt[,j] >0]
-      if (length(sub.cl) > 1 & prop.wt.fl[colnames(rt)[j]] > 0) {
-        if (is.null(dim(prop.wt.fl))){
-          # specify genes in xbulk.j ... first level genes ...
-          xbulk.j <- basis.mvw.fl[,j]*prop.wt.fl[j] + (xbulk.temp - basis.mvw.fl %*% lm.wt$x)*prop.wt.fl[j]
-        } else {
-          xbulk.j <- basis.mvw.fl[,j]*prop.wt.fl[,j] + (xbulk.temp - basis.mvw.fl %*% lm.wt$x)*prop.wt.fl[,j]
+      sub.cl <- rownames(rt)[rt[, j] > 0]
+      if (length(sub.cl) > 1 & prop.wt.fl[colnames(rt)[j]] >
+          0) {
+        if (is.null(dim(prop.wt.fl))) {
+          xbulk.j <- basis.mvw.fl[, j] * prop.wt.fl[j] +
+            (xbulk.temp - basis.mvw.fl %*% lm.wt$x) *
+            prop.wt.fl[j]
         }
-
-        markers.sl <- Reduce(intersect, list(markers, rownames(xbulk.j)))
-
-        ##############################################################################
-        # make markers.sub as a list, for each of the first-level intra clusters.
-        ##############################################################################
-
-        basis.sl <- basis.mvw[markers.sl,rownames(rt)[rt[,j] >0]]
-        lm.sl <- nnls::nnls(A=basis.sl,b=xbulk.j[markers.sl,])
+        else {
+          xbulk.j <- basis.mvw.fl[, j] * prop.wt.fl[,
+                                                    j] + (xbulk.temp - basis.mvw.fl %*% lm.wt$x) *
+            prop.wt.fl[, j]
+        }
+        markers.sl <- Reduce(intersect, list(markers,
+                                             rownames(xbulk.j)))
+        basis.sl <- basis.mvw[markers.sl, rownames(rt)[rt[,
+                                                          j] > 0]]
+        lm.sl <- nnls::nnls(A = basis.sl, b = xbulk.j[markers.sl,
+                                                      ])
         delta.sl <- lm.sl$residuals
         wt.gene.sl <- 1/(nu + delta.sl^2)
-        x.wt.sl <- xbulk.j[markers.sl,]*sqrt(wt.gene.sl)
-        b.wt.sl <- sweep(basis.sl,1,sqrt(wt.gene.sl),"*")
-
-        lm.wt.sl <- nnls::nnls(A=b.wt.sl, b=x.wt.sl)
+        x.wt.sl <- xbulk.j[markers.sl, ] * sqrt(wt.gene.sl)
+        b.wt.sl <- sweep(basis.sl, 1, sqrt(wt.gene.sl),
+                         "*")
+        lm.wt.sl <- nnls::nnls(A = b.wt.sl, b = x.wt.sl)
         prop.wt.sl <- lm.wt.sl$x/sum(lm.wt.sl$x)
         delta.sl <- lm.wt.sl$residuals
-
-        for (iter in 1:iter.max){
+        for (iter in 1:iter.max) {
           wt.gene.sl <- 1/(nu + delta.sl^2)
-          x.wt.sl <- xbulk.j[markers.sl,] * sqrt(wt.gene.sl)
-          b.wt.sl <- sweep(basis.sl,1,sqrt(wt.gene.sl),"*")
-          lm.wt.sl <- nnls::nnls(A=b.wt.sl, b=x.wt.sl)
+          x.wt.sl <- xbulk.j[markers.sl, ] * sqrt(wt.gene.sl)
+          b.wt.sl <- sweep(basis.sl, 1, sqrt(wt.gene.sl),
+                           "*")
+          lm.wt.sl <- nnls::nnls(A = b.wt.sl, b = x.wt.sl)
           delta.sl.new <- lm.wt.sl$residuals
           prop.wt.sl.new <- lm.wt.sl$x/sum(lm.wt.sl$x)
-
-          if (sum(abs(prop.wt.sl.new - prop.wt.sl)) < epsilon){
+          if (sum(abs(prop.wt.sl.new - prop.wt.sl)) <
+              epsilon) {
             prop.wt.sl <- prop.wt.sl.new
             delta.sl <- delta.sl.new
-            cat("WNNLS for Second level clusters",rownames(rt)[rt[,j] >0],"Converged at iteration ", iter)
+            cat("WNNLS for Second level clusters",
+                rownames(rt)[rt[, j] > 0], "Converged at iteration ",
+                iter)
             break
           }
           prop.wt.sl <- prop.wt.sl.new
           delta.sl <- delta.sl.new
         }
         names(prop.wt.sl) <- sub.cl
-        prop.wt <- c(prop.wt, prop.wt.sl*prop.wt.fl[colnames(rt)[j]])
-      } else if (length(sub.cl) == 1){
-        # j=2
+        prop.wt <- c(prop.wt, prop.wt.sl * prop.wt.fl[colnames(rt)[j]])
+      }
+      else if (length(sub.cl) == 1) {
         prop.wt <- c(prop.wt, prop.wt.fl[colnames(rt)[j]])
-      } else if (length(sub.cl) > 1 & prop.wt.fl[colnames(rt)[j]] == 0){
+      }
+      else if (length(sub.cl) > 1 & prop.wt.fl[colnames(rt)[j]] ==
+               0) {
         prop.wt.sl <- rep(0, length(sub.cl))
         names(prop.wt.sl) <- sub.cl
         prop.wt <- c(prop.wt, prop.wt.sl)
       }
-
     }
     prop.est <- rbind(prop.est, prop.wt)
   }
   rownames(prop.est) <- colnames(bulk.eset)
-
   peval <- NULL
-  if (!is.null(truep)){
-    peval <- SCDC_peval(ptrue= truep, pest = prop.est, pest.names = c('SCDC'),
-                       select.ct = ct.sub)
+  if (!is.null(truep)) {
+    peval <- SCDC_peval(ptrue = truep, pest = prop.est, pest.names = c("SCDC"),
+                        select.ct = ct.sub)
   }
 
-  return(list(prop.est = prop.est, prop.wt.fl = prop.wt.fl, basis.mvw = basis.mvw, peval = peval,
-              sc.basis = sc.basis, sc.fl.basis = sc.fl.basis))
+  # calculate yhat after deconv
+  yhat <- sc.basis$basis.mvw %*% t(prop.est)[colnames(sc.basis$basis.mvw),]
+
+  return(list(prop.est = prop.est, prop.wt.fl = prop.wt.fl,
+              basis.mvw = basis.mvw, peval = peval, sc.basis = sc.basis,
+              sc.fl.basis = sc.fl.basis, yhat = yhat))
 }
 
 
