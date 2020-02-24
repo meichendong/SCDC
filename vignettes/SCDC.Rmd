@@ -148,6 +148,10 @@ PS_ensemble$w_table
 #mAD_Y        0.00 1.00 0.00 6.705799 4.225710 0.8185645  0.8611222   0.03376  0.02509 0.9907
 #Spearman_Y   0.00 0.97 0.03 6.703476 4.229452 0.8192302  0.8613582   0.03483  0.02661 0.9912
 ```
+Interpretation of the `PS_ensemble$w_table`: columns w1,w2,w3 are the weight assigned to each of the reference dataset result. The columns 4-11 are the metrics we used to derived the optimal weights for the references. For example, 'RMSD_Y' stands for the RMSD value based on observed and predicted expression 'Y' values while using the set of weights suggested on the left.
+For each row, these are the different optimization methods/criteria we used to derive the corresponding weights.	For example, the first row suggests (0.06, 0.66, 0.28) for results derived from reference 1 to 3. This set of weights are selected based on calculating the inverse SSE value. Likewise, LAD stands for minimizing the least absolute deviation values based on 'Y'. Pearson_prop only works when you have the true sample composition input (that is, in the `SCDC_ENSEMBLE()` function, the `truep` option is not `NULL`.). This aims to find weights such that the final ensemble proportions have the highest Pearson correlation with the truth. `mAD_Y` is the grid search result, where we calculated the result from each weights combination, and chose the one minimized the mAD(Yobs, Ypredict). `Spearman_Y` is the grid search result, where we calculated the result from each weights combination, and chose the one maximized the Spearman corr(Yobs, Ypredict).
+If you have many reference datasets, say more than 4, then it's not recommended to use the 'grid search method' since it would be time consuming. You can turn off the grid search by setting `grid.search = F`.
+
 In this case, SCDC ENSEMBLE weights suggest that the weight for results from reference dataset Segerstolpe et al. to be one. Hence, the final estimated cell-type proportions can be found at `PS_ensemble$prop.only$seger` or `PS_ensemble$prop.list$seger$prop.est.mvw`.
 
 ## SCDC on Real Bulk RNA-seq Data
@@ -399,26 +403,33 @@ Then we proceed with the ENSEMBLE step. Note that you can also input the deconvo
 ## 
 ens_subcl_perou10x <- SCDC_ENSEMBLE(bulk.eset = bulk10x, prop.input = list(tmouse.subcl = tmouse.subcl, perou.subcl = perou.subcl), ct.sub = c("endothelial","fibroblast","immune","luminal","basal"), search.length = 0.01, grid.search = T)
 ens_subcl_perou10x$w_table
+```
 
+The following code visualizes the SCDC estimation results. `getPearson` is a function calculating the Pearson correlation between two (estimated) datasets for the selected subjects (subj) and cell types (ct). `ens_res` is the function to summarize the ENSEMBLE results. wt is a vector of estimated weights which should sum up to 1. proplist is a list of estimated proportion matrix corresponding to the reference datasets in the same order with wt. subject is a vector which specifies the name of subjects of interest.
+`getENSplot` is the function to generate the final ENSEMBLE plot. enstable is a matrix which usually is the selected `your_ENSEMBLE_result$w_table`. You can specify your own designed weights for the references also. each row is a set of weights and each column correspond to a reference dataset.
+combo is a list of estimated proportion matrices derieved from SCDC or other deconvolution methods. The order of the lists should be consistent with the column order in the weight table (enstable).
+subject specifies the subjects of interest in your bulk samples. subcat is optional, and it can help you select a subset of ENSEMBLE method options. To specify subcat, it should be a subset of rownames of your enstable. 
+
+```r
 getPearson <- function(dt1, dt2, ct, subj){
   cor(c(dt1[subj,ct]), c(dt2[subj,ct]))
 }
-combo.10x <- lapply(ens_subcl_perou10x$prop.list, function(x){
-  x$prop.est[,c("endothelial","fibroblast","luminal","basal","immune")] 
-})
 ens_res <- function(wt, proplist, subject = c("FVB3","FVB4")){
   ens <- wt_prop(wt, proplist = proplist) 
   p.ens <- getPearson(perou_pseudo_all$truep, ens ,
                       ct = c("endothelial","fibroblast","luminal","basal","immune"), subj = subject)
   return(list(prop = ens, p = p.ens))
 }
+combo.10x <- lapply(ens_subcl_perou10x$prop.list, function(x){
+  x$prop.est[,c("endothelial","fibroblast","luminal","basal","immune")] 
+})
 
 library(ggplot2)
 library(reshape2)
 ct1 <- c("mediumorchid1","mediumpurple1","lightskyblue","seagreen1","yellow","tan1","azure3")
 perou_pseudo_all <- generateBulk_allcells(perou, ct.varname = 'md_cluster', sample = 'subj', ct.sub = c("endothelial","fibroblast","immune","luminal","basal"))
 
-getENSplot <- function(enstable, combo, subject, figname, subcat = NULL){
+getENSplot <- function(enstable, combo, subject, subcat = NULL){
   if (!is.null(subcat)){
     enstable <- enstable[subcat,]
   }
@@ -472,7 +483,7 @@ getENSplot <- function(enstable, combo, subject, figname, subcat = NULL){
   # dev.off()
 }
 
-getENSplot(enstable = ens_subcl_perou10x$w_table, combo=combo.10x, subject = "FVB3", figname="10X_FVB3", subcat = c("Spearman_Y","LAD"))
+getENSplot(enstable = ens_subcl_perou10x$w_table, combo=combo.10x, subject = "FVB3", subcat = c("Spearman_Y","LAD"))
 ```
 
 Visualization of the proportion estimation results:
