@@ -47,6 +47,7 @@ getESET <- function(exprs, fdata, pdata){
 #' Construct Pseudo bulk samples
 #' @description Construct Pseudo bulk samples by actual number of cells per subject
 #' @name generateBulk_allcells
+#' @import xbioc
 #' @param eset ExpressionSet object for single cells
 #' @param ct.varname variable name for 'cell types'
 #' @param sample variable name for subject/samples
