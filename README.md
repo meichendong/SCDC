@@ -22,6 +22,12 @@ if (!require("devtools")) {
 devtools::install_github("meichendong/SCDC")
 ```
 
+Dependency package problem regarding to 'xbioc' could be resolved by:
+``` r
+install.packages("remotes")
+remotes::install_github("renozao/xbioc")
+```
+
 Vignettes
 ---------
 
