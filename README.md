@@ -34,3 +34,5 @@ Vignettes
 Please see the [vignettes page](https://meichendong.github.io/SCDC/articles/SCDC.html).
 
 The SCDC paper is published at [Briefings In Bioinformatics](https://doi.org/10.1093/bib/bbz166).
+
+Questions regarding to the package can be posted on the issues section or emailed to: meichen@live.unc.edu
