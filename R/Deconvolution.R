@@ -10,9 +10,10 @@
 #' @param ct.sub a subset of cell types that are selected to construct basis matrix
 #' @param ct.varname variable name for 'cell types'
 #' @param sample variable name for subject/samples
+#' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
 #' @return a list of basis matrix, sum of cell-type-specific library size, sample variance matrix, basis matrix by mvw, mvw matrix.
 #' @export
-SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample){
+SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample, ct.cell.size = NULL){
   # select only the subset of cell types of interest
   if (is.null(ct.sub)){
     ct.sub <- unique(x@phenoData@data[,ct.varname])
@@ -46,7 +47,17 @@ SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample){
   })
   rownames(sum.mat2) <- unique(ct.id)
   colnames(sum.mat2) <- unique(sample.id)
-  sum.mat <- rowMeans(sum.mat2, na.rm = T)
+  # library size factor calculated from the samples:
+  if (is.null(ct.cell.size)){
+    sum.mat <- rowMeans(sum.mat2, na.rm = T)
+  } else {
+    if (is.null(names(ct.cell.size))){
+      message("Cell size factor vector requires cell type names...")
+      break
+    } else {
+      sum.mat <- ct.cell.size
+    }
+  }
 
   basis <- sapply(unique(mean.id[,1]), function(id){
     z <- sum.mat[mean.id[,1]]
@@ -112,9 +123,10 @@ SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample){
 #' @param ct.sub a subset of cell types that are selected to construct basis matrix
 #' @param ct.varname variable name for 'cell types'
 #' @param sample variable name for subject/samples
+#' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
 #' @return a list of basis matrix, sum of cell-type-specific library size, sample variance matrix, basis matrix by mvw, mvw matrix.
 #' @export
-SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample){
+SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample, ct.cell.size = NULL){
   # select only the subset of cell types of interest
   if (is.null(ct.sub)){
     ct.sub <- unique(x@phenoData@data[,ct.varname])[!is.na(unique(x@phenoData@data[,ct.varname]))]
@@ -145,7 +157,17 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample){
   })
   rownames(sum.mat2) <- unique(ct.id)
   colnames(sum.mat2) <- unique(sample.id)
-  sum.mat <- rowMeans(sum.mat2, na.rm = T)
+  # sum.mat <- rowMeans(sum.mat2, na.rm = T)
+  if (is.null(ct.cell.size)){
+    sum.mat <- rowMeans(sum.mat2, na.rm = T)
+  } else {
+    if (is.null(names(ct.cell.size))){
+      message("Cell size factor vector requires cell type names...")
+      break
+    } else {
+      sum.mat <- ct.cell.size
+    }
+  }
 
   basis <- sapply(unique(mean.id[,1]), function(id){
     z <- sum.mat[mean.id[,1]]
@@ -219,14 +241,15 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample){
 #' @param arow annotation of rows for pheatmap
 #' @param qcthreshold the probability threshold used to filter out questionable cells
 #' @param generate.figure logical. If generate the heatmap by pheatmap or not. default is TRUE.
+#' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
 #' @return a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.
 #' @export
 SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
                    ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.01, arow =NULL,
-                   qcthreshold = 0.7, generate.figure = T,
+                   qcthreshold = 0.7, generate.figure = T, ct.cell.size = NULL,
                    cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
                    ...) {
-  sc.basis = SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
+  sc.basis = SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample, ct.cell.size = ct.cell.size)
   M.S <- sc.basis$sum.mat[ct.sub]
   xsc <- getCPM0(exprs(sc.eset)[rownames(sc.basis$basis.mvw),])
   N.sc <- ncol(xsc)
@@ -310,15 +333,16 @@ SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
 #' @param arow annotation of rows for pheatmap
 #' @param qcthreshold the probability threshold used to filter out questionable cells
 #' @param generate.figure logical. If generate the heatmap by pheatmap or not. default is TRUE.
+#' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
 #' @return a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.
 #' @export
 SCDC_qc_ONE <- function(sc.eset, ct.varname, sample, scsetname = "Single Cell",
                   ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.01,
                     arow = NULL, weight.basis = F, qcthreshold = 0.7,
-                  generate.figure = T,
+                  generate.figure = T, ct.cell.size = NULL,
                   cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
                   ...){
-  sc.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
+  sc.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample, ct.cell.size = ct.cell.size)
   if (weight.basis){
     basis.mvw <- sc.basis$basis.mvw[, ct.sub]
   } else {
@@ -409,18 +433,19 @@ SCDC_qc_ONE <- function(sc.eset, ct.varname, sample, scsetname = "Single Cell",
 #' @param nu a small constant to facilitate the calculation of variance
 #' @param epsilon a small constant number used for convergence criteria
 #' @param truep true cell-type proportions for bulk samples if known
+#' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
 #' @param Transform_bisque The bulk sample transformation from bisqueRNA. Aiming to reduce the systematic difference between single cells and bulk samples.
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
 #' @export
 SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max = 1000,
                        nu = 1e-04, epsilon = 0.01, truep = NULL, weight.basis = T,
-                       Transform_bisque = F, ...)
+                       ct.cell.size = NULL, Transform_bisque = F, ...)
 {
   bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset)) > 0, , drop = FALSE]
   ct.sub <- intersect(ct.sub, unique(sc.eset@phenoData@data[,
                                                             ct.varname]))
   sc.basis <- SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname,
-                         sample = sample)
+                         sample = sample, ct.cell.size = ct.cell.size)
   commongenes <- intersect(rownames(sc.basis$basis.mvw), rownames(bulk.eset))
   if (length(commongenes) < 0.2 * min(dim(sc.eset)[1], dim(bulk.eset)[1])) {
     stop("Too few common genes!")
@@ -585,14 +610,16 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
 #' @param nu a small constant to facilitate the calculation of variance
 #' @param epsilon a small constant number used for convergence criteria
 #' @param truep true cell-type proportions for bulk samples if known
+#' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
 #' @export
 SCDC_prop_ONE <- function (bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
                            ct.sub, iter.max = 2000, nu = 1e-10, epsilon = 0.01, weight.basis = T,
+                           ct.cell.size = NULL,
                            ...) {
   bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset)) > 0, , drop = FALSE]
   sc.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.sub,
-                             ct.varname = ct.varname, sample = sample)
+                             ct.varname = ct.varname, sample = sample, ct.cell.size = ct.cell.size)
   if (weight.basis) {
     basis <- sc.basis$basis.mvw
   }
@@ -694,13 +721,15 @@ SCDC_prop_ONE <- function (bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
 #' @param pseudocount.use a constant number used when selecting marker genes, default is 1.
 #' @param LFC.lim a threshold of log fold change when selecting genes as input to perform Wilcoxon's test.
 #' @param truep true cell-type proportions for bulk samples if known
+#' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
+#' @param fl.cell.size default is NULL, similar to ct.cell.size. This is for first-level 'meta-clusters'.
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
 #' @export
 SCDC_prop_subcl_marker <- function (bulk.eset, sc.eset, ct.varname, fl.varname, sample,
                                     ct.sub = NULL, ct.fl.sub, iter.max = 3000, nu = 1e-04, epsilon = 0.001,
                                     weight.basis = T, truep = NULL, select.marker = T, markers = NULL,
                                     marker.varname = NULL, allgenes.fl = F, pseudocount.use = 1,
-                                    LFC.lim = 0.5, ...)
+                                    LFC.lim = 0.5, ct.cell.size = NULL, fl.cell.size = NULL, ...)
 {
   if (is.null(ct.sub)) {
     ct.sub <- unique(sc.eset@phenoData@data[, ct.varname])[!is.na(unique(sc.eset@phenoData@data[,
@@ -712,9 +741,9 @@ SCDC_prop_subcl_marker <- function (bulk.eset, sc.eset, ct.varname, fl.varname, 
   sc.eset <- sc.eset[, sc.eset@phenoData@data[, ct.varname] %in%
                        ct.sub]
   sc.basis <- SCDC_basis(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname,
-                         sample = sample)
+                         sample = sample, ct.cell.size = ct.cell.size)
   sc.fl.basis <- SCDC_basis(x = sc.eset, ct.sub = ct.fl.sub[!is.na(ct.fl.sub)],
-                            ct.varname = fl.varname, sample = sample)
+                            ct.varname = fl.varname, sample = sample, ct.cell.size = fl.cell.size)
   if (select.marker) {
     if (is.null(marker.varname)) {
       marker.varname <- ct.varname
@@ -938,12 +967,14 @@ SCDC_prop_subcl_marker <- function (bulk.eset, sc.eset, ct.varname, fl.varname, 
 #' @param pseudocount.use a constant number used when selecting marker genes, default is 1.
 #' @param LFC.lim a threshold of log fold change when selecting genes as input to perform Wilcoxon's test.
 #' @param truep true cell-type proportions for bulk samples if known
+#' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
+#' @param fl.cell.size default is NULL, similar to ct.cell.size. This is for first-level 'meta-clusters'.
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
 #' @export
 SCDC_prop_ONE_subcl_marker <- function(bulk.eset, sc.eset, ct.varname, fl.varname, sample, truep = NULL,
                                        ct.sub = NULL, ct.fl.sub, iter.max = 3000, nu = 1e-04, epsilon = 0.001,
                                        weight.basis = F, bulk_disease = NULL, select.marker = T, markers = NULL, marker.varname = NULL,
-                                       pseudocount.use = 1, LFC.lim = 0.5, allgenes.fl = F,
+                                       pseudocount.use = 1, LFC.lim = 0.5, allgenes.fl = F, ct.cell.size = NULL, fl.cell.size = NULL,
                                        ...)
 {
 
@@ -953,9 +984,9 @@ SCDC_prop_ONE_subcl_marker <- function(bulk.eset, sc.eset, ct.varname, fl.varnam
   ct.sub <- ct.sub[!is.na(ct.sub)]
   ct.fl.sub <- ct.fl.sub[!is.na(ct.fl.sub)]
   bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset))>0, , drop = FALSE]
-  sc.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample)
+  sc.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.sub, ct.varname = ct.varname, sample = sample, ct.cell.size = ct.cell.size)
   sc.fl.basis <- SCDC_basis_ONE(x = sc.eset, ct.sub = ct.fl.sub[!is.na(ct.fl.sub)],
-                                ct.varname = fl.varname, sample = sample)
+                                ct.varname = fl.varname, sample = sample, ct.cell.size = fl.cell.size)
   if (select.marker){
     if (is.null(marker.varname)){
       marker.varname <- ct.varname

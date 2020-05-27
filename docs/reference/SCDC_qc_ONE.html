@@ -141,6 +141,7 @@
   <span class='kw'>weight.basis</span> <span class='kw'>=</span> <span class='no'>F</span>,
   <span class='kw'>qcthreshold</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
   <span class='kw'>generate.figure</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>ct.cell.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>cbPalette</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#999999"</span>, <span class='st'>"#E69F00"</span>, <span class='st'>"#56B4E9"</span>, <span class='st'>"#009E73"</span>, <span class='st'>"#F0E442"</span>, <span class='st'>"#0072B2"</span>,
     <span class='st'>"#D55E00"</span>, <span class='st'>"#CC79A7"</span>),
   <span class='no'>...</span>
@@ -192,6 +193,10 @@
     <tr>
       <th>generate.figure</th>
       <td><p>logical. If generate the heatmap by pheatmap or not. default is TRUE.</p></td>
+    </tr>
+    <tr>
+      <th>ct.cell.size</th>
+      <td><p>default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.</p></td>
     </tr>
     </table>
 

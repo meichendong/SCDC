@@ -148,6 +148,8 @@
   <span class='kw'>pseudocount.use</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>LFC.lim</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
   <span class='kw'>allgenes.fl</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>ct.cell.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>fl.cell.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -225,6 +227,14 @@
     <tr>
       <th>allgenes.fl</th>
       <td><p>logical, use all genes in the first-level deconvolution</p></td>
+    </tr>
+    <tr>
+      <th>ct.cell.size</th>
+      <td><p>default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.</p></td>
+    </tr>
+    <tr>
+      <th>fl.cell.size</th>
+      <td><p>default is NULL, similar to ct.cell.size. This is for first-level 'meta-clusters'.</p></td>
     </tr>
     </table>
 

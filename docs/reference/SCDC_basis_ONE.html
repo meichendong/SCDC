@@ -128,7 +128,7 @@
     <p>Basis matrix construction for single cells from one subject</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SCDC_basis_ONE</span>(<span class='no'>x</span>, <span class='kw'>ct.sub</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>ct.varname</span>, <span class='no'>sample</span>)</pre>
+    <pre class="usage"><span class='fu'>SCDC_basis_ONE</span>(<span class='no'>x</span>, <span class='kw'>ct.sub</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>ct.varname</span>, <span class='no'>sample</span>, <span class='kw'>ct.cell.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -148,6 +148,10 @@
     <tr>
       <th>sample</th>
       <td><p>variable name for subject/samples</p></td>
+    </tr>
+    <tr>
+      <th>ct.cell.size</th>
+      <td><p>default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.</p></td>
     </tr>
     </table>
 

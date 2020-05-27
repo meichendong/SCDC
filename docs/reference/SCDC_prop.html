@@ -139,6 +139,7 @@
   <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
   <span class='kw'>truep</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>weight.basis</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>ct.cell.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>Transform_bisque</span> <span class='kw'>=</span> <span class='no'>F</span>,
   <span class='no'>...</span>
 )</pre>
@@ -181,6 +182,10 @@
     <tr>
       <th>truep</th>
       <td><p>true cell-type proportions for bulk samples if known</p></td>
+    </tr>
+    <tr>
+      <th>ct.cell.size</th>
+      <td><p>default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.</p></td>
     </tr>
     <tr>
       <th>Transform_bisque</th>

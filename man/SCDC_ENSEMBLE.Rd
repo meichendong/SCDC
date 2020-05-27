@@ -19,6 +19,7 @@ SCDC_ENSEMBLE(
   weight.basis = T,
   prop.input = NULL,
   Transform_bisque = F,
+  ct.cell.size = NULL,
   ...
 )
 }
@@ -46,6 +47,8 @@ SCDC_ENSEMBLE(
 \item{truep}{true cell-type proportions for bulk samples if known}
 
 \item{prop.input}{A list of SCDC_prop objects. Default is NULL. Users can use the SCDC function CreateSCDCpropObj to create the SCDC_prop objects first, and then put all objects into a list as this input. This allows users to ENSEMBLE results calculated from other deconvolution methods.}
+
+\item{ct.cell.size}{default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.}
 }
 \description{
 ENSEMBLE function for deconvolution results output from SCDC_prop.

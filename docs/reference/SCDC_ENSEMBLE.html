@@ -143,6 +143,7 @@
   <span class='kw'>weight.basis</span> <span class='kw'>=</span> <span class='no'>T</span>,
   <span class='kw'>prop.input</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>Transform_bisque</span> <span class='kw'>=</span> <span class='no'>F</span>,
+  <span class='kw'>ct.cell.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -196,6 +197,10 @@
     <tr>
       <th>prop.input</th>
       <td><p>A list of SCDC_prop objects. Default is NULL. Users can use the SCDC function CreateSCDCpropObj to create the SCDC_prop objects first, and then put all objects into a list as this input. This allows users to ENSEMBLE results calculated from other deconvolution methods.</p></td>
+    </tr>
+    <tr>
+      <th>ct.cell.size</th>
+      <td><p>default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.</p></td>
     </tr>
     </table>
 

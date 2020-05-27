@@ -24,6 +24,8 @@ SCDC_prop_ONE_subcl_marker(
   pseudocount.use = 1,
   LFC.lim = 0.5,
   allgenes.fl = F,
+  ct.cell.size = NULL,
+  fl.cell.size = NULL,
   ...
 )
 }
@@ -63,6 +65,10 @@ SCDC_prop_ONE_subcl_marker(
 \item{LFC.lim}{a threshold of log fold change when selecting genes as input to perform Wilcoxon's test.}
 
 \item{allgenes.fl}{logical, use all genes in the first-level deconvolution}
+
+\item{ct.cell.size}{default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.}
+
+\item{fl.cell.size}{default is NULL, similar to ct.cell.size. This is for first-level 'meta-clusters'.}
 }
 \value{
 Estimated proportion, basis matrix, predicted gene expression levels for bulk samples

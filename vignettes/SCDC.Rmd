@@ -112,6 +112,7 @@ round(pseudo.seger.rand$true_p,3)
 
 The constructed _pseudo bulk_ object includes the true cell-type proportion matrix `pseudo.seger$truep` and the `ExpressionSet` object `pseudo.seger$pseudo_eset`.
 
+Note that if the 'library size' factors do not reflect the real 'cell size' factors relationship according to prior biological knowledge, you can specify the `ct.cell.size` values in the `SCDC_prop()` or `SCDC_basis()` or `SCDC_ENSEMBLE()` functions.
 To perform deconvolution using one reference scRNA-seq dataset, use the `SCDC_prop()` function:
 ```r
 bulkseger.scseger <- SCDC_prop(bulk.eset = pseudo.seger$pseudo_eset, sc.eset = qc.seger$sc.eset.qc, ct.varname = "cluster", sample = "sample", ct.sub = c("alpha","beta","delta","gamma"), truep = pseudo.seger$truep)

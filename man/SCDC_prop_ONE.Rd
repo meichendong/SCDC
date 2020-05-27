@@ -15,6 +15,7 @@ SCDC_prop_ONE(
   nu = 1e-10,
   epsilon = 0.01,
   weight.basis = T,
+  ct.cell.size = NULL,
   ...
 )
 }
@@ -36,6 +37,8 @@ SCDC_prop_ONE(
 \item{nu}{a small constant to facilitate the calculation of variance}
 
 \item{epsilon}{a small constant number used for convergence criteria}
+
+\item{ct.cell.size}{default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.}
 }
 \value{
 Estimated proportion, basis matrix, predicted gene expression levels for bulk samples

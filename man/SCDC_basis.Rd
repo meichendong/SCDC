@@ -4,7 +4,7 @@
 \alias{SCDC_basis}
 \title{Basis Matrix}
 \usage{
-SCDC_basis(x, ct.sub = NULL, ct.varname, sample)
+SCDC_basis(x, ct.sub = NULL, ct.varname, sample, ct.cell.size = NULL)
 }
 \arguments{
 \item{x}{ExpressionSet object for single cells}
@@ -14,6 +14,8 @@ SCDC_basis(x, ct.sub = NULL, ct.varname, sample)
 \item{ct.varname}{variable name for 'cell types'}
 
 \item{sample}{variable name for subject/samples}
+
+\item{ct.cell.size}{default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.}
 }
 \value{
 a list of basis matrix, sum of cell-type-specific library size, sample variance matrix, basis matrix by mvw, mvw matrix.

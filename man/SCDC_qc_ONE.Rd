@@ -17,6 +17,7 @@ SCDC_qc_ONE(
   weight.basis = F,
   qcthreshold = 0.7,
   generate.figure = T,
+  ct.cell.size = NULL,
   cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
     "#D55E00", "#CC79A7"),
   ...
@@ -44,6 +45,8 @@ SCDC_qc_ONE(
 \item{qcthreshold}{the probability threshold used to filter out questionable cells}
 
 \item{generate.figure}{logical. If generate the heatmap by pheatmap or not. default is TRUE.}
+
+\item{ct.cell.size}{default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.}
 }
 \value{
 a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.

@@ -21,6 +21,7 @@ library(L1pack)
 #' @param epsilon a small constant number used for convergence criteria
 #' @param truep true cell-type proportions for bulk samples if known
 #' @param prop.input A list of SCDC_prop objects. Default is NULL. Users can use the SCDC function CreateSCDCpropObj to create the SCDC_prop objects first, and then put all objects into a list as this input. This allows users to ENSEMBLE results calculated from other deconvolution methods.
+#' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
 #' @import L1pack
 #' @import nnls
 #' @import Biobase
@@ -29,7 +30,7 @@ SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list = NULL, ct.varname, sample,
                           ct.sub, grid.search = F, search.length = 0.05,
                           iter.max = 2000, nu = 1e-04, epsilon = 0.001,
                           truep = NULL, weight.basis =T,
-                          prop.input = NULL, Transform_bisque = F,
+                          prop.input = NULL, Transform_bisque = F, ct.cell.size = NULL,
                           ...){
   # STEP 1: CALCULATE PROPORTION USING REF SEPARATELY.
   if (!is.null(prop.input)){
@@ -40,10 +41,11 @@ SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list = NULL, ct.varname, sample,
       if (length(unique(zz@phenoData@data[,sample])) > 1){
         SCDC_prop(bulk.eset = bulk.eset, sc.eset = zz, ct.varname = ct.varname, sample = sample, truep = truep,
                   ct.sub = ct.sub, iter.max = iter.max, nu = nu, epsilon = epsilon, weight.basis = weight.basis,
-                  Transform_bisque = Transform_bisque)
+                  Transform_bisque = Transform_bisque, ct.cell.size = ct.cell.size)
       } else {
         SCDC_prop_ONE(bulk.eset = bulk.eset, sc.eset = zz, ct.varname = ct.varname, sample = sample, truep = truep,
-                      ct.sub = ct.sub, iter.max = iter.max, nu = nu, epsilon = epsilon, weight.basis = weight.basis)
+                      ct.sub = ct.sub, iter.max = iter.max, nu = nu, epsilon = epsilon, weight.basis = weight.basis,
+                      ct.cell.size = ct.cell.size)
       }
     })
   }

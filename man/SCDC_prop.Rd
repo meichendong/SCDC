@@ -15,6 +15,7 @@ SCDC_prop(
   epsilon = 0.01,
   truep = NULL,
   weight.basis = T,
+  ct.cell.size = NULL,
   Transform_bisque = F,
   ...
 )
@@ -37,6 +38,8 @@ SCDC_prop(
 \item{epsilon}{a small constant number used for convergence criteria}
 
 \item{truep}{true cell-type proportions for bulk samples if known}
+
+\item{ct.cell.size}{default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.}
 
 \item{Transform_bisque}{The bulk sample transformation from bisqueRNA. Aiming to reduce the systematic difference between single cells and bulk samples.}
 }
