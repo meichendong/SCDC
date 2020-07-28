@@ -469,7 +469,7 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
       sc.ref <- base::vapply(all.cell.types, aggr.fn, template)
       return(sc.ref)
     }
-    sc.ref <- GenerateSCReference(sc.eset, cell.types)[genes, , drop = F]
+    sc.ref <- GenerateSCReference(sc.eset, ct.sub)[genes, , drop = F]
     ncount <- table(sc.eset@phenoData@data[, sample], sc.eset@phenoData@data[, ct.varname])
     true.prop <- ncount/rowSums(ncount, na.rm = T)
     sc.props <- round(true.prop[complete.cases(true.prop), ], 2)
@@ -1195,3 +1195,65 @@ SCDC_prop_ONE_subcl_marker <- function(bulk.eset, sc.eset, ct.varname, fl.varnam
   return(list(prop.est = prop.est, prop.wt.fl = prop.wt.fl, basis.mvw = basis.mvw, peval = peval,
               sc.basis = sc.basis, sc.fl.basis = sc.fl.basis))
 }
+
+
+##############################################
+#' Simple deconvolution function using W-NNLS
+#' @description Deconvolution using pre-normalized count matrix and pre-calculated basis matrix.
+#' @name deconv_simple
+#' @param count.filter.norm Normalized count matrix for bulk samples. Genes by samples.
+#' @param basis.norm Basis matrix calculated from single cell samples. Genes by cell-types.
+#' @param iter.max the maximum number of iteration in WNNLS
+#' @param nu a small constant to facilitate the calculation of variance
+#' @param epsilon a small constant number used for convergence criteria
+#' @param truep true cell-type proportions for bulk samples if known
+#' @return Estimated proportion-prop.est.mvw for bulk samples
+#' @export
+deconv_simple <- function(count.filter.norm, basis.norm, iter.max = 2000, nu = 1e-10, epsilon = 0.001,
+                          truep = NULL){
+  ALS.S <- rep(1, ncol(basis.norm))
+  N.bulk <- ncol(count.filter.norm)
+  prop.est.mvw <- NULL
+  yhat <- NULL
+  yhatgene.temp <- rownames(basis.norm)
+  for (i in 1:N.bulk) {
+    xbulk.temp <- count.filter.norm[, i]
+    message(paste(colnames(count.filter.norm)[i], "has common genes",
+                  sum(count.filter.norm[, i] != 0), "..."))
+    lm <- nnls::nnls(A = basis.norm, b = xbulk.temp)
+    delta <- lm$residuals
+    wt.gene <- 1/(nu + delta^2)
+    x.wt <- xbulk.temp * sqrt(wt.gene)
+    b.wt <- sweep(basis.norm, 1, sqrt(wt.gene), "*")
+    lm.wt <- nnls::nnls(A = b.wt, b = x.wt)
+    prop.wt <- lm.wt$x/sum(lm.wt$x)
+    delta <- lm.wt$residuals
+    for (iter in 1:iter.max) {
+      wt.gene <- 1/(nu + delta^2)
+      x.wt <- xbulk.temp * sqrt(wt.gene)
+      b.wt <- sweep(basis.norm, 1, sqrt(wt.gene), "*")
+      lm.wt <- nnls::nnls(A = b.wt, b = x.wt)
+      delta.new <- lm.wt$residuals
+      prop.wt.new <- lm.wt$x/sum(lm.wt$x)
+      if (sum(abs(prop.wt.new - prop.wt)) < epsilon) {
+        prop.wt <- prop.wt.new
+        delta <- delta.new
+        message("WNNLS Converged at iteration ",
+                iter)
+        break
+      }
+      prop.wt <- prop.wt.new
+      delta <- delta.new
+    }
+    prop.est.mvw <- rbind(prop.est.mvw, prop.wt)
+    yhat.temp <- basis.norm %*% as.matrix(lm.wt$x)
+    yhatgene.temp <- intersect(rownames(yhat.temp), yhatgene.temp)
+    yhat <- cbind(yhat[yhatgene.temp, ], yhat.temp[yhatgene.temp,])
+  }
+  colnames(prop.est.mvw) <- colnames(basis.norm)
+  rownames(prop.est.mvw) <- colnames(count.filter.norm)
+  return(list(prop.est.mvw = prop.est.mvw))
+}
+
+# res = deconv_simple(count.filter.norm, basis.norm)
+# res$prop.est.mvw
