@@ -116,11 +116,11 @@
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw">counts</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, sep = <span class="st">""</span>)
 <span class="kw">counts</span>
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   317   122   462   280    54</span>
-<span class="co">#&gt; gene2   226    26   373   463   396</span>
-<span class="co">#&gt; gene3   445   480   378   149   368</span>
-<span class="co">#&gt; gene4   248   155   347   127    78</span>
-<span class="co">#&gt; gene5   446   224   199   393   461</span>
+<span class="co">#&gt; gene1    91   235   320    98   206</span>
+<span class="co">#&gt; gene2   259   160   367   105   123</span>
+<span class="co">#&gt; gene3   229   211   238   236   322</span>
+<span class="co">#&gt; gene4    74   106   359   141    72</span>
+<span class="co">#&gt; gene5   125   306   401    84   373</span>
 <span class="kw">fdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw">counts</span>)
 <span class="kw">pdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(cellname = <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">counts</span>), subjects = <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>,<span class="fl">5</span>)))
 <span class="kw">eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getESET.html">getESET</a></span>(<span class="kw">counts</span>, fdata = <span class="kw">fdata</span>, pdata = <span class="kw">pdata</span>)

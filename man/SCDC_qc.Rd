@@ -39,7 +39,7 @@ SCDC_qc(
 
 \item{epsilon}{a small constant number used for convergence criteria}
 
-\item{arow}{annotation of rows for pheatmap}
+\item{arow}{annotation of rows for pheatmap. Should be a variable name, like "sample" or "Subject".}
 
 \item{qcthreshold}{the probability threshold used to filter out questionable cells}
 

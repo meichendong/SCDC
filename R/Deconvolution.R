@@ -34,9 +34,15 @@ SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample, ct.cell.size = NULL
   })
   mean.id <- do.call('rbind',strsplit(unique(ct_sample.id), split = '%'))
 
-  sigma <- sapply(unique(mean.id[,1]), function(id){
-    y = mean.mat[,mean.id[,1] %in% id]
-    apply(y,1,var, na.rm = TRUE)
+  sigma <- sapply(unique(mean.id[, 1]), function(id) {
+    y = mean.mat[, mean.id[, 1] %in% id]
+    if (is.null(dim(y))){
+      res = rep(0, length(y))
+      message("Warning: the cell type [", id,"] is only available in at most 1 subject!")
+    } else {
+      res = apply(y, 1, var, na.rm = TRUE)
+    }
+    return(res)
   })
 
   sum.mat2 <- sapply(unique(sample.id), function(sid){
@@ -82,13 +88,20 @@ SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample, ct.cell.size = NULL
   })
   colnames(var.adj) <- unique(sample.id)
 
-  q15 <- apply(var.adj,2,quantile, probs = 0.15, na.rm =T)
+  # q15 <- apply(var.adj,2,quantile, probs = 0.15, na.rm =T)
+  q15 <- apply(var.adj, 2, function(zz){
+    z1 = min(zz[zz>0])
+    z2 = quantile(zz, 0.15, na.rm = T)
+    return(max(z1,z2))
+  })
   q85 <- apply(var.adj,2,quantile, probs = 0.85, na.rm =T)
 
-  var.adj.q <- t(apply(var.adj, 1,
-                       function(y){y[y<q15] <- q15[y<q15]
-                       y[y>q85] <- q85[y>q85]
-                       return(y)})) + 1e-4
+  var.adj.q <- t(apply(var.adj, 1, function(y){
+                        y[y<q15] <- q15[y<q15]
+                         y[y>q85] <- q85[y>q85]
+                         return(y)}
+                      )
+                 ) #+ 1e-4
 
   message("Creating Basis Matrix adjusted for maximal variance weight")
   mean.mat.mvw <- sapply(unique(ct_sample.id), function(id){
@@ -193,13 +206,18 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample, ct.cell.size =
   })
   colnames(var.adj) <- unique(sample.id)
 
-  q15 <- apply(var.adj,2,quantile, probs = 0.15, na.rm =T)
+  # q15 <- apply(var.adj,2,quantile, probs = 0.15, na.rm =T)
+  q15 <- apply(var.adj, 2, function(zz){
+    z1 = min(zz[zz>0])
+    z2 = quantile(zz, 0.15, na.rm = T)
+    return(max(z1,z2))
+  })
   q85 <- apply(var.adj,2,quantile, probs = 0.85, na.rm =T)
 
   var.adj.q <- as.matrix(apply(var.adj, 1,
                                function(y){y[y<q15] <- q15[y<q15]
                                y[y>q85] <- q85[y>q85]
-                               return(y)}) + 1e-4)
+                               return(y)}) ) #+ 1e-4
 
   message("Creating Basis Matrix adjusted for maximal variance weight")
   mean.mat.mvw <- sapply(unique(ct_sample.id), function(id){
@@ -238,7 +256,7 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample, ct.cell.size =
 #' @param iter.max the maximum number of iteration in WNNLS
 #' @param nu a small constant to facilitate the calculation of variance
 #' @param epsilon a small constant number used for convergence criteria
-#' @param arow annotation of rows for pheatmap
+#' @param arow annotation of rows for pheatmap. Should be a variable name, like "sample" or "Subject".
 #' @param qcthreshold the probability threshold used to filter out questionable cells
 #' @param generate.figure logical. If generate the heatmap by pheatmap or not. default is TRUE.
 #' @param ct.cell.size default is NULL, which means the "library size" is calculated based on the data. Users can specify a vector of cell size factors corresponding to the ct.sub according to prior knowledge. The vector should be named: names(ct.cell.size input) should not be NULL.
@@ -303,12 +321,18 @@ SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
   # name col and row
   colnames(prop.qc) <- colnames(m.basis)
   rownames(prop.qc) <- colnames(xsc)
-  if (generate.figure){
-    heat.anno <- pheatmap(prop.qc, annotation_row = arow,
-                          annotation_names_row=FALSE, show_rownames = F,
-                          annotation_names_col=FALSE, cutree_rows = length(ct.sub),
-                          color = cbPalette[2:4],
-                          cluster_rows = T, cluster_cols = F)
+  if (!is.null(arow)){
+    df.arow <- data.frame(sc.eset@phenoData@data[,arow])
+    rownames(df.arow) <- rownames(sc.eset@phenoData@data)
+    colnames(df.arow) <- arow
+  } else {
+    df.arow <- NULL
+  }
+  if (generate.figure) {
+    heat.anno <- pheatmap::pheatmap(prop.qc, annotation_row = df.arow, 
+                                    annotation_names_row = FALSE, show_rownames = F, 
+                                    annotation_names_col = FALSE, cutree_rows = length(ct.sub), 
+                                    color = cbPalette[2:4], cluster_rows = T, cluster_cols = F)
   } else {
     heat.anno <- NULL
   }
