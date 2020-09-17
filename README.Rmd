@@ -12,38 +12,49 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# SCDC: Bulk Gene Expression Deconvolution by Multiple Single-Cell RNA Sequencing References
+
+# SCDC
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/meichendong/SCDC.svg?branch=master)](https://travis-ci.org/meichendong/SCDC)
-[![CRAN status](https://www.r-pkg.org/badges/version/SCDC)](https://CRAN.R-project.org/package=SCDC)
 <!-- badges: end -->
 
-SCDC is a [deconvolution](https://en.wikipedia.org/wiki/Deconvolution) method for bulk [RNA-seq](https://en.wikipedia.org/wiki/RNA-Seq) that leverages cell-type specific gene expressions from **multiple [scRNA-seq](https://en.wikipedia.org/wiki/Single_cell_sequencing) reference datasets**.
-SCDC adopts an ENSEMBLE method to integrate deconvolution results from different scRNA-seq datasets that are produced in different laboratories and at different times, implicitly addressing the [batch-effect](http://www.molmine.com/magma/global_analysis/batch_effect.html) confounding.
-
-![SCDC framework](framework.PNG)
+The goal of SCDC is to ...
 
 ## Installation
 
-You can install the released version of SCDC from [GitHub](https://github.com/) with:
+You can install the released version of SCDC from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-if (!require("devtools")) {
-  install.packages("devtools")
-}
+install.packages("SCDC")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
 devtools::install_github("meichendong/SCDC")
 ```
+## Example
 
-Dependency package problem regarding to 'xbioc' could be resolved by:
-``` r
-install.packages("remotes")
-remotes::install_github("renozao/xbioc")
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(SCDC)
+## basic example code
 ```
-## Vignettes
 
-Please see the [vignettes page](https://meichendong.github.io/SCDC/articles/SCDC.html).
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
 
-The SCDC paper is published at [Briefings In Bioinformatics](https://doi.org/10.1093/bib/bbz166).
+```{r cars}
+summary(cars)
+```
 
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
 
+You can also embed plots, for example:
+
+```{r pressure, echo = FALSE}
+plot(pressure)
+```
+
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!

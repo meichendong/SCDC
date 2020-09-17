@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get ExpressionSet — getESET • SCDC</title>
+<title>Simple deconvolution function using W-NNLS — deconv_simple • SCDC</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Get ExpressionSet — getESET" />
-<meta property="og:description" content="Use Pdata, Fdata, and count matrix to derive ExpressionSet Object" />
+<meta property="og:title" content="Simple deconvolution function using W-NNLS — deconv_simple" />
+<meta property="og:description" content="Deconvolution using pre-normalized count matrix and pre-calculated basis matrix." />
 
 
 
@@ -122,33 +122,56 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get ExpressionSet</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meichendong/SCDC/blob/master/R/Basic_Functions.R'><code>R/Basic_Functions.R</code></a></small>
-    <div class="hidden name"><code>getESET.Rd</code></div>
+    <h1>Simple deconvolution function using W-NNLS</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meichendong/SCDC/blob/master/R/Deconvolution.R'><code>R/Deconvolution.R</code></a></small>
+    <div class="hidden name"><code>deconv_simple.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Use Pdata, Fdata, and count matrix to derive ExpressionSet Object</p>
+    <p>Deconvolution using pre-normalized count matrix and pre-calculated basis matrix.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>deconv_simple</span>(
+  <span class='kw'>count.filter.norm</span>,
+  <span class='kw'>basis.norm</span>,
+  iter.max = <span class='fl'>2000</span>,
+  nu = <span class='fl'>1e-10</span>,
+  epsilon = <span class='fl'>0.001</span>,
+  truep = <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>exprs</th>
-      <td><p>raw count matrix</p></td>
+      <th>count.filter.norm</th>
+      <td><p>Normalized count matrix for bulk samples. Genes by samples.</p></td>
     </tr>
     <tr>
-      <th>fdata</th>
-      <td><p>feature data, for genes, usually it's gene name</p></td>
+      <th>basis.norm</th>
+      <td><p>Basis matrix calculated from single cell samples. Genes by cell-types.</p></td>
     </tr>
     <tr>
-      <th>pdata</th>
-      <td><p>pheno data, for samples, usually it's the characteristics for each single cell/bulk sample, including name, gender, age, cluster, disease,...</p></td>
+      <th>iter.max</th>
+      <td><p>the maximum number of iteration in WNNLS</p></td>
+    </tr>
+    <tr>
+      <th>nu</th>
+      <td><p>a small constant to facilitate the calculation of variance</p></td>
+    </tr>
+    <tr>
+      <th>epsilon</th>
+      <td><p>a small constant number used for convergence criteria</p></td>
+    </tr>
+    <tr>
+      <th>truep</th>
+      <td><p>true cell-type proportions for bulk samples if known</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Estimated proportion-prop.est.mvw for bulk samples</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
