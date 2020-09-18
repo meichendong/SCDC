@@ -116,11 +116,11 @@
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw">counts</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"gene"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, sep = <span class="st">""</span>)
 <span class="kw">counts</span>
 <span class="co">#&gt;       cell1 cell2 cell3 cell4 cell5</span>
-<span class="co">#&gt; gene1   294    67   300   254   381</span>
-<span class="co">#&gt; gene2   485   483   438   236    25</span>
-<span class="co">#&gt; gene3   415   455   417   372   182</span>
-<span class="co">#&gt; gene4   229    19   481   342   497</span>
-<span class="co">#&gt; gene5   436   217   199   255    93</span>
+<span class="co">#&gt; gene1   212   244   261   460   129</span>
+<span class="co">#&gt; gene2   362     4   257   158   436</span>
+<span class="co">#&gt; gene3    86    71   145     5   321</span>
+<span class="co">#&gt; gene4   420   268     9   482    92</span>
+<span class="co">#&gt; gene5   300   196    33   152   121</span>
 <span class="kw">fdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw">counts</span>)
 <span class="kw">pdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(cellname = <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">counts</span>), subjects = <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"patient"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>,<span class="fl">5</span>)))
 <span class="kw">eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getESET.html">getESET</a></span>(<span class="kw">counts</span>, fdata = <span class="kw">fdata</span>, pdata = <span class="kw">pdata</span>)
@@ -142,7 +142,7 @@
 <span class="fu"><a href="../reference/DemoPlot.html">DemoPlot</a></span>(<span class="kw">seger</span>, cluster = <span class="st">"cluster"</span>, sample = <span class="st">"sample"</span>, select.ct = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"alpha"</span>,<span class="st">"beta"</span>,<span class="st">"delta"</span>,<span class="st">"gamma"</span>,<span class="st">"ductal"</span>,<span class="st">"acinar"</span>), Palette = <span class="kw">ct1</span>)
 </pre></div>
 <center>
-<img src="https://github.com/meichendong/SCDC/blob/master/vignettes/demoplot.png" alt="scRNA-seq from Segerstolpe et al." width="400">
+<img src="../../../../../../../OneDrive%20-%20University%20of%20North%20Carolina%20at%20Chapel%20Hill/994/SCDC/package/SCDC2/SCDC/vignettes/demoplot.png" alt="scRNA-seq from Segerstolpe et al." width="400">
 </center>
 <p>To make SCDC robust to single-cell clustering, a quality control procedure is performed as a first step to remove cells with questionable cell-type assignments, as well as cells with low library preparation and sequencing quality. Specifically, each single cell is treated as a "bulk" sample and its cell-type composition can be derived by a first-pass run of SCDC. The threshold of keeping a single cell from an assigned cluster is chosen as 0.7 in this illustration example. This user-defined threshold should be selected carefully, to achieve the effect of quality control of single cells without obstructing the performance on the downstream analysis. An unproper threshold could potentially lead to filtering out a large proportion of cells from rare cell types. To be conservative, this can be chosen from (0.5,0.7).</p>
 <div class="sourceCode"><pre class="downlit">
@@ -151,7 +151,7 @@
 <span class="kw">seger.qc</span><span class="op">$</span><span class="kw">heatfig</span>
 </pre></div>
 <center>
-<img src="https://github.com/meichendong/SCDC/blob/master/vignettes/cqc.png" alt="scRNA-seq from Segerstolpe et al. Clustering QC" width="350">
+<img src="../../../../../../../OneDrive%20-%20University%20of%20North%20Carolina%20at%20Chapel%20Hill/994/SCDC/package/SCDC2/SCDC/vignettes/cqc.png" alt="scRNA-seq from Segerstolpe et al. Clustering QC" width="350">
 </center>
 <p>Similarly, we can perform clustering QC for single cells from only one subject using function <code><a href="../reference/SCDC_qc_ONE.html">SCDC_qc_ONE()</a></code>.</p>
 </div>
@@ -296,7 +296,7 @@
 <span class="kw">pfa2</span>
 </pre></div>
 <center>
-<img src="https://github.com/meichendong/SCDC/blob/master/vignettes/fadista_ens.png" alt="Cell-type proportion estimation for 77 bulk samples from Fadista et al." width="600">
+<img src="../../../../../../../OneDrive%20-%20University%20of%20North%20Carolina%20at%20Chapel%20Hill/994/SCDC/package/SCDC2/SCDC/vignettes/fadista_ens.png" alt="Cell-type proportion estimation for 77 bulk samples from Fadista et al." width="600">
 </center>
 <p>In our paper, we sought to replicate previous findings on the negative correlation between the <a href="https://www.webmd.com/diabetes/guide/glycated-hemoglobin-test-hba1c">hemoglobin A1c</a> (HbA1c, an important biomarker for type 2 diabetes) levels and the beta cell functions ( <a href="https://care.diabetesjournals.org/content/34/4/1006.long">Kanat et al., 2011</a>, <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4657079/">Hou et al., 2016</a>). Hence, we constructed a linear model using the estimated cell-type proportions as the response variable and the other covariates (age, gender, BMI, and HbA1c) as predictors. Here we compare deconvolution results from three sources: 1) scRNA-seq from Segerstolpe et al. only; 2) scRNA-seq from Baron et al. only; 3) ENSEMBLE deconvolution results using scRNA-seq from Segerstolpe et al. and Baron et al. separately.</p>
 <div class="sourceCode"><pre class="downlit">
@@ -385,7 +385,7 @@
 <span class="kw">fadista.LMplot</span>
 </pre></div>
 <center>
-<img src="https://github.com/meichendong/SCDC/blob/master/vignettes/fadista_LMplot.png">
+<img src="../../../../../../../OneDrive%20-%20University%20of%20North%20Carolina%20at%20Chapel%20Hill/994/SCDC/package/SCDC2/SCDC/vignettes/fadista_LMplot.png">
 </center>
 <p>We see that SCDC ENSEMBLE method derives the p-value of 0.0019 &lt;0.05, indicating a statistically significant association between the beta-cell proportions and the HbA1c levels.</p>
 </div>
@@ -401,7 +401,7 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">hc1</span>, cex = <span class="fl">0.8</span>, hang = <span class="op">-</span><span class="fl">1</span>, main = <span class="st">"log(basis matrix)"</span>)
 </pre></div>
 <center>
-<img src="https://github.com/meichendong/SCDC/blob/master/vignettes/hc_3cl.png">
+<img src="../../../../../../../OneDrive%20-%20University%20of%20North%20Carolina%20at%20Chapel%20Hill/994/SCDC/package/SCDC2/SCDC/vignettes/hc_3cl.png">
 </center>
 <p>The tree-structured deconvolution procedure will allow users to specify a 'meta cluster' by their own professional judgment. Without the requirement for marker genes input, we could employ the function <code><a href="../reference/SCDC_prop_ONE_subcl_marker.html">SCDC_prop_ONE_subcl_marker()</a></code> to deconvolve the bulk samples.</p>
 <div class="sourceCode"><pre class="downlit">
@@ -533,7 +533,7 @@
 </pre></div>
 <p>Visualization of the proportion estimation results:</p>
 <center>
-<img src="https://github.com/meichendong/SCDC/blob/master/vignettes/mammarygland.png">
+<img src="../../../../../../../OneDrive%20-%20University%20of%20North%20Carolina%20at%20Chapel%20Hill/994/SCDC/package/SCDC2/SCDC/vignettes/mammarygland.png">
 </center>
 <!-- 
 pending... -->
