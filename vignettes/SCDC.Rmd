@@ -495,6 +495,8 @@ Visualization of the proportion estimation results:
 
 <!-- 
 pending... -->
+## Simple Deconvolution
+
 For simple deconvolution aims, SCDC provides the `deconv_simple()` function to allow users to specify a pre-processed bulk sample matrix "count.filter.norm", and a pre-calculated basis matrix "basis.norm" for deconvolution. Thus, by iterative weighted-NNLS, the cell-type proportion would be estimated. One example will be:
 ```r
 res = deconv_simple(count.filter.norm, basis.norm)
