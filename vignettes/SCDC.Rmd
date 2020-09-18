@@ -65,7 +65,7 @@ DemoPlot(seger, cluster = "cluster", sample = "sample", select.ct = c("alpha","b
 ![scRNA-seq from Segerstolpe et al.](demoplot.png){width=400px}
 </center>
 
-To make SCDC robust to single-cell clustering, a quality control procedure is performed as a first step to remove cells with questionable cell-type assignments, as well as cells with low library preparation and sequencing quality. Specifically, each single cell is treated as a “bulk” sample and its cell-type composition can be derived by a first-pass run of SCDC. 
+To make SCDC robust to single-cell clustering, a quality control procedure is performed as a first step to remove cells with questionable cell-type assignments, as well as cells with low library preparation and sequencing quality. Specifically, each single cell is treated as a "bulk" sample and its cell-type composition can be derived by a first-pass run of SCDC. 
 The threshold of keeping a single cell from an assigned cluster is chosen as 0.7 in this illustration example. This user-defined threshold should be selected carefully, to achieve the effect of quality control of single cells without obstructing the performance on the downstream analysis. An unproper threshold could potentially lead to filtering out a large proportion of cells from rare cell types. To be conservative, this can be chosen from (0.5,0.7).
 
 ```r
@@ -506,4 +506,3 @@ res$prop.est.mvw
 <font color='blue'>
 _Thanks for using SCDC! Please feel free to reach out (meichen@live.unc.edu) if you have questions!_
 </font>
-

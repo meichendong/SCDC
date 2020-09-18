@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # SCDC
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/SCDC)](https://CRAN.R-project.org/package=SCDC)
 <!-- badges: end -->
 
 The goal of SCDC is to ...
