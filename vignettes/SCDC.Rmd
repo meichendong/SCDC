@@ -62,7 +62,7 @@ DemoPlot(seger, cluster = "cluster", sample = "sample", select.ct = c("alpha","b
 ```
 
 <center>
-![scRNA-seq from Segerstolpe et al.](docs/reference/figures/demoplot.png){width=400px}
+![scRNA-seq from Segerstolpe et al.](demoplot.png){width=400px}
 </center>
 
 To make SCDC robust to single-cell clustering, a quality control procedure is performed as a first step to remove cells with questionable cell-type assignments, as well as cells with low library preparation and sequencing quality. Specifically, each single cell is treated as a "bulk" sample and its cell-type composition can be derived by a first-pass run of SCDC. 
