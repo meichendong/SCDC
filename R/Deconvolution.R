@@ -329,9 +329,9 @@ SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
     df.arow <- NULL
   }
   if (generate.figure) {
-    heat.anno <- pheatmap::pheatmap(prop.qc, annotation_row = df.arow, 
-                                    annotation_names_row = FALSE, show_rownames = F, 
-                                    annotation_names_col = FALSE, cutree_rows = length(ct.sub), 
+    heat.anno <- pheatmap::pheatmap(prop.qc, annotation_row = df.arow,
+                                    annotation_names_row = FALSE, show_rownames = F,
+                                    annotation_names_col = FALSE, cutree_rows = length(ct.sub),
                                     color = cbPalette[2:4], cluster_rows = T, cluster_cols = F)
   } else {
     heat.anno <- NULL
@@ -1237,6 +1237,9 @@ deconv_simple <- function(count.filter.norm, basis.norm, iter.max = 2000, nu = 1
                           truep = NULL){
   ALS.S <- rep(1, ncol(basis.norm))
   N.bulk <- ncol(count.filter.norm)
+  common.gene <- intersect(rownames(count.filter.norm), rownames(basis.norm))
+  count.filter.norm <- count.filter.norm[common.gene,]
+  basis.norm <- basis.norm[common.gene,]
   prop.est.mvw <- NULL
   yhat <- NULL
   yhatgene.temp <- rownames(basis.norm)
