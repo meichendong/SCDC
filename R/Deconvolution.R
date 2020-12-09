@@ -942,7 +942,9 @@ SCDC_prop_subcl_marker <- function (bulk.eset, sc.eset, ct.varname, fl.varname, 
         prop.wt <- c(prop.wt, prop.wt.sl * prop.wt.fl[colnames(rt)[j]])
       }
       else if (length(sub.cl) == 1) {
-        prop.wt <- c(prop.wt, prop.wt.fl[colnames(rt)[j]])
+        temp <- prop.wt.fl[colnames(rt)[j]]
+        names(temp) <- rt.list[[j]]
+        prop.wt <- c(prop.wt, temp)
       }
       else if (length(sub.cl) > 1 & prop.wt.fl[colnames(rt)[j]] ==
                0) {
@@ -1197,7 +1199,10 @@ SCDC_prop_ONE_subcl_marker <- function(bulk.eset, sc.eset, ct.varname, fl.varnam
         prop.wt <- c(prop.wt, prop.wt.sl*prop.wt.fl[colnames(rt)[j]])
       } else if (length(sub.cl) == 1){
         # j=2
-        prop.wt <- c(prop.wt, prop.wt.fl[colnames(rt)[j]])
+        # prop.wt <- c(prop.wt, prop.wt.fl[colnames(rt)[j]])
+        temp <- prop.wt.fl[colnames(rt)[j]]
+        names(temp) <- rt.list[[j]]
+        prop.wt <- c(prop.wt, temp)
       } else if (length(sub.cl) > 1 & prop.wt.fl[colnames(rt)[j]] == 0){
         prop.wt.sl <- rep(0, length(sub.cl))
         names(prop.wt.sl) <- sub.cl
