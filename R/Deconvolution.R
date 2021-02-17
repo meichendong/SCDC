@@ -483,8 +483,8 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
   }
   # link to bisqueRNA, bulk transformation method. https://github.com/cozygene/bisque
   if (Transform_bisque) {
-    GenerateSCReference <- function(sc.eset, ct.sub) {
-      cell.labels <- base::factor(sc.eset[[ct.sub]])
+    GenerateSCReference <- function(sc.eset, ct.sub, ct.varname) {
+      cell.labels <- base::factor(sc.eset[[ct.varname]])
       all.cell.types <- base::levels(cell.labels)
       aggr.fn <- function(ct.sub) {
         base::rowMeans(Biobase::exprs(sc.eset)[,cell.labels == ct.sub, drop=F])
@@ -493,12 +493,11 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
       sc.ref <- base::vapply(all.cell.types, aggr.fn, template)
       return(sc.ref)
     }
-    sc.ref <- GenerateSCReference(sc.eset, ct.sub)[genes, , drop = F]
+    sc.ref <- GenerateSCReference(sc.eset, ct.sub, ct.varname)[commongenes, , drop = F]
     ncount <- table(sc.eset@phenoData@data[, sample], sc.eset@phenoData@data[, ct.varname])
     true.prop <- ncount/rowSums(ncount, na.rm = T)
     sc.props <- round(true.prop[complete.cases(true.prop), ], 2)
     Y.train <- sc.ref %*% t(sc.props[, colnames(sc.ref)])
-    dim(Y.train)
     X.pred <- exprs(bulk.eset)[commongenes, ]
     sample.names <- base::colnames(Biobase::exprs(bulk.eset))
     template <- base::numeric(base::length(sample.names))
@@ -603,7 +602,7 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
       yhat.temp <- basis.mvw.temp %*% as.matrix(lm.wt$x)
       yhatgene.temp <- intersect(rownames(yhat.temp), yhatgene.temp)
       yhat <- cbind(yhat[yhatgene.temp, ], yhat.temp[yhatgene.temp,
-                                                     ])
+      ])
     }
     colnames(prop.est.mvw) <- colnames(basis.mvw)
     rownames(prop.est.mvw) <- colnames(xbulk)
