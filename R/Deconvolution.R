@@ -162,10 +162,16 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample, ct.cell.size =
   mean.id <- do.call('rbind',strsplit(unique(ct_sample.id), split = '%'))
 
   # by subj, then take avg????
-  sum.mat2 <- sapply(unique(sample.id), function(sid){
-    sapply(unique(ct.id), function(id){
-      y = as.matrix(countmat[, ct.id %in% id & sample.id %in% sid])
-      sum(y)/ncol(y)
+  sum.mat2 <- sapply(unique(sample.id), function(sid) {
+    sapply(unique(ct.id), function(id) {
+      y = as.matrix(countmat[, ct.id %in% id & sample.id %in%
+                               sid])
+      if (ncol(y)>0){
+        out = sum(y)/ncol(y)
+      } else {
+        out = 0
+      }
+      return(out)
     })
   })
   rownames(sum.mat2) <- unique(ct.id)
@@ -191,17 +197,26 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample, ct.cell.size =
   })
 
   # weighted basis matrix
-  my.max <- function(x,...){
-    y <- apply(x,1,max, na.rm = TRUE)
-    y / median(y, na.rm = T)
+  my.max <- function(x, ...) {
+    y <- apply(x, 1, max, na.rm = TRUE)
+    if (median(y, na.rm = T) == 0){
+      outx = y
+    }else{
+      outx = y/median(y, na.rm = T)
+    }
+    return(outx)
   }
 
-  # MATCH DONOR, CELLTYPE, GENES!!!!!!!!!!!!!!!!
   var.adj <- sapply(unique(sample.id), function(sid) {
     my.max(sapply(unique(ct.id), function(id) {
       y = countmat[, ct.id %in% id & sample.id %in% sid,
                    drop = FALSE]
-      apply(y,1,var, na.rm=T)
+      if (ncol(y)>0){
+        out = apply(y, 1, var, na.rm = T)
+      } else {
+        out = rep(0, nrow(y))
+      }
+      return(out)
     }), na.rm = T)
   })
   colnames(var.adj) <- unique(sample.id)
