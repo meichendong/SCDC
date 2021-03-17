@@ -45,10 +45,15 @@ SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample, ct.cell.size = NULL
     return(res)
   })
 
-  sum.mat2 <- sapply(unique(sample.id), function(sid){
-    sapply(unique(ct.id), function(id){
+  sum.mat2 <- sapply(unique(sample.id), function(sid) {
+    sapply(unique(ct.id), function(id) {
       y = as.matrix(countmat[, ct.id %in% id & sample.id %in% sid])
-      sum(y)/ncol(y)
+      if (ncol(y)>0){
+        out = sum(y)/ncol(y)
+      } else {
+        out = 0
+      }
+      return(out)
     })
   })
   rownames(sum.mat2) <- unique(ct.id)
@@ -73,9 +78,14 @@ SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample, ct.cell.size = NULL
   })
 
   # weighted basis matrix
-  my.max <- function(x,...){
-    y <- apply(x,1,max, na.rm = TRUE)
-    y / median(y, na.rm = T)
+  my.max <- function(x, ...) {
+    y <- apply(x, 1, max, na.rm = TRUE)
+    if (median(y, na.rm = T) == 0){
+      outx = y
+    }else{
+      outx = y/median(y, na.rm = T)
+    }
+    return(outx)
   }
 
   # MATCH DONOR, CELLTYPE, GENES!!!!!!!!!!!!!!!!
@@ -83,18 +93,28 @@ SCDC_basis <- function(x, ct.sub = NULL, ct.varname, sample, ct.cell.size = NULL
     my.max(sapply(unique(ct.id), function(id) {
       y = countmat[, ct.id %in% id & sample.id %in% sid,
                    drop = FALSE]
-      apply(y,1,var, na.rm=T)
+      if (ncol(y)>0){
+        out = apply(y, 1, var, na.rm = T)
+      } else {
+        out = rep(0, nrow(y))
+      }
+      return(out)
     }), na.rm = T)
   })
   colnames(var.adj) <- unique(sample.id)
 
   # q15 <- apply(var.adj,2,quantile, probs = 0.15, na.rm =T)
-  q15 <- apply(var.adj, 2, function(zz){
-    z1 = min(zz[zz>0])
+  q15 <- apply(var.adj, 2, function(zz) {
+    z1 = min(zz[zz > 0])
     z2 = quantile(zz, 0.15, na.rm = T)
-    return(max(z1,z2))
+    return(max(z1, z2))
   })
-  q85 <- apply(var.adj,2,quantile, probs = 0.85, na.rm =T)
+  q85 <- apply(var.adj, 2, quantile, probs = 0.85, na.rm = T)
+  var.adj.q <- t(apply(var.adj, 1, function(y) {
+    y[y < q15] <- q15[y < q15]
+    y[y > q85] <- q85[y > q85]
+    return(y)
+  }))
 
   var.adj.q <- t(apply(var.adj, 1, function(y){
                         y[y<q15] <- q15[y<q15]
