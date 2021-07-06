@@ -17,6 +17,16 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-Imports: Rcpp (>= 0.11.0), L1pack, Biobase, nnls, reshape, xbioc, cowplot, ggplot2, pheatmap
+Imports: 
+    Rcpp (>= 0.11.0),
+    L1pack,
+    Biobase,
+    nnls,
+    reshape,
+    xbioc,
+    cowplot,
+    ggplot2,
+    pheatmap
+biocViews:
 LinkingTo: Rcpp
 Depends: R (>= 3.0.1)
