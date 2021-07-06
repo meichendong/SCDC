@@ -27,6 +27,8 @@ Imports:
     cowplot,
     ggplot2,
     pheatmap
+Remotes:
+    renozao/xbioc
 biocViews:
 LinkingTo: Rcpp
 Depends: R (>= 3.0.1)
