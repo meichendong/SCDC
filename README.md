@@ -14,6 +14,8 @@ Citation
 ------------
 Meichen Dong, Aatish Thennavan, Eugene Urrutia, Yun Li, Charles M Perou, Fei Zou, Yuchao Jiang, SCDC: bulk gene expression deconvolution by multiple single-cell RNA sequencing references, Briefings in Bioinformatics, , bbz166, https://doi.org/10.1093/bib/bbz166
 
+License: MIT
+
 
 Installation
 ------------
