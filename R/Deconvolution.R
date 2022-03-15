@@ -581,7 +581,7 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
                           pest.names = c("SCDC"), select.ct = ct.sub)
     }
   } else {
-    xbulk <- getCPM0(exprs(bulk.eset)[commongenes, ])
+    xbulk <- getCPM0(exprs(bulk.eset)[commongenes, , drop = F])
     sigma <- sc.basis$sigma[commongenes, ct.sub]
     ALS.S <- sc.basis$sum.mat[ct.sub]
     N.bulk <- ncol(bulk.eset)
