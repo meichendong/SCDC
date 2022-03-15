@@ -337,7 +337,7 @@ In the real world, some identified cell types are hard to be distinguished in ce
 
 ```r
 qc.3cl <- readRDS("MIX3cl_scESET.rds")
-sc3cl.basis <- SCDC_basis_ONE(qc.3cl$sc.eset.qc, ct.varname = "md_cluster", sample ="orig.ident")
+sc3cl.basis <- SCDC_basis_ONE(qc.3cl, ct.varname = "md_cluster", sample ="orig.ident")
 df.d <- dist(t(log(sc3cl.basis$basis.mvw + 1e-10)), method = "euclidean")
 hc1 <- hclust(df.d, method = "complete")
 plot(hc1, cex = 0.8, hang = -1, main = "log(basis matrix)")
