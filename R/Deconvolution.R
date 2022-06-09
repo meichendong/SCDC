@@ -597,12 +597,19 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
     prop.est.mvw <- NULL
     yhat <- NULL
     yhatgene.temp <- rownames(basis.mvw)
+    to.remove <- list()
     for (i in 1:N.bulk) {
       basis.mvw.temp <- basis.mvw
       xbulk.temp <- xbulk[, i]*100
       sigma.temp <- sigma
+      com.genes <- sum(xbulk[, i] != 0)
       message(paste(colnames(xbulk)[i], "has common genes",
-                    sum(xbulk[, i] != 0), "..."))
+                    com.genes, "..."))
+      if (is.na(com.genes)) {
+        # store indices of NA vals to remove later
+        to.remove <- append(to.remove, -i)
+        next
+      }
       lm <- nnls::nnls(A = basis.mvw.temp, b = xbulk.temp)
       delta <- lm$residuals
       wt.gene <- 1/(nu + delta^2 + colSums((lm$x * ALS.S)^2 *
@@ -640,9 +647,13 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
       ])
     }
     colnames(prop.est.mvw) <- colnames(basis.mvw)
-    rownames(prop.est.mvw) <- colnames(xbulk)
-    colnames(yhat) <- colnames(xbulk)
+    # remove column names for NA vals
+    to.remove <- unlist(to.remove)
+    xbulk.cols <- colnames(xbulk)[to.remove]
+    rownames(prop.est.mvw) <- xbulk.cols
+    colnames(yhat) <- xbulk.cols
     yobs <- exprs(bulk.eset)
+    yobs <- yobs[, to.remove]
     yeval <- SCDC_yeval(y = yobs, yest = yhat, yest.names = c("SCDC"))
     peval <- NULL
     if (!is.null(truep)) {
