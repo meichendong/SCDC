@@ -647,13 +647,17 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
       ])
     }
     colnames(prop.est.mvw) <- colnames(basis.mvw)
+    
     # remove column names for NA vals
+    xbulk.cols <- colnames(xbulk)
+    yobs <- exprs(bulk.eset)
     to.remove <- unlist(to.remove)
-    xbulk.cols <- colnames(xbulk)[to.remove]
+    if (!is.null(to.remove)) {
+      xbulk.cols <- xbulk.cols[to.remove]
+      yobs <- yobs[, to.remove]
+    }
     rownames(prop.est.mvw) <- xbulk.cols
     colnames(yhat) <- xbulk.cols
-    yobs <- exprs(bulk.eset)
-    yobs <- yobs[, to.remove]
     yeval <- SCDC_yeval(y = yobs, yest = yhat, yest.names = c("SCDC"))
     peval <- NULL
     if (!is.null(truep)) {
