@@ -455,7 +455,7 @@ getENSplot <- function(enstable, combo, subject, subcat = NULL){
                     ct = c("endothelial","fibroblast","luminal","basal","immune"), subj = c(subject))
   p_p <- getPearson(perou_pseudo_all$truep, combo[[2]],
                     ct = c("endothelial","fibroblast","luminal","basal","immune"), subj = c(subject))
-  dat_text <- data.frame(label = c("",paste("R=", round(c(p_t, p_p, pcor.list),2), sep = "")),
+  dat_text <- data.frame(label = c("",paste("R=", round(c(p_t, p_p, unlist(pcor.list)),2), sep = "")),
                          Var1 = as.factor(c("Seurat", "Tabula Muris", "Perou", 
                                             paste("ENSEMBLE:",names(pcor.list)))),
                          value =rep(0.9, length(pcor.list)+3),
