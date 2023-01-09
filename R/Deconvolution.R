@@ -298,7 +298,7 @@ SCDC_basis_ONE <- function(x , ct.sub = NULL, ct.varname, sample, ct.cell.size =
 #' @return a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.
 #' @export
 SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
-                   ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.01, arow =NULL,
+                   ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.001, arow =NULL,
                    qcthreshold = 0.7, generate.figure = T, ct.cell.size = NULL,
                    cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
                    ...) {
@@ -396,7 +396,7 @@ SCDC_qc <- function (sc.eset, ct.varname, sample, scsetname = "Single Cell",
 #' @return a list including: 1) a probability matrix for each single cell input; 2) a clustering QCed ExpressionSet object; 3) a heatmap of QC result.
 #' @export
 SCDC_qc_ONE <- function(sc.eset, ct.varname, sample, scsetname = "Single Cell",
-                  ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.01,
+                  ct.sub, iter.max = 1000, nu = 1e-04, epsilon = 0.001,
                     arow = NULL, weight.basis = F, qcthreshold = 0.7,
                   generate.figure = T, ct.cell.size = NULL,
                   cbPalette = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
@@ -497,7 +497,7 @@ SCDC_qc_ONE <- function(sc.eset, ct.varname, sample, scsetname = "Single Cell",
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
 #' @export
 SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max = 1000,
-                       nu = 1e-04, epsilon = 0.01, truep = NULL, weight.basis = T,
+                       nu = 1e-04, epsilon = 0.001, truep = NULL, weight.basis = T,
                        ct.cell.size = NULL, Transform_bisque = F, ...)
 {
   bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset)) > 0, , drop = FALSE]
@@ -672,7 +672,7 @@ SCDC_prop <- function (bulk.eset, sc.eset, ct.varname, sample, ct.sub, iter.max 
 #' @return Estimated proportion, basis matrix, predicted gene expression levels for bulk samples
 #' @export
 SCDC_prop_ONE <- function (bulk.eset, sc.eset, ct.varname, sample, truep = NULL,
-                           ct.sub, iter.max = 2000, nu = 1e-10, epsilon = 0.01, weight.basis = T,
+                           ct.sub, iter.max = 2000, nu = 1e-10, epsilon = 0.001, weight.basis = T,
                            ct.cell.size = NULL,
                            ...) {
   bulk.eset <- bulk.eset[rowSums(exprs(bulk.eset)) > 0, , drop = FALSE]

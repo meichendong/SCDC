@@ -350,7 +350,7 @@ The tree-structured deconvolution procedure will allow users to specify a 'meta 
 
 ```r
 bulk3cl <- readRDS("MIX3cl_bulkESET.rds")
-sc3cl2 <- qc.3cl$sc.eset.qc
+sc3cl2 <- qc.3cl
 sc3cl2$md_cluster2 <- sc3cl2$md_cluster
 sc3cl2$md_cluster2[!sc3cl2$md_cluster2 %in% "NormalFibroblast"] <- "Tumor"
 # deconv_3cl <- SCDC_prop_ONE(bulk.eset = bulk3cl, sc.eset = sc3cl2, ct.varname = "md_cluster", sample = "orig.ident", ct.sub = unique(sc3cl$md_cluster), weight.basis = T)
@@ -504,5 +504,5 @@ res$prop.est.mvw
 ```
 
 <font color='blue'>
-_Thanks for using SCDC! Please feel free to reach out (meichen@live.unc.edu) if you have questions!_
+_Thanks for using SCDC! Please feel free to reach out (meichen5dong@gmail.com) if you have questions!_
 </font>
