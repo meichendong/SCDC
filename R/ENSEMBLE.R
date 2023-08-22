@@ -101,7 +101,7 @@ SCDC_ENSEMBLE <- function(bulk.eset, sc.eset.list = NULL, ct.varname, sample,
   message("Searching ENSEMBLE weight by LAD -- Minimizing mAD of Y measurement")
   w_lad <-NA
   dt <- data.frame(y = yv, y.list)
-  fitlad <- L1pack::lad(y~.-1, data = dt, method = c("BR", "EM"))
+  fitlad <- L1pack::lad(y~.-1, data = dt, method = "BR")
   w_lad <- fitlad$coefficients
   w_lad[w_lad <0] <- 0
   w_lad <- w_lad/sum(w_lad)
